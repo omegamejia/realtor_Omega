@@ -1,0 +1,84 @@
+# The weekly numbers, collected while the agent's laptop is shut.
+#
+# This job only COLLECTS. It writes content/reports/<date>.json, commits it, and
+# opens an issue saying the week's figures are ready. The reading — what the
+# numbers mean, whether last week's suggestions worked, what to change next — is
+# the `reporting` skill's job, because that is judgement and this is a cron.
+#
+# Secrets it uses, both optional (a missing one is reported as missing, never as
+# a zero): GHL_API_TOKEN, CLARITY_API_TOKEN.
+name: Weekly report
+
+on:
+  schedule:
+    # Monday 13:00 UTC — early morning in the US, so the week's figures are
+    # waiting rather than landing mid-week.
+    - cron: "0 13 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Collect the week's numbers
+        id: collect
+        env:
+          GHL_API_TOKEN: ${{ secrets.GHL_API_TOKEN }}
+          CLARITY_API_TOKEN: ${{ secrets.CLARITY_API_TOKEN }}
+        run: |
+          node scripts/report.mjs | tee /tmp/summary.txt
+          echo "file=content/reports/$(date -u +%F).json" >> "$GITHUB_OUTPUT"
+
+      - name: Keep the file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/reports
+          git diff --staged --quiet || git commit -m "chore: weekly numbers for $(date -u +%F)"
+          # A protected main branch refuses this push, and that must not fail the
+          # run: the numbers are in the issue either way, and an agent whose
+          # weekly job shows a red X every Monday stops reading it.
+          git push || echo "::warning::Could not push the numbers file (a protected branch?). The figures are in the issue below."
+
+      - name: Tell the agent it is ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "The week's figures are collected. **Nothing here is the report yet** —"
+            echo "open this project in Claude and say:"
+            echo
+            echo "> walk me through this week's report"
+            echo
+            echo "Claude reads the numbers below, checks what happened to last week's"
+            echo "suggestions, and tells you what to change next."
+            echo
+            echo '```'
+            cat /tmp/summary.txt
+            echo '```'
+            echo
+            # The raw file goes in the issue as well as the repo. On a protected
+            # branch the commit above cannot push, and without this the numbers
+            # died with the runner — leaving every future report with nothing to
+            # compare against, which is the part that makes it worth reading.
+            FILE="content/reports/$(date -u +%F).json"
+            if [ -f "$FILE" ]; then
+              echo "<details><summary>The raw numbers — kept here so next week has something to compare against</summary>"
+              echo
+              echo '```json'
+              cat "$FILE"
+              echo '```'
+              echo
+              echo "</details>"
+            fi
+          } > /tmp/issue.md
+          gh issue create --title "Weekly site report — $(date -u +%F)" --body-file /tmp/issue.md
