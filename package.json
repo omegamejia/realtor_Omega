@@ -1,0 +1,52 @@
+{
+  "name": "realtor-site-seed",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "validate:schema": "node scripts/validate-schema.mjs",
+    "launch:check": "node scripts/launch-check.mjs",
+    "test:ghl": "node scripts/ghl-test.mjs",
+    "report": "node scripts/report.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "gate": "node scripts/gate.mjs",
+    "catchup": "node scripts/capabilities.mjs",
+    "article": "node scripts/daily-article.mjs",
+    "article:dry": "node scripts/daily-article.mjs --dry-run",
+    "update:engine": "node scripts/update-engine.mjs",
+    "update:skills": "node scripts/update-engine.mjs --skills",
+    "check:domain": "node scripts/check-domain.mjs",
+    "audit:browser": "node scripts/audit-browser.mjs",
+    "audit:compare": "node scripts/audit-compare.mjs",
+    "audit:history": "node scripts/audit-history.mjs"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "next": "^15.5.20",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/puppeteer": "^4.13.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.20",
+    "axe-core": "^4.14.0",
+    "postcss": "^8.5.20",
+    "puppeteer-core": "^23.11.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "overrides": {
+    "postcss": "$postcss",
+    "sharp": "^0.35.3"
+  }
+}

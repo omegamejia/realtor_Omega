@@ -1,0 +1,96 @@
+name: Site gate
+
+# Mechanical enforcement of the launch gate. Without this, "nothing ships with
+# filler" is a manual step a human must remember to run before every deploy —
+# while Vercel auto-deploys every push to main. This makes the gate a required,
+# automatic check on every PR and push.
+#
+# Build, smoke test, and schema validation run ALWAYS (they must pass on any clone, including a
+# fresh seed). The filler/interlink launch-check only enforces once the owner has
+# set `launchReady: true` — i.e. once the site is actually live — so a pre-launch
+# seed or un-configured clone isn't blocked by its own placeholders.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Start server
+        run: |
+          npm run start &
+          npx --yes wait-on http://localhost:3000 -t 60000
+      - name: Smoke test (always) — does the site actually work?
+        run: npm run smoke
+      - name: Validate schema (always)
+        run: npm run validate:schema
+      # THE CHECKS THAT READING HTML CANNOT DO.
+      #
+      # Everything above reads markup. The two worst defects ever found in the
+      # sibling seed were invisible to that and were caught by a human looking
+      # at a screenshot: headings rendering at 1.02:1 in dark mode, and a
+      # breadcrumb printed on top of the logo on every desktop page.
+      #
+      # On this seed's own first run it found eight: unattached form labels
+      # (axe: critical), the raw brand colour used as text at 2.00:1 on dark
+      # bands, a white pill taking the dark-theme ink at 3.61:1, and a computed
+      # ink variant checked against the darkest surface instead of the lightest.
+      #
+      # REQUIRED TO PASS, unlike the launch check above it. That one fails on an
+      # unfinished site by design — placeholders, no sign-off — so demanding a
+      # green tick would put a permanent red cross on every clone. Contrast and
+      # overlap are not like that: a heading nobody can read is wrong on day one
+      # and wrong on launch day, whatever the content says.
+      - name: Find Chrome
+        run: |
+          for p in /usr/bin/google-chrome /usr/bin/google-chrome-stable /usr/bin/chromium-browser; do
+            if [ -x "$p" ]; then echo "CHROME_PATH=$p" >> "$GITHUB_ENV"; echo "found $p"; break; fi
+          done
+          grep -q CHROME_PATH "$GITHUB_ENV" || { echo "::error::No Chrome on the runner."; exit 1; }
+
+      - name: Browser audit (contrast, overlap, focus, tap targets)
+        run: |
+          set -o pipefail
+          npx next start -p 3100 > /tmp/browser-server.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS -o /dev/null http://127.0.0.1:3100/ && break
+            sleep 2
+          done
+          curl -fsS -o /dev/null http://127.0.0.1:3100/ || { echo "site never came up"; cat /tmp/browser-server.log; exit 1; }
+          CHECK_BASE=http://127.0.0.1:3100 node scripts/audit-browser.mjs | tee /tmp/browser.txt
+          rc=${PIPESTATUS[0]}
+          kill %1 2>/dev/null || true
+          {
+            echo "### Browser audit"
+            echo ""
+            echo '```'
+            tail -40 /tmp/browser.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+
+      - name: Launch check (enforced once launchReady is true)
+        run: |
+          if grep -Eq '^[[:space:]]*launchReady:[[:space:]]*true\b' site.config.ts; then
+            echo "launchReady: true — enforcing the no-filler / interlink gate."
+            npm run launch:check
+          else
+            echo "launchReady is not true yet — site is pre-launch; skipping the filler gate (build + schema still enforced above)."
+            # One rule still applies before launch. Setup deploys early, and the
+            # listings-first and assistant-only routes run that way for weeks, so
+            # a pixel can be watching real visitors while the privacy policy
+            # names nobody. That is not a placeholder problem, so it is not
+            # skipped with them.
+            node scripts/launch-check.mjs --tracking-only
+          fi

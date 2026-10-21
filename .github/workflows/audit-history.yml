@@ -1,0 +1,75 @@
+name: Record the numbers
+
+# THE "AUTOMATICALLY TRACKING" PART, and it is this file rather than the script.
+#
+# `npm run audit:history -- --record` takes a reading. Somebody has to run it,
+# and nobody remembers to run anything monthly. So this does it: builds the
+# site, takes a reading, and commits it to `content/audit-history.json`.
+#
+# WEEKLY, ON A SUNDAY NIGHT. Not daily — these are lab measurements of a static
+# build, and they only move when somebody changes the site or updates the
+# engine. A daily reading would be fifty-two identical rows a year and would
+# bury the ones that mattered. Weekly is frequent enough that a regression is
+# caught inside seven days and sparse enough that the file stays readable.
+#
+# It can also be run by hand from the Actions tab, which is what you want after
+# a big change rather than waiting for Sunday.
+on:
+  schedule:
+    - cron: "17 2 * * 0"
+  workflow_dispatch:
+
+# Needed to commit the reading back. Nothing else is granted.
+permissions:
+  contents: write
+
+jobs:
+  record:
+    name: Take a reading and keep it
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      - name: Where is Chrome
+        run: |
+          for p in /usr/bin/google-chrome /usr/bin/google-chrome-stable /usr/bin/chromium-browser; do
+            if [ -x "$p" ]; then echo "CHROME_PATH=$p" >> "$GITHUB_ENV"; break; fi
+          done
+
+      - name: Take the reading
+        run: |
+          npx next start -p 3000 > /tmp/server.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS -o /dev/null http://127.0.0.1:3000/ && break
+            sleep 2
+          done
+          curl -fsS -o /dev/null http://127.0.0.1:3000/ || { echo "site never came up"; cat /tmp/server.log; exit 1; }
+          CHECK_BASE=http://127.0.0.1:3000 node scripts/audit-history.mjs -- --record | tee /tmp/history.txt
+          kill %1 2>/dev/null || true
+          {
+            echo "### The numbers, this week"
+            echo ""
+            echo '```'
+            tail -45 /tmp/history.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Only commits when the file actually changed, so an unchanged week adds
+      # no commit and no noise to the history of the repository.
+      - name: Keep it
+        run: |
+          if git diff --quiet -- content/audit-history.json; then
+            echo "::notice::Nothing changed this week, so nothing was committed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/audit-history.json
+          git commit -m "chore: site numbers for $(date -u +%Y-%m-%d)"
+          git push
