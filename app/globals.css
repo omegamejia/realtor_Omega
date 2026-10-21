@@ -1,0 +1,732 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonts are declared here, NOT via next/font, and that is a reliability choice.
+   next/font makes the typeface a BUILD dependency: with next/font/google a
+   Google Fonts hiccup fails `next build` (it did, twice in one day), and with
+   next/font/local a missing or corrupt file fails it too — tested, and it
+   produces "Failed to compile" with a webpack trace, which on an agent's own
+   Vercel deploy reads as their whole site being broken.
+
+   A plain @font-face is a runtime reference instead. If the file is missing,
+   404s, or is corrupt, the browser silently uses the next family in the stack
+   and the site still builds, deploys and reads correctly — it is simply set in
+   system-ui and Georgia. Cosmetic, never fatal. That is the right trade for a
+   site somebody else's business depends on.
+
+   Licences and provenance: public/fonts/LICENSE.md */
+@font-face {
+  font-family: "Inter Local";
+  src: url("/fonts/Inter-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fraunces Local";
+  src: url("/fonts/Fraunces-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: "Inter Local", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-display: "Fraunces Local", Georgia, "Times New Roman", serif;
+
+  /* Let the UA theme form controls, scrollbars, etc. Default follows the OS;
+     an explicit data-theme (below) pins it. */
+  color-scheme: light dark;
+
+  /* ---- Semantic color tokens — LIGHT ---- */
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --fg-muted: #374151;
+  --fg-subtle: #6b7280;
+  --surface: #ffffff;
+  --surface-muted: color-mix(in srgb, var(--brand) 6%, #ffffff);
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  /* Darkened accent that passes WCAG AA as small text (the raw gold does not). */
+  --accent-text: color-mix(in srgb, var(--accent) 62%, #000000);
+
+  /* Derived brand tints (from --brand/--accent set in layout.tsx). The muted
+     section band now follows the theme by tracking --surface-muted. */
+  --brand-tint: var(--surface-muted);
+  --brand-hover: color-mix(in srgb, var(--brand) 82%, #000000);
+
+  /* Theme-aware brand for INTERACTIVE use. In light they're just --brand; the
+     dark blocks lift them so navy CTAs/links don't sink into a dark background.
+     --brand-cta = solid button fill (keeps white text legible);
+     --brand-ink = brand-colored text/border/links (legible on either surface). */
+  --brand-cta: var(--brand-cta-light, var(--brand));
+  --brand-ink: var(--brand-ink-light, var(--brand));
+
+  /* Text/icon color that sits ON a brand-colored surface (buttons, footer). */
+  --on-brand: var(--on-brand-light, #ffffff);
+
+  /* Footer = a deliberate dark anchor in BOTH themes, but derived from --brand
+     so it re-brands per agent automatically. Change --brand → footer follows. */
+  --footer-bg: color-mix(in srgb, var(--brand) 40%, #0a0d12);
+  --footer-fg: #eaedf1;
+  --footer-fg-muted: #a3adb9;
+  /* AA-compliant (4.78:1) on --footer-bg for small legal/license text. */
+  --footer-fg-subtle: #88919e;
+  --footer-border: color-mix(in srgb, #ffffff 14%, transparent);
+
+  /* Paint the root so the page background is never a white canvas, independent
+     of body-background-to-canvas propagation. */
+  background-color: var(--bg);
+}
+
+/* ---- Semantic color tokens — DARK ----
+   OS preference drives it by default (unless an explicit light theme is pinned),
+   and an explicit data-theme="dark" always wins. --brand-tint tracks
+   --surface-muted, so it flips automatically. --brand-hover is intentionally
+   unchanged. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --fg-muted: #b0b8c1;
+    --fg-subtle: #8b949e;
+    --surface: #161b22;
+    --surface-muted: color-mix(in srgb, var(--brand) 16%, #0d1117);
+    --border: #2a313a;
+    --border-strong: #3a424d;
+    --accent-text: color-mix(in srgb, var(--accent) 88%, #ffffff);
+    /* Lift brand for interactive use on dark surfaces (see light :root notes). */
+    --brand-cta: var(--brand-cta-dark, var(--brand));
+    --brand-ink: var(--brand-ink-dark, var(--brand));
+    --on-brand: var(--on-brand-dark, #ffffff);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --fg: #e6edf3;
+  --fg-muted: #b0b8c1;
+  --fg-subtle: #8b949e;
+  --surface: #161b22;
+  --surface-muted: color-mix(in srgb, var(--brand) 16%, #0d1117);
+  --border: #2a313a;
+  --border-strong: #3a424d;
+  --accent-text: color-mix(in srgb, var(--accent) 88%, #ffffff);
+  --brand-cta: var(--brand-cta-dark, var(--brand));
+  --brand-ink: var(--brand-ink-dark, var(--brand));
+  --on-brand: var(--on-brand-dark, #ffffff);
+}
+
+/* A pinned light theme wins over the OS dark preference. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--fg);
+  background: var(--bg);
+}
+
+/* Display serif on headings — the site's typographic identity. */
+h1,
+h2 {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+/* Visible keyboard focus everywhere (links, buttons, card links) — the light UI
+   otherwise relies on the near-invisible browser default. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  /* --brand-ink, not --brand: a near-black brand would make the focus ring
+     invisible on a dark background. The ink variant is contrast-guaranteed. */
+  outline: 2px solid var(--brand-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================================
+   SIGNATURE + HEADER SYSTEM — the single lever for site-wide type & accent.
+   Every page header (via <PageHero>) and the home hero use these. Change a
+   value HERE and it propagates to every page — no per-page edits.
+   ============================================================================ */
+
+/* Fluid display scale for the ONE page-title treatment. clamp() = one rule,
+   responsive from mobile to desktop. Change the range → every H1 rescales. */
+.display-h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+  color: var(--fg);
+  font-size: clamp(2rem, 1.35rem + 2.8vw, 3.5rem);
+}
+
+/* Home hero only — the "thesis" headline, one step larger than page titles.
+   Use alongside .display-h1 (this just overrides the size/leading). */
+.display-hero {
+  font-size: clamp(2.5rem, 1.5rem + 4.4vw, 4.25rem);
+  line-height: 1.02;
+}
+
+/* The signature accent: a two-tone headline highlight. Apply .hl-accent to the
+   phrase that should pop (usually the city/area). The underline — not raw gold
+   text — carries the accent so it stays AA-legible in light AND dark. Tune the
+   four values below once to restyle every accented headline site-wide. */
+.hl-accent {
+  color: var(--accent-text);
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.14em;
+  text-decoration-skip-ink: none;
+}
+
+/* Eyebrow tick — a short accent rule that marks every page header as ours.
+   One definition; shows up under every <PageHero> eyebrow. */
+.eyebrow-tick::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 0.14em;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ---- Form fields — ONE definition for every input on the site ----
+   Used by ContactForm, FunnelForm, ListingSearch, ChatWidget. min-height 44px
+   meets the WCAG 2.5.5 touch-target floor (a 38px input fails on mobile).
+   Change the look of every field on the site here. */
+.field {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  outline: none;
+}
+.field:focus {
+  border-color: var(--brand-ink);
+  box-shadow: 0 0 0 1px var(--brand-ink);
+}
+textarea.field {
+  min-height: 5.5rem;
+}
+/* Radio/checkbox: the default ~13px box is far below the touch floor. */
+.field-choice {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--brand-cta);
+}
+/* Give the whole choice row a 44px hit area without bloating the visual. */
+.field-choice-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+/* Subtle section rhythm helpers */
+.container-page {
+  width: 100%;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* Long-form rendered content (from content/pages.ts) */
+.rich {
+  overflow-wrap: break-word;
+}
+.rich table {
+  display: block;
+  overflow-x: auto;
+}
+.rich pre {
+  overflow-x: auto;
+}
+.rich p {
+  margin: 0 0 1rem;
+  line-height: 1.75;
+  color: var(--fg-muted);
+}
+.rich ul,
+.rich ol {
+  margin: 0 0 1rem 1.25rem;
+  color: var(--fg-muted);
+  line-height: 1.75;
+}
+.rich ul {
+  list-style: disc;
+}
+.rich ol {
+  list-style: decimal;
+}
+.rich li {
+  margin: 0.35rem 0;
+}
+.rich strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+.rich h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+  color: var(--fg);
+}
+.rich a {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+/* Chat widget intro: floating orb + speech bubble on first homepage visit */
+@keyframes orb-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-6px, -10px) scale(1.03);
+  }
+  66% {
+    transform: translate(5px, 6px) scale(0.98);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes orb-morph {
+  0%,
+  100% {
+    border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+  }
+  50% {
+    border-radius: 58% 42% 39% 61% / 55% 60% 40% 45%;
+  }
+}
+
+.orb-blob {
+  animation: orb-float 6s ease-in-out infinite, orb-morph 8s ease-in-out infinite;
+}
+
+.orb-bubble-enter {
+  animation: orb-bubble-in 0.4s ease-out both;
+}
+
+@keyframes orb-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb-blob {
+    animation: none;
+  }
+}
+
+/* ---- Chat launcher: a soap bubble ---------------------------------------
+   Almost entirely clear. Three things give it shape:
+   1. A very thin dark slate outline (with a faint light hairline outside it),
+      so the circle reads on a white band, a dark band or a photograph.
+   2. The rainbow film concentrated on ONE side, the way light comes through a
+      real bubble: intense along the lower-right edge, fading to nothing
+      toward the upper-left. It drifts a little rather than spinning.
+   3. A small white glint where the light hits.
+   The icon is dark with a thin white halo, so it reads on anything.
+
+   The skin (.soap-bubble) is a separate layer inside the button so it can be
+   pushed out of round by its own motion (ChatWidget, useBubblePhysics) while
+   the icon stays crisp and the button keeps its own float animation. */
+.soap-launch {
+  position: relative;
+  border-radius: 50%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.soap-launch > .soap-bubble {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.soap-icon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  color: #1c2230;
+}
+.soap-bubble {
+  position: relative;
+  border-radius: 50%;
+  isolation: isolate;
+  color: #1c2230;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0 60%, rgba(255, 255, 255, 0.1) 100%);
+  border: 1px solid rgba(28, 34, 48, 0.62);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 0 12px rgba(255, 255, 255, 0.18),
+    0 8px 22px rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: saturate(1.25) brightness(1.04);
+  backdrop-filter: saturate(1.25) brightness(1.04);
+  transition: box-shadow 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* The rainbow: a full-colour sweep, masked by a ring whose centre is pulled up
+   and left, so the band is widest on the lower right and thins to nothing. */
+.soap-bubble::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 90deg at 50% 50%,
+    rgba(255, 60, 170, 0.95) 0deg,
+    rgba(255, 150, 40, 0.95) 45deg,
+    rgba(255, 235, 60, 0.9) 80deg,
+    rgba(60, 230, 150, 0.9) 120deg,
+    rgba(40, 190, 255, 0.95) 160deg,
+    rgba(120, 90, 255, 0.95) 200deg,
+    rgba(255, 60, 170, 0.6) 240deg,
+    rgba(255, 60, 170, 0) 290deg,
+    rgba(255, 60, 170, 0) 330deg,
+    rgba(255, 60, 170, 0.95) 360deg
+  );
+  -webkit-mask: radial-gradient(circle at 36% 32%, transparent 0 58%, rgba(0, 0, 0, 0.35) 70%, #000 86%);
+  mask: radial-gradient(circle at 36% 32%, transparent 0 58%, rgba(0, 0, 0, 0.35) 70%, #000 86%);
+  opacity: 0.85;
+  pointer-events: none;
+}
+/* Where the light hits: one bright glint and a softer second one. */
+.soap-bubble::after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  top: 15%;
+  width: 22%;
+  height: 12%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 6px 10px 0 -3px rgba(255, 255, 255, 0.45);
+  filter: blur(0.6px);
+  transform: rotate(-38deg);
+  pointer-events: none;
+}
+.soap-icon svg {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+.soap-launch:hover,
+.soap-launch:focus-visible {
+  transform: scale(1.07);
+}
+.soap-launch:hover .soap-bubble,
+.soap-launch:focus-visible .soap-bubble {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    inset 0 0 14px rgba(255, 255, 255, 0.25),
+    0 12px 28px rgba(0, 0, 0, 0.18);
+}
+.soap-launch:hover .soap-bubble::before,
+.soap-launch:focus-visible .soap-bubble::before {
+  opacity: 1;
+}
+/* The greeting beside it: frosted glass, dark enough to keep the words legible
+   over a bright sky. */
+.soap-note {
+  color: #fff;
+  background: rgba(16, 18, 22, 0.62);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .soap-bubble::before {
+    animation: soap-shimmer 7s ease-in-out infinite;
+  }
+  /* The float only moves it; the shape change comes from the physics. */
+  .soap-launch.orb-blob {
+    animation: orb-float 6s ease-in-out infinite;
+  }
+}
+/* The shine slides a little along the edge and back, as a bubble turns. */
+@keyframes soap-shimmer {
+  0%, 100% { transform: rotate(-14deg); }
+  50% { transform: rotate(22deg); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   EDITORIAL LAYER — the page template.
+   Everything derives from --brand / --accent so it re-skins per agent.
+   Doctrine it serves: Attract -> Connect -> Convert, and the three R's
+   (Relevancy, Recency, Proximity) made visible rather than implied.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* THE THREE WAYS DARK MODE ARRIVES, and why all three are listed every time.
+   `--fg` and `--surface` flip on all of them. These editorial tokens used to
+   flip on only some, and a background that goes light while the text goes light
+   is not a small bug: on a system set to LIGHT with the toggle set to dark, the
+   paper bands rendered at a 1.06:1 contrast ratio. That is invisible, not merely
+   low. AA needs 4.5:1.
+
+     html.dark                 legacy class hook
+     :root[data-theme="dark"]  what the toggle actually sets  <- was missing
+     prefers-color-scheme      the OS preference, unless overridden to light
+
+   `--paper-fg` is defined NEXT TO `--paper` on purpose. The pair travels
+   together, so a future theme cannot move the background without moving the
+   text on it. */
+:root {
+  /* Warm off-white. Tinted by the agent's accent so the whole palette stays
+     theirs instead of being a fixed cream borrowed from someone else's site. */
+  --paper: color-mix(in srgb, var(--accent) 8%, #fbf9f6);
+  --paper-fg: #1a1a1a;
+  --paper-fg-muted: #374151;
+  --ink: color-mix(in srgb, var(--brand) 92%, #05070a);
+  --hairline: color-mix(in srgb, var(--brand) 18%, transparent);
+}
+html.dark,
+:root[data-theme="dark"] {
+  --paper: color-mix(in srgb, var(--accent) 6%, #14161a);
+  --paper-fg: #e6edf3;
+  --paper-fg-muted: #b0b8c1;
+  --ink: #0b0d11;
+  --hairline: color-mix(in srgb, #ffffff 16%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: color-mix(in srgb, var(--accent) 6%, #14161a);
+    --paper-fg: #e6edf3;
+    --paper-fg-muted: #b0b8c1;
+      --ink: #0b0d11;
+    --hairline: color-mix(in srgb, #ffffff 16%, transparent);
+  }
+}
+
+/* Paper states its own text colour rather than inheriting `--fg`, for the same
+   reason `.surface-ink` does. Inheriting is what let the two drift apart. */
+.surface-paper {
+  background: var(--paper);
+  color: var(--paper-fg);
+}
+.surface-paper :where(h1, h2, h3, h4, strong) { color: var(--paper-fg); }
+.surface-paper :where(p, li, dd) { color: var(--paper-fg-muted); }
+.surface-ink   { background: var(--ink); color: #fff; }
+.surface-ink :where(h1,h2,h3) { color: #fff; }
+.surface-ink .eyebrow-tick, .surface-ink .ed-eyebrow { color: var(--accent); }
+
+/* Full-bleed photographic moment. Used for the hero, the mid-page break and
+   the closing. The scrim is what makes white type readable over any photo the
+   agent supplies, which matters because we cannot art-direct their pictures. */
+.ed-bleed {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+  background-position: center;
+  background-size: cover;
+  isolation: isolate;
+}
+.ed-bleed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    rgba(8, 11, 16, 0.9) 0%,
+    rgba(8, 11, 16, 0.72) 42%,
+    rgba(8, 11, 16, 0.34) 100%
+  );
+}
+.ed-bleed--tall { min-height: min(84vh, 760px); }
+.ed-bleed--mid  { min-height: min(62vh, 560px); align-items: center; }
+/* White on the scrim. Note the specificity: wrapping the PARENT in :where()
+   drops the whole selector to zero and .display-h1's own colour wins, which
+   turned the hero headline dark. The class selector is deliberately plain, and
+   .display-h1 gets its own rule so it beats the base rule outright. */
+.ed-bleed :where(h1, h2, h3, p, li) { color: #fff; }
+.ed-bleed .display-h1,
+.ed-bleed h1.display-h1,
+.ed-bleed p.display-h1 { color: #fff; }
+
+.ed-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  /* --accent-text, not --accent: a brand accent is chosen to look right as a
+     brand, not to be read as small type. One agent's gold measured 2.01:1 on
+     the paper band, so every eyebrow on the site failed AA. --accent-text
+     already exists for exactly this and flips per theme. */
+  color: var(--accent-text);
+}
+/* On dark ground the raw accent is already high-contrast and is the brand
+   moment, so it wins there. */
+.surface-ink .ed-eyebrow,
+.ed-bleed .ed-eyebrow,
+.surface-ink .eyebrow-tick,
+.ed-bleed .eyebrow-tick { color: var(--accent); }
+
+/* Numbered chapter list — her "eight chapters, one strategy" shape. Turns an
+   abstract process into something a nervous seller can see the length of. */
+.ed-chapter {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+  border-top: 1px solid var(--hairline);
+}
+.ed-chapter:last-child { border-bottom: 1px solid var(--hairline); }
+.ed-chapter-num {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Field note — a single claim, set large, framed. The thing a reader
+   remembers and an AI assistant quotes. */
+.ed-note {
+  background: var(--paper);
+  border-left: 3px solid var(--accent);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+.ed-note p {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.25rem, 2.6vw, 1.85rem);
+  line-height: 1.32;
+  margin: 0;
+}
+
+/* Card grid where ONE card inverts. The inverted card is the agent's own
+   specialty, so the page says "this is the one I am known for" visually
+   rather than only in words. */
+.ed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  border-top: 1px solid var(--hairline);
+  border-left: 1px solid var(--hairline);
+}
+.ed-cell {
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+/* The featured cell. Inversion is the resting state for ONE cell so the grid
+   has a focal point, but it is also the hover state for EVERY cell, so pointing
+   at another one moves the emphasis instead of leaving two things looking
+   selected at once. */
+.ed-cell {
+  transition: background-color 0.15s ease, color 0.15s ease,
+    outline-color 0.15s ease;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+}
+.ed-cell--feature,
+a.ed-cell:hover,
+a.ed-cell:focus-visible {
+  background: var(--ink);
+  color: #fff;
+  outline-color: var(--accent);
+}
+.ed-cell--feature :where(h3),
+a.ed-cell:hover :where(h3),
+a.ed-cell:focus-visible :where(h3) { color: #fff; }
+.ed-cell--feature :where(p),
+a.ed-cell:hover :where(p),
+a.ed-cell:focus-visible :where(p) { color: rgba(255, 255, 255, 0.8); }
+/* LIGHTENED, not raw. This eyebrow sits on --ink, and a mid-tone brand accent
+   lands just under AA on a dark card (one agent's measured 3.94:1). Mixing
+   toward white keeps it recognisably the brand and clears the bar for whatever
+   accent an agent picks. */
+.ed-cell--feature .ed-eyebrow,
+a.ed-cell:hover .ed-eyebrow,
+a.ed-cell:focus-visible .ed-eyebrow {
+  color: color-mix(in srgb, var(--accent) 72%, #ffffff);
+}
+
+/* When any sibling is hovered, the resting feature cell steps back, so only
+   one cell is ever emphasised. */
+.ed-grid:hover .ed-cell--feature:not(:hover) {
+  background: transparent;
+  color: inherit;
+  outline-color: transparent;
+}
+.ed-grid:hover .ed-cell--feature:not(:hover) :where(h3) { color: var(--fg); }
+.ed-grid:hover .ed-cell--feature:not(:hover) :where(p) {
+  color: var(--fg-muted);
+}
+.ed-grid:hover .ed-cell--feature:not(:hover) .ed-eyebrow {
+  color: var(--accent);
+}
+
+/* Sticky in-page nav. Long pages stay navigable, and the anchors give search
+   engines named subsections to deep-link. */
+.ed-toc {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ed-toc::-webkit-scrollbar { display: none; }
+.ed-toc-inner { display: flex; gap: clamp(1rem, 3vw, 1.75rem); padding: 0.9rem 0; }
+.ed-toc a {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  text-decoration: none;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.ed-toc a:hover { color: var(--brand-ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Bleed with no photograph. The scrim alone over nothing is just a grey box, so
+   this gives the same shape a deliberate brand surface instead. An agent with no
+   wide photography still gets a real hero, and the open-items list tracks the
+   photo as an upgrade rather than a defect. */
+.ed-bleed--noimage {
+  background-image: linear-gradient(
+    135deg,
+    var(--ink) 0%,
+    color-mix(in srgb, var(--brand) 70%, #0b0d11) 55%,
+    color-mix(in srgb, var(--accent) 22%, var(--ink)) 100%
+  );
+}
+.ed-bleed--noimage::after { opacity: 0.35; }
