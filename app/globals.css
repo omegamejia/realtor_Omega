@@ -1,0 +1,318 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
+  /* Let the UA theme form controls, scrollbars, etc. Default follows the OS;
+     an explicit data-theme (below) pins it. */
+  color-scheme: light dark;
+
+  /* ---- Semantic color tokens — LIGHT ---- */
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --fg-muted: #374151;
+  --fg-subtle: #6b7280;
+  --surface: #ffffff;
+  --surface-muted: color-mix(in srgb, var(--brand) 6%, #ffffff);
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  /* Darkened accent that passes WCAG AA as small text (the raw gold does not). */
+  --accent-text: color-mix(in srgb, var(--accent) 62%, #000000);
+
+  /* Derived brand tints (from --brand/--accent set in layout.tsx). The muted
+     section band now follows the theme by tracking --surface-muted. */
+  --brand-tint: var(--surface-muted);
+  --brand-hover: color-mix(in srgb, var(--brand) 82%, #000000);
+
+  /* Theme-aware brand for INTERACTIVE use. In light they're just --brand; the
+     dark blocks lift them so navy CTAs/links don't sink into a dark background.
+     --brand-cta = solid button fill (keeps white text legible);
+     --brand-ink = brand-colored text/border/links (legible on either surface). */
+  --brand-cta: var(--brand-cta-light, var(--brand));
+  --brand-ink: var(--brand-ink-light, var(--brand));
+
+  /* Text/icon color that sits ON a brand-colored surface (buttons, footer). */
+  --on-brand: var(--on-brand-light, #ffffff);
+
+  /* Footer = a deliberate dark anchor in BOTH themes, but derived from --brand
+     so it re-brands per agent automatically. Change --brand → footer follows. */
+  --footer-bg: color-mix(in srgb, var(--brand) 40%, #0a0d12);
+  --footer-fg: #eaedf1;
+  --footer-fg-muted: #a3adb9;
+  /* AA-compliant (4.78:1) on --footer-bg for small legal/license text. */
+  --footer-fg-subtle: #88919e;
+  --footer-border: color-mix(in srgb, #ffffff 14%, transparent);
+
+  /* Paint the root so the page background is never a white canvas, independent
+     of body-background-to-canvas propagation. */
+  background-color: var(--bg);
+}
+
+/* ---- Semantic color tokens — DARK ----
+   OS preference drives it by default (unless an explicit light theme is pinned),
+   and an explicit data-theme="dark" always wins. --brand-tint tracks
+   --surface-muted, so it flips automatically. --brand-hover is intentionally
+   unchanged. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --fg-muted: #b0b8c1;
+    --fg-subtle: #8b949e;
+    --surface: #161b22;
+    --surface-muted: color-mix(in srgb, var(--brand) 16%, #0d1117);
+    --border: #2a313a;
+    --border-strong: #3a424d;
+    --accent-text: color-mix(in srgb, var(--accent) 88%, #ffffff);
+    /* Lift brand for interactive use on dark surfaces (see light :root notes). */
+    --brand-cta: var(--brand-cta-dark, var(--brand));
+    --brand-ink: var(--brand-ink-dark, var(--brand));
+    --on-brand: var(--on-brand-dark, #ffffff);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --fg: #e6edf3;
+  --fg-muted: #b0b8c1;
+  --fg-subtle: #8b949e;
+  --surface: #161b22;
+  --surface-muted: color-mix(in srgb, var(--brand) 16%, #0d1117);
+  --border: #2a313a;
+  --border-strong: #3a424d;
+  --accent-text: color-mix(in srgb, var(--accent) 88%, #ffffff);
+  --brand-cta: var(--brand-cta-dark, var(--brand));
+  --brand-ink: var(--brand-ink-dark, var(--brand));
+  --on-brand: var(--on-brand-dark, #ffffff);
+}
+
+/* A pinned light theme wins over the OS dark preference. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--fg);
+  background: var(--bg);
+}
+
+/* Display serif on headings — the site's typographic identity. */
+h1,
+h2 {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+/* Visible keyboard focus everywhere (links, buttons, card links) — the light UI
+   otherwise relies on the near-invisible browser default. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  /* --brand-ink, not --brand: a near-black brand would make the focus ring
+     invisible on a dark background. The ink variant is contrast-guaranteed. */
+  outline: 2px solid var(--brand-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================================
+   SIGNATURE + HEADER SYSTEM — the single lever for site-wide type & accent.
+   Every page header (via <PageHero>) and the home hero use these. Change a
+   value HERE and it propagates to every page — no per-page edits.
+   ============================================================================ */
+
+/* Fluid display scale for the ONE page-title treatment. clamp() = one rule,
+   responsive from mobile to desktop. Change the range → every H1 rescales. */
+.display-h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+  color: var(--fg);
+  font-size: clamp(2rem, 1.35rem + 2.8vw, 3.5rem);
+}
+
+/* Home hero only — the "thesis" headline, one step larger than page titles.
+   Use alongside .display-h1 (this just overrides the size/leading). */
+.display-hero {
+  font-size: clamp(2.5rem, 1.5rem + 4.4vw, 4.25rem);
+  line-height: 1.02;
+}
+
+/* The signature accent: a two-tone headline highlight. Apply .hl-accent to the
+   phrase that should pop (usually the city/area). The underline — not raw gold
+   text — carries the accent so it stays AA-legible in light AND dark. Tune the
+   four values below once to restyle every accented headline site-wide. */
+.hl-accent {
+  color: var(--accent-text);
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.14em;
+  text-decoration-skip-ink: none;
+}
+
+/* Eyebrow tick — a short accent rule that marks every page header as ours.
+   One definition; shows up under every <PageHero> eyebrow. */
+.eyebrow-tick::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 0.14em;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ---- Form fields — ONE definition for every input on the site ----
+   Used by ContactForm, FunnelForm, ListingSearch, ChatWidget. min-height 44px
+   meets the WCAG 2.5.5 touch-target floor (a 38px input fails on mobile).
+   Change the look of every field on the site here. */
+.field {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  outline: none;
+}
+.field:focus {
+  border-color: var(--brand-ink);
+  box-shadow: 0 0 0 1px var(--brand-ink);
+}
+textarea.field {
+  min-height: 5.5rem;
+}
+/* Radio/checkbox: the default ~13px box is far below the touch floor. */
+.field-choice {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--brand-cta);
+}
+/* Give the whole choice row a 44px hit area without bloating the visual. */
+.field-choice-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+/* Subtle section rhythm helpers */
+.container-page {
+  width: 100%;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* Long-form rendered content (from content/pages.ts) */
+.rich {
+  overflow-wrap: break-word;
+}
+.rich table {
+  display: block;
+  overflow-x: auto;
+}
+.rich pre {
+  overflow-x: auto;
+}
+.rich p {
+  margin: 0 0 1rem;
+  line-height: 1.75;
+  color: var(--fg-muted);
+}
+.rich ul,
+.rich ol {
+  margin: 0 0 1rem 1.25rem;
+  color: var(--fg-muted);
+  line-height: 1.75;
+}
+.rich ul {
+  list-style: disc;
+}
+.rich ol {
+  list-style: decimal;
+}
+.rich li {
+  margin: 0.35rem 0;
+}
+.rich strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+.rich h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+  color: var(--fg);
+}
+.rich a {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+/* Chat widget intro: floating orb + speech bubble on first homepage visit */
+@keyframes orb-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-6px, -10px) scale(1.03);
+  }
+  66% {
+    transform: translate(5px, 6px) scale(0.98);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes orb-morph {
+  0%,
+  100% {
+    border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+  }
+  50% {
+    border-radius: 58% 42% 39% 61% / 55% 60% 40% 45%;
+  }
+}
+
+.orb-blob {
+  animation: orb-float 6s ease-in-out infinite, orb-morph 8s ease-in-out infinite;
+}
+
+.orb-bubble-enter {
+  animation: orb-bubble-in 0.4s ease-out both;
+}
+
+@keyframes orb-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb-blob {
+    animation: none;
+  }
+}

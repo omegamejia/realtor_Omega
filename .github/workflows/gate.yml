@@ -1,0 +1,43 @@
+name: Site gate
+
+# Mechanical enforcement of the launch gate. Without this, "nothing ships with
+# filler" is a manual step a human must remember to run before every deploy —
+# while Vercel auto-deploys every push to main. This makes the gate a required,
+# automatic check on every PR and push.
+#
+# Build + schema validation run ALWAYS (they must pass on any clone, including a
+# fresh seed). The filler/interlink launch-check only enforces once the owner has
+# set `launchReady: true` — i.e. once the site is actually live — so a pre-launch
+# seed or un-configured clone isn't blocked by its own placeholders.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Start server
+        run: |
+          npm run start &
+          npx --yes wait-on http://localhost:3000 -t 60000
+      - name: Validate schema (always)
+        run: npm run validate:schema
+      - name: Launch check (enforced once launchReady is true)
+        run: |
+          if grep -Eq '^[[:space:]]*launchReady:[[:space:]]*true\b' site.config.ts; then
+            echo "launchReady: true — enforcing the no-filler / interlink gate."
+            npm run launch:check
+          else
+            echo "launchReady is not true yet — site is pre-launch; skipping the filler gate (build + schema still enforced above)."
+          fi
