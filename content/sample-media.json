@@ -1,0 +1,339 @@
+{
+ "generated": "2026-09-28T21:01:48Z",
+ "_readme": "Licensed stock filling every photo frame so a brand-new site looks finished on the first render. Each slot's `need` says what the REAL photograph has to show, which makes this file the shot list too (npm run shot-list). launch:check blocks any sample host from going live, so these cannot ship. Area slots are deliberately absent: they are filled per site during setup, because a photo of the wrong town is a false claim, not a placeholder.",
+ "slots": [
+  {
+   "key": "home.hero.2",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Terra_Sol_Twilight_%28Unsplash%29.jpg/1920px-Terra_Sol_Twilight_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Terra_Sol_Twilight_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Brian Babb brianbabb",
+   "title": "Terra Sol Twilight (Unsplash).jpg",
+   "need": "A handsome single-family listing photographed at dusk with every interior and porch light on, shot straight-on from the street.",
+   "w": 5362,
+   "h": 3577
+  },
+  {
+   "key": "home.hero.3",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Clinton_Residence.jpg/1920px-Clinton_Residence.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Clinton_Residence.jpg",
+   "license": "CC BY-SA 4.0",
+   "credit": "Studioartlineinc",
+   "title": "Clinton Residence.jpg",
+   "need": "A bright, high-end great room in a recent listing, staged, lights on, wide lens from the corner, windows showing the view.",
+   "w": 3888,
+   "h": 2592
+  },
+  {
+   "key": "home.difference",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Old_camera_%28Unsplash%29.jpg/1920px-Old_camera_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Old_camera_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Alexandru STAVRIC\u0102 alexandru_stavrica",
+   "title": "Old camera (Unsplash).jpg",
+   "need": "Behind the scenes on a listing shoot: your camera on a tripod in a staged, sunlit living room, no faces in frame.",
+   "w": 5466,
+   "h": 3644
+  },
+  {
+   "key": "home.quote",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Brix_-_December_2024_-_Sarah_Stierch_21.jpg/1920px-Brix_-_December_2024_-_Sarah_Stierch_21.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Brix_-_December_2024_-_Sarah_Stierch_21.jpg",
+   "license": "CC0",
+   "credit": "Missvain",
+   "title": "Brix - December 2024 - Sarah Stierch 21.jpg",
+   "need": "A vertical detail of a styled front entry: door, porch light, planters and a wreath or fresh flowers, shot at dusk.",
+   "w": 4032,
+   "h": 3024
+  },
+  {
+   "key": "home.epic.equity",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Spanish_House_5-18-14_%2814556374401%29.jpg/1920px-Spanish_House_5-18-14_%2814556374401%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Spanish_House_5-18-14_(14556374401).jpg",
+   "license": "CC BY-SA 2.0",
+   "credit": "inkknife_2000 (7.5 million views +)",
+   "title": "Spanish House 5-18-14 (14556374401).jpg",
+   "need": "A well-kept client home with strong curb appeal: fresh lawn, trimmed shrubs, clean walkway, shot in soft morning light.",
+   "w": 1960,
+   "h": 1325
+  },
+  {
+   "key": "home.epic.presentation",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Kitchen_%28Unsplash%29.jpg/1920px-Kitchen_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Kitchen_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Naomi H\u00e9bert naomish",
+   "title": "Kitchen (Unsplash).jpg",
+   "need": "A staged kitchen from one of your listings, island and pendant lights in frame, counters clear, shot from the dining side.",
+   "w": 4288,
+   "h": 2848
+  },
+  {
+   "key": "home.epic.impact",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Camp_site_%28Unsplash%29.jpg/1920px-Camp_site_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Camp_site_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Mahkeo mahkeo",
+   "title": "Camp site (Unsplash).jpg",
+   "need": "A twilight exterior of a sold listing with warm light glowing from every window against a deep blue sky.",
+   "w": 2500,
+   "h": 1667
+  },
+  {
+   "key": "home.epic.campaign",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Work_%28Unsplash_Px3iBXV-4TU%29.jpg/1920px-Work_%28Unsplash_Px3iBXV-4TU%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Work_(Unsplash_Px3iBXV-4TU).jpg",
+   "license": "CC0",
+   "credit": "Igor Miske igorm",
+   "title": "Work (Unsplash Px3iBXV-4TU).jpg",
+   "need": "A laptop or phone on a clean desk showing one of your listing pages or social posts, screen legible, no personal data visible.",
+   "w": 5320,
+   "h": 3073
+  },
+  {
+   "key": "home.real.ready",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Door_in_a_white_room_%28Unsplash%29.jpg/1920px-Door_in_a_white_room_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Door_in_a_white_room_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Philipp Berndt philberndt",
+   "title": "Door in a white room (Unsplash).jpg",
+   "need": "An open front door looking into a bright, empty or lightly staged entry and living area on move-in day.",
+   "w": 5200,
+   "h": 3744
+  },
+  {
+   "key": "home.real.aligned",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Grovemade_2017-04-13_%28Unsplash_vfIx29EsLHA%29.jpg/1920px-Grovemade_2017-04-13_%28Unsplash_vfIx29EsLHA%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Grovemade_2017-04-13_(Unsplash_vfIx29EsLHA).jpg",
+   "license": "CC0",
+   "credit": "Grovemade grovemade",
+   "title": "Grovemade 2017-04-13 (Unsplash vfIx29EsLHA).jpg",
+   "need": "A set dining table or kitchen island in a client home, morning light, a few homey touches like flowers or coffee.",
+   "w": 4896,
+   "h": 3264
+  },
+  {
+   "key": "home.real.locked",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Camera_keys_notebook_coffee_%28Unsplash%29.jpg/1920px-Camera_keys_notebook_coffee_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Camera_keys_notebook_coffee_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Melinda Pack melindapack",
+   "title": "Camera keys notebook coffee (Unsplash).jpg",
+   "need": "A close-up of house keys being handed over on closing day, or keys on a kitchen counter beside a signed folder, no faces.",
+   "w": 4368,
+   "h": 2912
+  },
+  {
+   "key": "page.process",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Home_Sweet_Home_Pt._6_%28Unsplash%29.jpg/1920px-Home_Sweet_Home_Pt._6_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Home_Sweet_Home_Pt._6_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Kari Shea karishea",
+   "title": "Home Sweet Home Pt. 6 (Unsplash).jpg",
+   "need": "A listing-prep moment in a staged room: lighting stand and camera set up, furniture styled, shot wide and bright.",
+   "w": 5472,
+   "h": 3648
+  },
+  {
+   "key": "page.process-buying",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Kambara_House%2C_Richard_Neutra_1960_00.jpg/1920px-Kambara_House%2C_Richard_Neutra_1960_00.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Kambara_House,_Richard_Neutra_1960_00.jpg",
+   "license": "CC BY-SA 4.0",
+   "credit": "MichaelJLocke",
+   "title": "Kambara House, Richard Neutra 1960 00.jpg",
+   "need": "A bright living room in a home on tour, shot from the doorway the way a buyer first sees it.",
+   "w": 3872,
+   "h": 2592
+  },
+  {
+   "key": "page.team",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Leather_chairs_in_meeting_room_%28Unsplash%29.jpg/1920px-Leather_chairs_in_meeting_room_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Leather_chairs_in_meeting_room_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Breather breather",
+   "title": "Leather chairs in meeting room (Unsplash).jpg",
+   "need": "Your office or meeting space, bright and tidy, table and chairs ready for a client meeting, no people or with the team out of focus.",
+   "w": 3558,
+   "h": 2400
+  },
+  {
+   "key": "page.blog",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Coffee%2C_flowers_and_books_%28Unsplash%29.jpg/1920px-Coffee%2C_flowers_and_books_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Coffee,_flowers_and_books_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Juja Han juja_han",
+   "title": "Coffee, flowers and books (Unsplash).jpg",
+   "need": "A cozy window seat or reading nook in a local home with coffee, a book and natural light.",
+   "w": 2449,
+   "h": 1633
+  },
+  {
+   "key": "page.contact",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Grand_Rapids%2C_United_States_%28Unsplash%29.jpg/1920px-Grand_Rapids%2C_United_States_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Grand_Rapids,_United_States_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Kari Shea karishea",
+   "title": "Grand Rapids, United States (Unsplash).jpg",
+   "need": "A clean desk in your office with a laptop, notebook and phone, soft daylight, nothing confidential on screen.",
+   "w": 5243,
+   "h": 3495
+  },
+  {
+   "key": "page.buyers",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/Living_room_%28Unsplash%29.jpg/1920px-Living_room_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Living_room_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Jaros\u0142aw Ceborski jarson",
+   "title": "Living room (Unsplash).jpg",
+   "need": "A bright, move-in-ready living room in a local listing, clean lines, lots of daylight, shot at eye level.",
+   "w": 5346,
+   "h": 3568
+  },
+  {
+   "key": "page.sellers",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Lake_St_Clair_%28Unsplash%29.jpg/1920px-Lake_St_Clair_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Lake_St_Clair_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Simon Rae simonrae",
+   "title": "Lake St Clair (Unsplash).jpg",
+   "need": "A staged living room at golden hour with warm light across the sofa and windows, from one of your sold listings.",
+   "w": 2738,
+   "h": 1825
+  },
+  {
+   "key": "page.media",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Ottomon_and_interior_design_%28Unsplash%29.jpg/1920px-Ottomon_and_interior_design_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Ottomon_and_interior_design_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Jeff Hopper jeffhopper",
+   "title": "Ottomon and interior design (Unsplash).jpg",
+   "need": "A still life of your video and photo gear laid out on a table: camera, lenses, microphone, no brand logos prominent.",
+   "w": 5140,
+   "h": 3427
+  },
+  {
+   "key": "page.free",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Bookshelf_and_blue_couch_%28Unsplash%29.jpg/1920px-Bookshelf_and_blue_couch_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Bookshelf_and_blue_couch_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Ben Garratt wstn",
+   "title": "Bookshelf and blue couch (Unsplash).jpg",
+   "need": "A calm corner of a home with a sofa, bookshelves and daylight, suggesting sitting down with a guide.",
+   "w": 4600,
+   "h": 3071
+  },
+  {
+   "key": "page.awards",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Pure_white_stairway_%28Unsplash%29.jpg/1920px-Pure_white_stairway_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Pure_white_stairway_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Liane Metzler liane",
+   "title": "Pure white stairway (Unsplash).jpg",
+   "need": "An architectural detail with clean light, such as a staircase, window wall or entry, from a standout local listing.",
+   "w": 6000,
+   "h": 4000
+  },
+  {
+   "key": "niche.selling-your-home",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/House_%282816282981%29.jpg/1920px-House_%282816282981%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:House_(2816282981).jpg",
+   "license": "CC BY-SA 2.0",
+   "credit": "David Sawyer from Rancho Murieta, California, United States",
+   "title": "House (2816282981).jpg",
+   "need": "One of your listings from the street on photo day: lawn cut, lights on, walkway clear, shot at golden hour.",
+   "w": 2272,
+   "h": 1704
+  },
+  {
+   "key": "niche.divorce-home-sale",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Breather_Montreal_interior_%28Unsplash%29.jpg/1920px-Breather_Montreal_interior_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Breather_Montreal_interior_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Breather breather",
+   "title": "Breather Montreal interior (Unsplash).jpg",
+   "need": "A calm, neutral, lightly staged room in a listing, one chair and soft window light, nothing personal in frame.",
+   "w": 7186,
+   "h": 4796
+  },
+  {
+   "key": "niche.probate-and-trust",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Jefferson_Park_Bungalows.jpg/1920px-Jefferson_Park_Bungalows.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Jefferson_Park_Bungalows.jpg",
+   "license": "CC BY-SA 4.0",
+   "credit": "Christopheraweed",
+   "title": "Jefferson Park Bungalows.jpg",
+   "need": "A classic older family home in an established neighborhood, front porch and mature trees, shot respectfully in daylight.",
+   "w": 3776,
+   "h": 2832
+  },
+  {
+   "key": "niche.buying-a-home",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/At_Home_%28Unsplash%29.jpg/1920px-At_Home_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:At_Home_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Naomi H\u00e9bert naomish",
+   "title": "At Home (Unsplash).jpg",
+   "need": "A bright, staged living room in a home on tour, shot from the entry the way a buyer first walks in.",
+   "w": 3897,
+   "h": 2588
+  },
+  {
+   "key": "niche.relocation",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Winding_road_through_golden_hills.jpg/1920px-Winding_road_through_golden_hills.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Winding_road_through_golden_hills.jpg",
+   "license": "CC0",
+   "credit": "Sasha \u2022 Instagram.com/sanfrancisco sanfrancisco",
+   "title": "Winding road through golden hills.jpg",
+   "need": "Moving boxes stacked in a bright, empty room of a new home on move-in day, windows open to daylight.",
+   "w": 3008,
+   "h": 2000
+  },
+  {
+   "key": "niche.va-and-military",
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Millennium_Mansions_in_Gang_Mills_46b.jpg/1920px-Millennium_Mansions_in_Gang_Mills_46b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Millennium_Mansions_in_Gang_Mills_46b.jpg",
+   "license": "CC BY-SA 4.0",
+   "credit": "Stilfehler",
+   "title": "Millennium Mansions in Gang Mills 46b.jpg",
+   "need": "A well-kept suburban family home with a covered porch and clean landscaping, shot from the street, no flags or insignia needed.",
+   "w": 4000,
+   "h": 3000
+  },
+  {
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Clinton_Residence.jpg/1920px-Clinton_Residence.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Clinton_Residence.jpg",
+   "license": "CC BY-SA 4.0",
+   "credit": "Studioartlineinc",
+   "title": "Clinton Residence.jpg",
+   "key": "page.areas",
+   "need": "The street or neighbourhood you work in, wide, daylight."
+  },
+  {
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Terra_Sol_Twilight_%28Unsplash%29.jpg/1920px-Terra_Sol_Twilight_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Terra_Sol_Twilight_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Brian Babb brianbabb",
+   "title": "Terra Sol Twilight (Unsplash).jpg",
+   "key": "page.services",
+   "need": "A wide shot of where the work actually happens."
+  },
+  {
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Terra_Sol_Twilight_%28Unsplash%29.jpg/1920px-Terra_Sol_Twilight_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Terra_Sol_Twilight_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Brian Babb brianbabb",
+   "title": "Terra Sol Twilight (Unsplash).jpg",
+   "key": "page.guide",
+   "need": "Hands doing the work, no faces."
+  },
+  {
+   "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Leather_chairs_in_meeting_room_%28Unsplash%29.jpg/1920px-Leather_chairs_in_meeting_room_%28Unsplash%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "original": "https://commons.wikimedia.org/wiki/File:Leather_chairs_in_meeting_room_(Unsplash).jpg",
+   "license": "CC0",
+   "credit": "Breather breather",
+   "title": "Leather chairs in meeting room (Unsplash).jpg",
+   "key": "page.legal",
+   "need": "Somewhere plain and tidy in your own premises."
+  }
+ ]
+}

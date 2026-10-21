@@ -1,0 +1,3219 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE LOOK — a photography-first editorial system.
+
+   Modelled on the design language of a single-residence luxury site, rebuilt
+   here in our own code, colours and content. The rules that make it work:
+
+   1. PHOTOGRAPHS CARRY THE COLOUR. The interface is ink on white with one pale
+      grey for alternating bands. Blue water, green trees and warm interiors are
+      the only saturated things on the page, so they are what the eye goes to.
+   2. ONE LIGHT SERIF, SET LARGE. Whole sentences at headline size, weight 300,
+      paired with small spaced capitals in a geometric sans for labels and links.
+      No bold headlines anywhere.
+   3. TEXT LINKS, NOT BUTTONS. Small capitals over a hairline underline. The one
+      solid pill is the form's submit.
+   4. SPACE AROUND EVERYTHING. Sections breathe for most of a screen.
+   5. MOTION EVERYWHERE, NEVER LOUD. Things rise in, photographs settle in from a
+      slight zoom, the hero cross-fades, numbers count, the photo strip drifts.
+
+   This file loads after globals.css and restyles the existing classes, so every
+   page on the site takes the look without being rewritten.
+
+   Colour tokens are DERIVED from the existing semantic tokens (--fg, --bg,
+   --surface-muted, --brand-cta), so dark mode keeps working without a second
+   palette.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --font-display: var(--font-newsreader), "Times New Roman", Georgia, serif;
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+
+  --tb-gutter: 20px;
+  --tb-boxed: 1168px;
+  --tb-header-h: 76px;
+  --tb-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* #f6f6f6 in light — the pale band. Mixed from --fg so dark mode follows. */
+  --tb-alt: color-mix(in srgb, var(--fg) 4%, var(--bg));
+  /* Hairline rules over stats and under form fields. */
+  --tb-rule: color-mix(in srgb, var(--fg) 42%, var(--bg));
+  /* Small legal text. 58% keeps it at AA (about 5:1) on white; the reference's
+     pale grey is decorative and fails, which licensee disclosure cannot. */
+  --tb-legal: color-mix(in srgb, var(--fg) 60%, var(--bg));
+}
+@media (min-width: 768px) {
+  :root {
+    --tb-gutter: 40px;
+    --tb-header-h: 96px;
+  }
+}
+
+/* ---- Base type ------------------------------------------------------------ */
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.display-h1,
+.display-h2,
+.display-h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.2px;
+}
+.display-h1 {
+  font-size: clamp(2.25rem, 1.35rem + 2.6vw, 3.5rem);
+  line-height: 1.08;
+}
+.display-hero {
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+}
+.display-h2 {
+  font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem);
+  line-height: 1.1;
+}
+.display-h3 {
+  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.6rem);
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: -0.1px;
+}
+/* The light serif has no bold in this system. Weight utilities left on a
+   heading resolve to the light cut instead of a faked heavy one. */
+:where(h1, h2, h3).font-medium,
+:where(h1, h2, h3).font-bold,
+:where(h1, h2, h3).font-semibold,
+:where(h1, h2, h3).font-extrabold {
+  font-weight: 300;
+}
+
+/* Titles are capitalised all the way through, everywhere a title appears, not
+   only in headings: menu entries, card titles, pillar titles, call-out lines. */
+.tb-menu__big,
+.tb-menu__list a,
+.tb-card__title,
+.tb-pillar h3,
+.tb-ctaband__title,
+.tb-stat__label {
+  text-transform: capitalize;
+}
+
+/* Labels: small spaced capitals, ink not gold. Colour comes from photographs. */
+.tb-eyebrow,
+.ed-eyebrow,
+.eyebrow-tick {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.ed-eyebrow::before,
+.eyebrow-tick::before {
+  content: none;
+  display: none;
+}
+.surface-ink .ed-eyebrow,
+.ed-bleed .ed-eyebrow,
+.tb-pagehero--image .ed-eyebrow {
+  color: #fff;
+}
+
+/* The accent phrase: the same serif, italic. It was a script, and a script
+   fights a light serif instead of finishing it. */
+.hl-accent {
+  font-family: inherit;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1em;
+  line-height: inherit;
+  letter-spacing: inherit;
+  white-space: normal;
+  color: inherit;
+  text-decoration: none;
+}
+
+.container-page {
+  max-width: calc(var(--tb-boxed) + 2 * var(--tb-gutter));
+  padding-left: var(--tb-gutter);
+  padding-right: var(--tb-gutter);
+}
+
+/* ---- Layout primitives ----------------------------------------------------- */
+.tb-section {
+  padding-top: clamp(72px, 8vw, 128px);
+  padding-bottom: clamp(72px, 8vw, 128px);
+}
+.tb-alt {
+  background: var(--tb-alt);
+}
+.tb-boxed {
+  width: 100%;
+  max-width: calc(var(--tb-boxed) + 2 * var(--tb-gutter));
+  margin-inline: auto;
+  padding-inline: var(--tb-gutter);
+}
+.tb-center {
+  text-align: center;
+}
+.tb-stack > * + * {
+  margin-top: 28px;
+}
+.tb-stack > .tb-links {
+  margin-top: 44px;
+}
+.tb-statement {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 1.05rem + 2.15vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.2px;
+  color: var(--fg);
+  margin-inline: auto;
+  max-width: var(--tb-boxed);
+  text-wrap: pretty;
+}
+.tb-left .tb-statement {
+  margin-inline: 0;
+}
+.tb-body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 0.03em;
+  color: var(--fg);
+  max-width: 690px;
+  margin-inline: auto;
+}
+.tb-left .tb-body {
+  margin-inline: 0;
+}
+.tb-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 44px;
+  justify-content: center;
+}
+.tb-left .tb-links {
+  justify-content: flex-start;
+}
+
+/* Text link: capitals over a hairline that retreats on hover. Padding keeps a
+   44px tap target while the line still sits 15px under the letters. */
+.tb-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 0 15px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+  text-decoration: none;
+}
+.tb-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+  transition: transform 0.7s var(--tb-ease);
+}
+.tb-link:hover::after {
+  transform: scaleX(0.35);
+}
+.ed-bleed .tb-link,
+.tb-hero .tb-link,
+.tb-pagehero--image .tb-link,
+.tb-on-dark .tb-link {
+  color: #fff;
+}
+
+.tb-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 34px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.5s var(--tb-ease), color 0.5s var(--tb-ease),
+    border-color 0.5s var(--tb-ease);
+}
+.tb-pill--dark {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+.tb-pill--dark:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+.tb-pill--light {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+.tb-pill--light:hover {
+  background: #fff;
+  color: #111;
+}
+.tb-pill--white {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+}
+.tb-pill--white:hover {
+  background: transparent;
+  color: #fff;
+}
+
+/* ---- Header ---------------------------------------------------------------- */
+html.tb-lock {
+  overflow: hidden;
+}
+.tb-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  color: var(--fg);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  transition: transform 0.55s var(--tb-ease), background-color 0.45s var(--tb-ease),
+    color 0.45s var(--tb-ease), border-color 0.45s var(--tb-ease);
+}
+/* An open dropdown sits above the chat bubble (z-50, later in the page), which
+   otherwise drew its greeting straight over the panel. */
+.tb-header.is-menu {
+  z-index: 60;
+}
+.tb-header.is-down:not(.is-menu) {
+  transform: translateY(-100%);
+}
+.tb-header__bar {
+  position: relative;
+  height: var(--tb-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-inline: var(--tb-gutter);
+}
+.tb-header__logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+/* The lockup is the one piece of brand colour in the chrome, and the reference
+   gives its emblem real size, so it reads as a signature rather than a label. */
+.tb-header__logo img {
+  height: 40px;
+  width: auto;
+}
+@media (min-width: 1024px) {
+  .tb-header__logo img {
+    height: 54px;
+  }
+}
+.tb-logo-hero {
+  display: none;
+}
+.tb-logo-solid {
+  display: inline-flex;
+}
+.tb-header__right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.tb-header__phone {
+  display: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: inherit;
+  text-decoration: none;
+}
+.tb-header__cta {
+  display: none;
+}
+@media (min-width: 768px) {
+  .tb-header__cta {
+    display: inline-flex;
+    padding: 0 44px;
+  }
+}
+@media (min-width: 1100px) {
+  .tb-header__phone {
+    display: inline;
+  }
+}
+.tb-burger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.tb-burger {
+  width: 46px;
+  height: 14px;
+  display: grid;
+  align-content: space-between;
+}
+.tb-burger i {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  transform-origin: right;
+  transition: transform 0.5s var(--tb-ease);
+}
+.tb-burger-btn:hover .tb-burger i:nth-child(2) {
+  transform: scaleX(0.6);
+}
+
+/* Over a photograph: transparent, white, and a soft shade so the white type
+   holds on a bright sky. Pages without a hero keep the solid bar and push the
+   content down by its height. */
+body:has(main [data-hero]) .tb-header.is-top:not(.is-menu) {
+  background: transparent;
+  color: #fff;
+  border-color: transparent;
+}
+body:has(main [data-hero]) .tb-header.is-top:not(.is-menu)::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -60px 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+body:has(main [data-hero]) .tb-header.is-top:not(.is-menu) .tb-logo-hero {
+  display: inline-flex;
+}
+body:has(main [data-hero]) .tb-header.is-top:not(.is-menu) .tb-logo-solid {
+  display: none;
+}
+body:has(main [data-hero]) .tb-header.is-top .tb-pill--dark {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+body:has(main [data-hero]) .tb-header.is-top .tb-pill--dark:hover {
+  background: #fff;
+  color: #111;
+}
+body:not(:has(main [data-hero])) main {
+  padding-top: var(--tb-header-h);
+}
+
+/* ---- Full-screen menu ------------------------------------------------------ */
+.tb-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-y: auto;
+  animation: tb-menu-in 0.6s var(--tb-ease) both;
+}
+.tb-menu:not(.is-open) {
+  animation: tb-menu-out 0.45s var(--tb-ease) both;
+  pointer-events: none;
+}
+.tb-menu__top {
+  height: var(--tb-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--tb-gutter);
+  border-bottom: 1px solid var(--border);
+}
+.tb-menu__grid {
+  display: grid;
+  gap: 48px 40px;
+  grid-template-columns: 1fr;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 56px var(--tb-gutter);
+}
+@media (min-width: 768px) {
+  .tb-menu__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .tb-menu__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.tb-menu__big {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.5rem);
+  line-height: 1.15;
+  color: var(--fg);
+  text-decoration: none;
+  transition: opacity 0.4s var(--tb-ease);
+}
+.tb-menu__big:hover {
+  opacity: 0.5;
+}
+.tb-menu__list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+.tb-menu__list--cols {
+  columns: 2;
+  column-gap: 20px;
+}
+.tb-menu__list li {
+  break-inside: avoid;
+}
+.tb-menu__list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color 0.35s;
+}
+.tb-menu__list a:hover {
+  color: var(--fg);
+}
+.tb-menu__list .is-child a {
+  padding-left: 14px;
+  font-size: 12px;
+}
+.tb-menu__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding: 24px var(--tb-gutter) 40px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.tb-menu__foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The focus ring is dark by default; on a photograph it has to be white. */
+.tb-hero :focus-visible,
+.ed-bleed :focus-visible,
+.tb-pagehero--image :focus-visible,
+body:has(main [data-hero]) .tb-header.is-top:not(.is-menu) :focus-visible {
+  outline-color: #fff;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tb-menu.is-open .tb-menu__col {
+    animation: tb-rise 0.9s var(--tb-ease) both;
+  }
+  .tb-menu.is-open .tb-menu__col:nth-child(2) { animation-delay: 0.08s; }
+  .tb-menu.is-open .tb-menu__col:nth-child(3) { animation-delay: 0.16s; }
+  .tb-menu.is-open .tb-menu__col:nth-child(4) { animation-delay: 0.24s; }
+}
+
+/* ---- Hero ------------------------------------------------------------------ */
+.tb-hero {
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  color: #fff;
+  isolation: isolate;
+  background: #1b1b1b;
+}
+.tb-hero__slides,
+.tb-hero__slide {
+  position: absolute;
+  inset: 0;
+}
+/* The incoming photo fades in over the outgoing one, which stays at full
+   strength underneath until the blend is finished. Slow, symmetrical easing so
+   there is no moment where the change is noticeable. */
+.tb-hero__slide {
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  z-index: 0;
+}
+.tb-hero__slide.is-leaving {
+  opacity: 1;
+  z-index: 0;
+}
+.tb-hero__slide.is-active {
+  opacity: 1;
+  z-index: 1;
+  transition: opacity 2.8s cubic-bezier(0.45, 0, 0.55, 1);
+}
+.tb-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.12) 42%, rgba(0, 0, 0, 0) 60%);
+  pointer-events: none;
+}
+.tb-hero__caption {
+  position: absolute;
+  z-index: 2;
+  left: var(--tb-gutter);
+  right: var(--tb-gutter);
+  bottom: clamp(44px, 7vh, 72px);
+  max-width: 760px;
+}
+.tb-hero__eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tb-hero__rule {
+  display: block;
+  height: 1px;
+  width: min(655px, 100%);
+  margin: 22px 0 24px;
+  background: rgba(255, 255, 255, 0.9);
+  transform-origin: left;
+}
+.tb-hero__title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.3px;
+  color: #fff;
+}
+.tb-hero__sub {
+  margin-top: 18px;
+  max-width: 600px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+}
+.tb-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 36px;
+  margin-top: 18px;
+}
+
+/* The pinned hero. On a desktop the photograph stays put and the page slides
+   up over it, the way the reference opens. Everything after it gets the page
+   colour so it covers the photo as it rises; `:where` keeps that at zero
+   specificity, so a pale band's own background still wins. */
+@media (min-width: 1025px) {
+  .tb-hero--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+  :where(.tb-hero--sticky ~ *) {
+    position: relative;
+    z-index: 1;
+    background-color: var(--bg);
+  }
+}
+
+/* The existing full-bleed block takes the same shape: a full-height photograph
+   with the caption at the bottom-left and a hairline above the headline. */
+.ed-bleed {
+  isolation: isolate;
+  overflow: hidden;
+}
+.ed-bleed::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: inherit;
+  background-size: cover;
+  background-position: inherit;
+}
+.ed-bleed::after {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.2) 45%, rgba(0, 0, 0, 0.08) 68%, rgba(0, 0, 0, 0.3) 100%);
+}
+.ed-bleed--tall {
+  min-height: 100svh;
+}
+.ed-bleed--mid {
+  min-height: 72svh;
+  align-items: flex-end;
+}
+.ed-bleed--inset {
+  border: 0;
+  border-radius: 0;
+}
+.ed-bleed > div {
+  max-width: none;
+  margin: 0;
+  padding: 0 var(--tb-gutter) clamp(44px, 7vh, 76px);
+}
+.ed-bleed .ed-eyebrow {
+  max-width: 655px;
+  padding-bottom: 22px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+}
+.ed-bleed p:not(.ed-eyebrow):not(.display-h1) {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+  max-width: 620px;
+}
+
+/* Page heroes: the photographic variant matches the bleed; the plain variant
+   is the reference's gallery-page top — a big light title on white. */
+.tb-pagehero--image {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 78svh;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  isolation: isolate;
+  overflow: hidden;
+}
+.tb-pagehero--image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: inherit;
+  background-size: cover;
+  background-position: inherit;
+}
+.tb-pagehero--image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.18) 48%, rgba(0, 0, 0, 0.3) 100%);
+}
+.tb-pagehero__inner {
+  width: 100%;
+  padding: 0 var(--tb-gutter) clamp(44px, 7vh, 72px);
+}
+.tb-pagehero--image h1,
+.tb-pagehero--image p {
+  color: #fff;
+}
+.tb-pagehero--image .ed-eyebrow {
+  max-width: 655px;
+  padding-bottom: 22px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+}
+.tb-pagehero__sub {
+  margin-top: 18px;
+  max-width: 640px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.tb-pagehero--plain {
+  border-bottom: 1px solid var(--border);
+}
+.tb-pagehero--plain .tb-pagehero__inner {
+  max-width: calc(var(--tb-boxed) + 2 * var(--tb-gutter));
+  margin: 0 auto;
+  padding-top: clamp(56px, 7vw, 104px);
+  padding-bottom: clamp(48px, 6vw, 88px);
+}
+.tb-pagehero--plain .tb-pagehero__sub {
+  color: var(--fg-muted);
+}
+
+/* ---- Stats ----------------------------------------------------------------- */
+.tb-stats__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 38px;
+  margin-top: 56px;
+}
+@media (min-width: 768px) {
+  .tb-stats__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.tb-stat {
+  border-top: 1px solid var(--tb-rule);
+  padding: 20px 0 44px;
+}
+.tb-stat__num {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(3.4rem, 2.4rem + 3vw, 5.25rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.tb-stat__num--word {
+  font-size: clamp(2.4rem, 1.8rem + 2vw, 3.6rem);
+  font-weight: 300;
+}
+.tb-stat__label {
+  margin-top: 18px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tb-stat__text {
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+  color: var(--fg-muted);
+  max-width: 34ch;
+}
+
+/* ---- Photographs ----------------------------------------------------------- */
+.tb-frame {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+}
+.tb-frame img,
+.tb-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tb-frame--wide {
+  height: clamp(320px, 56vw, 820px);
+}
+.tb-frame--inset {
+  margin-inline: var(--tb-gutter);
+  height: clamp(300px, 45vw, 660px);
+}
+.tb-frame--band {
+  height: clamp(110px, 10vw, 150px);
+}
+
+.tb-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 92svh;
+  overflow: hidden;
+  background: #111;
+}
+.tb-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The photo strip that never stops: three frame shapes at staggered heights,
+   no gaps between them, drifting left. The set is rendered twice so the loop
+   is seamless; the second copy is hidden from assistive technology. */
+.tb-ticker {
+  overflow: hidden;
+  background: var(--tb-alt);
+  padding: clamp(56px, 6.25vw, 90px) 0 clamp(72px, 8.3vw, 120px);
+}
+.tb-ticker__track {
+  display: flex;
+  align-items: flex-start;
+  width: max-content;
+  animation: tb-marquee var(--tb-ticker-dur, 90s) linear infinite;
+}
+.tb-ticker:hover .tb-ticker__track {
+  animation-play-state: paused;
+}
+.tb-ticker__item {
+  position: relative;
+  flex: none;
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+}
+.tb-ticker__item--a { width: 42.15vw; height: 32.6vw; margin-top: 8.1vw; }
+.tb-ticker__item--b { width: 37.6vw; height: 27.5vw; margin-top: 10.6vw; }
+.tb-ticker__item--c { width: 42.15vw; height: 48.8vw; margin-top: 0; }
+@media (max-width: 767px) {
+  .tb-ticker__item--a { width: 78vw; height: 60vw; margin-top: 14vw; }
+  .tb-ticker__item--b { width: 70vw; height: 52vw; margin-top: 20vw; }
+  .tb-ticker__item--c { width: 78vw; height: 90vw; margin-top: 0; }
+}
+.tb-ticker__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.8s var(--tb-ease);
+}
+.tb-ticker__item:hover img {
+  transform: scale(1.05);
+}
+.tb-ticker__item.has-cap::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+}
+.tb-ticker__cap {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  bottom: 22px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+@keyframes tb-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.tb-carousel {
+  position: relative;
+  height: clamp(320px, 50vw, 726px);
+  overflow: hidden;
+  background: var(--tb-alt);
+}
+.tb-carousel__slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 1.2s var(--tb-ease);
+}
+.tb-carousel__slide.is-active {
+  opacity: 1;
+}
+.tb-carousel__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.tb-carousel__dots {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+}
+.tb-carousel__dots button {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid #fff;
+  background: transparent;
+  cursor: pointer;
+}
+.tb-carousel__dots button::before {
+  content: "";
+  position: absolute;
+  inset: -17px;
+}
+.tb-carousel__dots button.is-active {
+  background: #fff;
+}
+
+/* ---- Split feature and quote ---------------------------------------------- */
+.tb-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+  padding-inline: var(--tb-gutter);
+}
+.tb-split__media {
+  aspect-ratio: 4 / 3;
+}
+.tb-split__heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem);
+  line-height: 1.1;
+  margin: 20px 0 30px;
+}
+.tb-split .tb-body {
+  margin-inline: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  max-width: 560px;
+}
+.tb-split .tb-body + .tb-body {
+  margin-top: 18px;
+}
+@media (min-width: 1024px) {
+  .tb-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+  }
+  .tb-split__media {
+    margin-right: 55px;
+  }
+  .tb-split__text {
+    padding-left: 25px;
+    max-width: 580px;
+  }
+  .tb-split--reverse .tb-split__media {
+    order: 2;
+    margin-right: 0;
+    margin-left: 55px;
+  }
+  .tb-split--reverse .tb-split__text {
+    order: 1;
+    padding-left: 0;
+    padding-right: 25px;
+    justify-self: end;
+  }
+}
+
+.tb-rs {
+  margin: 34px 0 0;
+  border-top: 1px solid var(--tb-rule);
+}
+.tb-rs > div {
+  display: grid;
+  gap: 6px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--tb-rule);
+}
+.tb-rs dd {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+
+.tb-quote {
+  display: grid;
+  gap: 40px;
+  padding-inline: var(--tb-gutter);
+}
+.tb-quote blockquote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 1.1rem + 1.9vw, 2.8rem);
+  line-height: 1.12;
+  letter-spacing: -0.2px;
+}
+.tb-quote__cite {
+  margin-top: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tb-quote__media {
+  aspect-ratio: 639 / 460;
+}
+@media (min-width: 1024px) {
+  .tb-quote {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .tb-quote__text {
+    padding-top: 50px;
+    padding-right: 40px;
+  }
+  .tb-quote__media {
+    margin-top: 110px;
+  }
+}
+
+/* ---- Image cards ----------------------------------------------------------- */
+.tb-card {
+  display: block;
+  color: var(--fg);
+  text-decoration: none;
+}
+.tb-card__img {
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--tb-alt);
+}
+.tb-card__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.6s var(--tb-ease);
+}
+.tb-card:hover .tb-card__img img {
+  transform: scale(1.05);
+}
+.tb-card__meta {
+  display: block;
+  padding-top: 16px;
+}
+.tb-card__eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.tb-card__title {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.65rem;
+  line-height: 1.15;
+}
+.tb-card__text {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--fg-muted);
+}
+
+/* Featured-listings cards reuse .tb-card's photo + meta layout, adding a
+   status pill over the photo and a price line in the meta block. */
+.listing-card .tb-card__img {
+  position: relative;
+}
+.listing-card__status {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--surface);
+  color: var(--fg);
+}
+.listing-card__status--pending {
+  background: var(--brand-ink);
+  color: var(--surface);
+}
+.listing-card__price {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--brand-ink);
+}
+
+/* Photo pillars: a framework's steps, each with its own photograph. Even
+   columns sit lower on a wide screen, the same stagger as the photo strip. */
+.tb-pillars {
+  list-style: none;
+  margin: 64px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 56px 30px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .tb-pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .tb-pillars { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tb-pillars > li:nth-child(even) { margin-top: 72px; }
+}
+.tb-pillar__img {
+  display: block;
+  aspect-ratio: 4 / 5;
+}
+.tb-pillar__num {
+  display: block;
+  margin-top: 24px;
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+.tb-pillar h3 {
+  margin-top: 8px;
+  font-size: 1.65rem;
+  line-height: 1.15;
+}
+.tb-pillar h3 a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+}
+.tb-pillar h3 a:hover {
+  opacity: 0.6;
+}
+.tb-pillar p {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+
+.tb-grid4 {
+  display: grid;
+  gap: 40px 30px;
+  grid-template-columns: 1fr;
+  margin-top: 64px;
+}
+@media (min-width: 640px) {
+  .tb-grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .tb-grid4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.tb-grid4 h3 {
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+.tb-grid4 h3 a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+.tb-grid4 p {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+
+.tb-cardbox {
+  height: 100%;
+  border-top: 1px solid var(--tb-rule);
+  padding-top: 22px;
+}
+
+/* ---- Inquiry form ---------------------------------------------------------- */
+.tb-inquire {
+  background: var(--tb-alt);
+}
+.tb-inquire__title {
+  text-align: center;
+  font-size: clamp(2.2rem, 1.4rem + 2vw, 3rem);
+  line-height: 1.1;
+}
+.tb-inquire__sub {
+  margin-top: 16px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.25rem, 1rem + 0.9vw, 1.9rem);
+  line-height: 1.3;
+}
+.tb-form {
+  max-width: 1170px;
+  margin: 56px auto 0;
+  text-align: left;
+}
+.tb-form label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.tb-form .field {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--tb-rule);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  box-shadow: none;
+}
+.tb-form .field:focus {
+  border-bottom-color: var(--fg);
+  box-shadow: 0 1px 0 var(--fg);
+}
+.tb-form textarea.field {
+  min-height: 130px;
+  padding: 14px 22px;
+  border: 1px solid var(--tb-rule);
+  border-radius: 26px;
+}
+.tb-form .grid {
+  gap: 28px 30px;
+}
+.tb-form .space-y-4 > * + * {
+  margin-top: 28px;
+}
+.tb-form button[type="submit"] {
+  display: flex;
+  width: min(416px, 100%);
+  min-height: 62px;
+  margin: 40px auto 0;
+  border-radius: 999px;
+  background: var(--brand-cta);
+  color: var(--on-brand);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: opacity 0.5s var(--tb-ease);
+}
+
+/* ---- The one solid button outside the form ---------------------------------
+   Rule 3 says text links, not buttons, and it holds everywhere a visitor is
+   browsing. It stops holding when they are not browsing.
+
+   Somebody whose boiler has failed, or who is holding half a tooth, is not
+   scanning for small spaced capitals over a hairline. For a call-first trade
+   that CTA is the entire business, so it gets weight. This is the documented
+   exception, not a licence to reintroduce buttons: use it for an urgent phone
+   or booking action and nothing else.
+
+   Same shape as the form's submit so the two read as one family. */
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 34px;
+  border-radius: 999px;
+  background: var(--brand-cta);
+  color: var(--on-brand);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.4s var(--tb-ease), transform 0.4s var(--tb-ease);
+}
+.tb-btn:hover { opacity: 0.86; }
+.tb-btn:active { transform: translateY(1px); }
+/* Over a photograph the hero's white type is the reference, so the button keeps
+   its brand fill and simply never borrows the scrim's colour. */
+.tb-hero__actions .tb-btn { color: var(--on-brand); }
+
+/* ---- Footer ---------------------------------------------------------------- */
+.tb-footer {
+  background: var(--bg);
+  color: var(--fg);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 72px var(--tb-gutter) 36px;
+}
+.tb-footer__logo {
+  display: inline-flex;
+  justify-content: center;
+  min-height: 44px;
+}
+.tb-footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tb-footer__row > * + *::before {
+  content: "|";
+  margin: 0 14px;
+  color: var(--tb-rule);
+  font-weight: 400;
+}
+.tb-footer__row a,
+.tb-footer__bottom a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.35s;
+}
+.tb-footer__row a:hover,
+.tb-footer__bottom a:hover {
+  opacity: 0.6;
+}
+.tb-footer__row--plain {
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.tb-footer__map {
+  max-width: 760px;
+  margin: 36px auto 0;
+}
+.tb-footer__map iframe {
+  filter: grayscale(0.35);
+}
+.tb-footer__legal {
+  max-width: 1187px;
+  margin: 30px auto 0;
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tb-legal);
+}
+.tb-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 22px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tb-legal);
+}
+
+/* ---- Existing blocks, restyled -------------------------------------------- */
+/* ---- Bands: blocked light and dark ---------------------------------------
+   Inner pages are long reads, and one surface from the hero to the footer read
+   as a single slab, worst of all in dark mode, where it was dark on dark on
+   dark. So content pages are built from BLOCKS that alternate a warm light band
+   and a deep dark band, in BOTH themes. A light band stays light when the site
+   is dark; that is the whole point of it.
+
+   Each band re-declares the semantic tokens, so everything inside it (links,
+   rules, pills, cards, forms, eyebrows) takes the right colour without knowing
+   where it sits. `.surface-paper` and `.surface-ink`, used across the older
+   components, are mapped onto the same two bands. */
+:root {
+  --band-light-bg: color-mix(in srgb, var(--accent) 7%, #f8f5f0);
+  --band-light-fg: #16181c;
+  --band-light-muted: #4a4f57;
+  --band-dark-bg: #121418;
+  --band-dark-fg: #f2efe9;
+  --band-dark-muted: #bfbbb3;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --band-light-bg: color-mix(in srgb, var(--accent) 7%, #e8e3da);
+    --band-dark-bg: #171a20;
+  }
+}
+:root[data-theme="dark"] {
+  --band-light-bg: color-mix(in srgb, var(--accent) 7%, #e8e3da);
+  --band-dark-bg: #171a20;
+}
+
+.tb-band--light,
+.surface-paper {
+  --bg: var(--band-light-bg);
+  --fg: var(--band-light-fg);
+  --fg-muted: var(--band-light-muted);
+  --fg-subtle: color-mix(in srgb, var(--band-light-fg) 62%, var(--band-light-bg));
+  --surface: color-mix(in srgb, #ffffff 70%, var(--band-light-bg));
+  --surface-muted: color-mix(in srgb, var(--band-light-fg) 6%, var(--band-light-bg));
+  --border: color-mix(in srgb, var(--band-light-fg) 14%, var(--band-light-bg));
+  --border-strong: color-mix(in srgb, var(--band-light-fg) 30%, var(--band-light-bg));
+  --tb-rule: color-mix(in srgb, var(--band-light-fg) 32%, var(--band-light-bg));
+  --tb-alt: color-mix(in srgb, var(--band-light-fg) 6%, var(--band-light-bg));
+  --hairline: color-mix(in srgb, var(--band-light-fg) 18%, transparent);
+  --paper-fg: var(--band-light-fg);
+  --paper-fg-muted: var(--band-light-muted);
+  --brand-ink: var(--band-light-fg);
+  --brand-cta: var(--band-light-fg);
+  --on-brand: var(--band-light-bg);
+  color-scheme: light;
+  background: var(--bg);
+  color: var(--fg);
+}
+.tb-band--dark,
+.surface-ink {
+  --bg: var(--band-dark-bg);
+  --fg: var(--band-dark-fg);
+  --fg-muted: var(--band-dark-muted);
+  --fg-subtle: color-mix(in srgb, var(--band-dark-fg) 60%, var(--band-dark-bg));
+  --surface: color-mix(in srgb, var(--band-dark-fg) 6%, var(--band-dark-bg));
+  --surface-muted: color-mix(in srgb, var(--band-dark-fg) 10%, var(--band-dark-bg));
+  --border: color-mix(in srgb, var(--band-dark-fg) 16%, var(--band-dark-bg));
+  --border-strong: color-mix(in srgb, var(--band-dark-fg) 32%, var(--band-dark-bg));
+  --tb-rule: color-mix(in srgb, var(--band-dark-fg) 36%, var(--band-dark-bg));
+  --tb-alt: color-mix(in srgb, var(--band-dark-fg) 7%, var(--band-dark-bg));
+  --hairline: color-mix(in srgb, var(--band-dark-fg) 22%, transparent);
+  --paper-fg: var(--band-dark-fg);
+  --paper-fg-muted: var(--band-dark-muted);
+  --brand-ink: var(--band-dark-fg);
+  --brand-cta: var(--band-dark-fg);
+  --on-brand: var(--band-dark-bg);
+  color-scheme: dark;
+  background: var(--bg);
+  color: var(--fg);
+}
+.surface-ink :where(h1, h2, h3),
+.surface-ink .display-h1,
+.surface-ink .display-h2,
+.surface-ink .display-h3 {
+  color: var(--fg);
+}
+
+.band-statement h2,
+.band-statement .display-h1 {
+  font-weight: 300;
+}
+.rich {
+  max-width: 760px;
+  margin-inline: auto;
+}
+.rich h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.9rem, 1.2rem + 1.8vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.2px;
+  margin: 64px 0 22px;
+}
+.rich h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin: 36px 0 12px;
+}
+.rich p,
+.rich li {
+  font-size: 15px;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+}
+.rich a {
+  color: var(--fg);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.tb-ctaband {
+  max-width: 760px;
+  margin: 64px auto;
+  padding: 44px 0 30px;
+  border-top: 1px solid var(--tb-rule);
+  border-bottom: 1px solid var(--tb-rule);
+  text-align: center;
+}
+.tb-ctaband__title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem);
+  line-height: 1.15;
+  color: var(--fg);
+}
+.tb-ctaband .tb-links {
+  margin: 24px 0 8px;
+  align-items: center;
+}
+.tb-faq {
+  max-width: 760px;
+  margin: 72px auto 0;
+}
+.tb-faq__item {
+  padding: 24px 0;
+  border-top: 1px solid var(--tb-rule);
+}
+.tb-faq__item:last-child {
+  border-bottom: 1px solid var(--tb-rule);
+}
+.tb-faq h2 {
+  margin-bottom: 28px;
+}
+.tb-faq__item h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.25;
+  color: var(--fg);
+}
+.tb-faq__item p {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--fg-muted);
+}
+
+.ed-chapter {
+  grid-template-columns: 5.5rem 1fr;
+  border-top: 1px solid var(--tb-rule);
+  padding: 28px 0;
+}
+.ed-chapter:last-child {
+  border-bottom: 1px solid var(--tb-rule);
+}
+.ed-chapter-num {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(2.6rem, 2rem + 1.6vw, 3.6rem);
+  color: var(--fg);
+}
+.ed-chapter h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 2.1rem);
+}
+.ed-grid,
+.ed-cell {
+  border-color: var(--tb-rule);
+}
+.ed-toc a {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Chapters: long-form content as blocks ------------------------------- */
+.tb-pill--solid {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+.tb-pill--solid:hover {
+  background: transparent;
+  color: var(--fg);
+}
+
+.tb-chap {
+  position: relative;
+  padding: clamp(80px, 9vw, 140px) 0;
+}
+.tb-chap__inner {
+  width: 100%;
+  max-width: calc(var(--tb-boxed) + 2 * var(--tb-gutter));
+  margin: 0 auto;
+  padding-inline: var(--tb-gutter);
+}
+.tb-chap__num {
+  display: block;
+  margin-bottom: 20px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--fg-muted);
+}
+.tb-chap h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.1rem, 1.3rem + 2.4vw, 3.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.3px;
+  color: var(--fg);
+}
+.tb-chap .rich {
+  max-width: 680px;
+  margin: 0;
+}
+.tb-chap .rich p,
+.tb-chap .rich li {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--fg-muted);
+}
+/* The opening paragraph of every chapter is set in the serif, larger, in full
+   ink: it is the sentence the rest of the chapter explains. */
+.tb-chap .rich > p:first-child {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.3rem, 1.05rem + 0.8vw, 1.7rem);
+  line-height: 1.45;
+  letter-spacing: -0.1px;
+  color: var(--fg);
+  margin-bottom: 1.4rem;
+}
+
+/* Split: heading on the left holds still while the prose scrolls past it. */
+.tb-chap--split .tb-chap__head {
+  margin-bottom: 40px;
+}
+@media (min-width: 1024px) {
+  .tb-chap--split .tb-chap__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 80px;
+    align-items: start;
+  }
+  .tb-chap--split .tb-chap__head {
+    position: sticky;
+    top: 120px;
+    margin-bottom: 0;
+  }
+}
+
+/* Centre: a big heading over a single reading column. */
+.tb-chap--center .tb-chap__inner {
+  max-width: 900px;
+}
+.tb-chap--center .tb-chap__head {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.tb-chap--center .tb-chap__head h2 {
+  font-size: clamp(2.4rem, 1.4rem + 3vw, 4.5rem);
+}
+.tb-chap--center .rich {
+  margin: 0 auto;
+}
+
+/* Media: a photograph fills half the band and stays pinned while the text
+   beside it scrolls; on a phone it sits above the text, full width. */
+.tb-chap--media {
+  padding: 0;
+}
+.tb-chap__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--tb-alt);
+}
+.tb-chap__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tb-chap__text {
+  padding: clamp(56px, 8vw, 140px) var(--tb-gutter);
+}
+@media (min-width: 1024px) {
+  .tb-chap--media .tb-chap__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    max-width: none;
+    min-height: 100vh;
+    padding: 0;
+  }
+  .tb-chap__media {
+    aspect-ratio: auto;
+  }
+  .tb-chap__media-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .tb-chap--media.is-reverse .tb-chap__media {
+    order: 2;
+  }
+  .tb-chap__text {
+    align-self: center;
+    padding: clamp(96px, 9vw, 150px) clamp(48px, 6vw, 110px);
+  }
+}
+
+/* The mid-page photograph is a window: on a desktop the picture holds still
+   while the page moves across it. */
+@media (min-width: 1025px) {
+  .tb-reveal-window::before {
+    background-attachment: fixed;
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Call to action as a block of its own. */
+.tb-ctablock {
+  padding: clamp(96px, 11vw, 170px) var(--tb-gutter);
+  text-align: center;
+}
+.tb-ctablock__title {
+  max-width: 920px;
+  margin: 0 auto;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.2rem, 1.3rem + 2.8vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.3px;
+  color: var(--fg);
+}
+.tb-ctablock .tb-links {
+  margin-top: 40px;
+  align-items: center;
+}
+.tb-ctablock .tb-links + .tb-link {
+  margin-top: 12px;
+}
+
+/* Questions open and close. The answers stay in the HTML either way, so
+   search engines and the FAQ schema check still read every one. */
+.tb-faqs {
+  max-width: 940px;
+}
+.tb-faqs__list {
+  margin-top: 48px;
+}
+.tb-faq-item {
+  border-top: 1px solid var(--tb-rule);
+}
+.tb-faq-item:last-child {
+  border-bottom: 1px solid var(--tb-rule);
+}
+.tb-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 44px;
+  padding: 26px 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.2rem, 1rem + 0.6vw, 1.6rem);
+  line-height: 1.3;
+  color: var(--fg);
+}
+.tb-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.tb-faq-item summary::after {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1.5px 100% no-repeat;
+  transition: transform 0.5s var(--tb-ease);
+}
+.tb-faq-item[open] summary::after {
+  transform: rotate(45deg);
+}
+.tb-faq-item p {
+  max-width: 760px;
+  padding: 0 0 30px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--fg-muted);
+}
+@supports (interpolate-size: allow-keywords) {
+  .tb-faqs {
+    interpolate-size: allow-keywords;
+  }
+  .tb-faq-item::details-content {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.6s var(--tb-ease), content-visibility 0.6s allow-discrete;
+  }
+  .tb-faq-item[open]::details-content {
+    height: auto;
+  }
+}
+
+/* Stacking: on a desktop each block slides up over the one before it. A block
+   taller than the screen scrolls all the way to its end first (its sticky top
+   is set to screen height minus its own height), so nothing is ever covered
+   before it has been read. Only once the script has measured: before that, the
+   blocks are ordinary flow. */
+@media (min-width: 1025px) and (prefers-reduced-motion: no-preference) {
+  .tb-stack.is-ready > * {
+    position: sticky;
+    top: var(--stack-top, 0px);
+  }
+  /* A soft edge only while one block is passing over another; strong enough
+     to read as layering, faint enough not to leave a seam once they settle. */
+  .tb-stack.is-ready > * + * {
+    box-shadow: 0 -18px 36px -26px rgba(0, 0, 0, 0.3);
+  }
+}
+.ed-toc {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--bg);
+}
+
+/* Blog posts rail. */
+.tb-posts__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 40px;
+  margin-bottom: 48px;
+}
+.tb-posts__card {
+  flex: 0 0 min(380px, 82vw);
+  display: block;
+  color: var(--fg);
+  text-decoration: none;
+}
+.tb-posts__img {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--tb-alt);
+}
+.tb-posts__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.6s var(--tb-ease);
+}
+.tb-posts__card:hover .tb-posts__img img {
+  transform: scale(1.05);
+}
+.tb-posts__meta {
+  display: block;
+  margin-top: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.tb-posts__title {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  text-transform: capitalize;
+}
+.tb-posts__text {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg-muted);
+}
+
+/* Boxed cards on the hub pages: a real block with a border and a surface. */
+.tb-box {
+  height: 100%;
+  padding: 32px 30px 30px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: background-color 0.5s var(--tb-ease), border-color 0.5s var(--tb-ease);
+}
+a:hover > .tb-box,
+a:focus-visible > .tb-box {
+  border-color: var(--fg);
+  background: var(--surface-muted);
+}
+.tb-box :where(h2, h3) {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.65rem;
+  line-height: 1.15;
+}
+
+.tb-inquire.tb-band,
+.tb-ticker.tb-band {
+  background: var(--bg);
+}
+
+/* Gold as small type must be dark on a light band and light on a dark one.
+   The award seals set their years in raw --accent, which measured 2.1:1 in
+   both themes; the field note sat on --paper, which a dark band left at 1.08:1
+   (invisible); the team role labels were raw accent too. */
+.tb-band--light {
+  --accent-text: color-mix(in srgb, var(--accent) 48%, #000000);
+}
+.tb-band--dark {
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #ffffff);
+}
+.badge-year,
+.badge-mark,
+.acc-year {
+  color: var(--accent-text);
+}
+/* Subtle grey measured 4.48:1 on both bands, a hair under AA. */
+.tb-band--light {
+  --fg-subtle: color-mix(in srgb, var(--band-light-fg) 72%, var(--band-light-bg));
+}
+.tb-band--dark {
+  --fg-subtle: color-mix(in srgb, var(--band-dark-fg) 68%, var(--band-dark-bg));
+}
+:root {
+  --accent-text: color-mix(in srgb, var(--accent) 48%, #000000);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent-text: color-mix(in srgb, var(--accent) 72%, #ffffff);
+  }
+}
+:root[data-theme="dark"] {
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #ffffff);
+}
+.ed-note {
+  background: var(--surface-muted);
+  border-left-color: var(--accent-text);
+  color: var(--fg);
+}
+.ed-note p,
+.ed-note .ed-eyebrow {
+  color: var(--fg);
+}
+.text-\[color\:var\(--accent\)\] {
+  color: var(--accent-text) !important;
+}
+.tb-related__cta {
+  margin-top: 40px;
+  padding: clamp(40px, 5vw, 64px) clamp(24px, 4vw, 56px);
+  text-align: center;
+}
+
+/* ---- Menu explorer --------------------------------------------------------- */
+.tb-theme {
+  display: none !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 999px !important;
+  border: 1px solid color-mix(in srgb, currentColor 40%, transparent) !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+@media (min-width: 768px) {
+  .tb-header .tb-theme {
+    display: inline-flex !important;
+  }
+}
+.tb-menu__foot .tb-theme {
+  display: inline-flex !important;
+}
+
+.tb-x {
+  display: none;
+}
+.tb-xm {
+  padding: 16px var(--tb-gutter) 40px;
+}
+@media (min-width: 1100px) {
+  .tb-x {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 2fr);
+    max-width: 1640px;
+    margin: 0 auto;
+    min-height: calc(100vh - var(--tb-header-h) - 100px);
+  }
+  .tb-xm {
+    display: none;
+  }
+}
+.tb-x__col {
+  padding: 44px var(--tb-gutter) 56px;
+  min-width: 0;
+}
+.tb-x__col + .tb-x__col {
+  border-left: 1px solid var(--border);
+}
+.tb-x__tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 44px;
+  padding: 2px 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.1rem, 1.4rem + 1.3vw, 3.1rem);
+  line-height: 1.14;
+  color: color-mix(in srgb, var(--fg) 42%, var(--bg));
+  transition: color 0.45s var(--tb-ease);
+}
+.tb-x__tab:hover,
+.tb-x__tab[aria-pressed="true"] {
+  color: var(--fg);
+}
+.tb-x__tab::after {
+  content: "\2192";
+  font-family: var(--font-sans);
+  font-size: 20px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.4s var(--tb-ease), transform 0.5s var(--tb-ease);
+}
+.tb-x__tab[aria-pressed="true"]::after {
+  opacity: 1;
+  transform: none;
+}
+.tb-x__more {
+  display: grid;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
+}
+.tb-x__more a,
+.tb-xm__link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  color: var(--fg);
+  text-decoration: none;
+  text-transform: capitalize;
+  transition: opacity 0.35s;
+}
+.tb-x__more a:hover {
+  opacity: 0.55;
+}
+.tb-x__guides,
+.tb-xm__guides {
+  margin-top: 30px;
+}
+.tb-x__guides a,
+.tb-xm__guides a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-decoration: none;
+  text-transform: capitalize;
+}
+.tb-x__label {
+  margin: 0 0 6px;
+}
+.tb-x__rows {
+  display: grid;
+  margin-top: 18px;
+}
+.tb-x__row,
+.tb-xm__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  margin: 0 -14px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+  text-decoration: none;
+  text-transform: capitalize;
+  transition: background-color 0.35s var(--tb-ease), color 0.35s var(--tb-ease);
+}
+.tb-x__row::after,
+.tb-xm__row::after {
+  content: "\203A";
+  font-size: 20px;
+  opacity: 0.45;
+}
+.tb-x__row.is-child,
+.tb-xm__row.is-child {
+  padding-left: 34px;
+  font-size: 14px;
+}
+.tb-x__row:hover,
+.tb-x__row.is-active {
+  background: var(--fg);
+  color: var(--bg);
+}
+.tb-x__detail {
+  animation: tb-rise 0.6s var(--tb-ease) both;
+}
+.tb-x__photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 8;
+  overflow: hidden;
+  margin-bottom: 30px;
+  background: var(--tb-alt);
+  color: #fff;
+  text-decoration: none;
+}
+.tb-x__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: tb-x-photo 1s var(--tb-ease) both;
+  transition: transform 1.6s var(--tb-ease);
+}
+.tb-x__photo:hover img {
+  transform: scale(1.04);
+}
+.tb-x__photo::after {
+  content: "";
+  position: absolute;
+  inset: 35% 0 0 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0));
+}
+.tb-x__photo span {
+  position: absolute;
+  z-index: 1;
+  left: 26px;
+  right: 26px;
+  bottom: 22px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.7rem, 1.2rem + 1.1vw, 2.6rem);
+  line-height: 1.08;
+  text-transform: capitalize;
+}
+.tb-x__photo small,
+.tb-x__photo em {
+  display: block;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.tb-x__photo small {
+  margin-bottom: 10px;
+}
+.tb-x__photo em {
+  margin-top: 12px;
+  opacity: 0.85;
+}
+@keyframes tb-x-photo {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: none; }
+}
+.tb-x__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 22px;
+  margin: 10px 0 26px;
+}
+.tb-x__split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 30px;
+}
+.tb-x__stack {
+  display: grid;
+  margin-top: 10px;
+}
+.tb-x__grid a,
+.tb-x__stack a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+  text-decoration: none;
+  text-transform: capitalize;
+}
+.tb-x__grid a.is-child {
+  padding-left: 12px;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+.tb-x__grid a:hover,
+.tb-x__stack a:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+@media (max-width: 1099px) {
+  .tb-x__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tb-x__split {
+    grid-template-columns: 1fr;
+  }
+}
+.tb-xm__big {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 60px;
+  padding: 4px 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: var(--fg);
+}
+.tb-xm__big::after {
+  content: "\203A";
+  font-family: var(--font-sans);
+  font-size: 26px;
+  opacity: 0.5;
+}
+.tb-xm__more {
+  display: grid;
+  margin-top: 22px;
+}
+.tb-xm__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.tb-xm__title {
+  margin: 8px 0 4px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 2.4rem;
+  line-height: 1.1;
+  color: var(--fg);
+}
+.tb-xm__rows {
+  display: grid;
+  margin-top: 14px;
+}
+.tb-xm__row {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.tb-xm__panel {
+  animation: tb-xm-in 0.45s var(--tb-ease) both;
+}
+@keyframes tb-xm-in {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb-x__detail,
+  .tb-x__photo img,
+  .tb-xm__panel {
+    animation: none;
+  }
+}
+
+/* ---- Desktop navigation bar and cascading panels -------------------------- */
+.tb-nav {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .tb-nav {
+    display: flex;
+    align-self: stretch;
+    align-items: stretch;
+    margin: 0 auto 0 28px;
+  }
+  .tb-burger-btn--mobile {
+    display: none !important;
+  }
+  .tb-xm,
+  .tb-menu {
+    display: none;
+  }
+}
+@media (min-width: 1280px) and (max-width: 1599px) {
+  .tb-header__phone {
+    display: none !important;
+  }
+  .tb-header__cta {
+    padding: 0 24px !important;
+  }
+  .tb-header__logo img {
+    height: 46px;
+  }
+}
+@media (min-width: 1600px) {
+  .tb-header__phone {
+    display: inline;
+  }
+}
+.tb-nav__item {
+  display: flex;
+  align-items: center;
+}
+.tb-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
+  text-decoration: none;
+  align-self: center;
+}
+.tb-nav__link::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--tb-ease);
+}
+.tb-nav__link:hover::after,
+.tb-nav__link[aria-expanded="true"]::after {
+  transform: scaleX(1);
+}
+.tb-nav__chev {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.4s var(--tb-ease);
+}
+[aria-expanded="true"] > .tb-nav__chev {
+  transform: translateY(2px) rotate(-135deg);
+}
+.tb-mega {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 40px 70px -40px rgba(0, 0, 0, 0.45);
+  animation: tb-mega-in 0.45s var(--tb-ease) both;
+}
+@keyframes tb-mega-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+.tb-mega__inner {
+  display: grid;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.tb-mega__inner--3 {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.7fr);
+}
+.tb-mega__inner--2 {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+}
+.tb-mega__col {
+  padding: 32px 30px 36px;
+  max-height: calc(100vh - var(--tb-header-h) - 24px);
+  overflow-y: auto;
+}
+.tb-mega__col + .tb-mega__col {
+  border-left: 1px solid var(--border);
+}
+.tb-mega__col--tint {
+  background: var(--tb-alt);
+}
+.tb-mega__col .tb-x__rows {
+  margin: 12px 0 18px;
+}
+.tb-mega__hint {
+  padding: 14px 0;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+.tb-mega .tb-x__photo {
+  aspect-ratio: 16 / 7;
+  margin-bottom: 22px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tb-mega {
+    animation: none;
+  }
+}
+
+/* ---- Clickable things look clickable -------------------------------------
+   One hover language for every card and chip: the block flips to the ink
+   colour of its band and lifts a few pixels, so there is never a question
+   whether something is a link. */
+.tb-flip {
+  display: block;
+  height: 100%;
+  color: var(--fg);
+  text-decoration: none;
+  transition: background-color 0.5s var(--tb-ease), color 0.5s var(--tb-ease),
+    transform 0.5s var(--tb-ease), box-shadow 0.5s var(--tb-ease);
+}
+.tb-flip:hover,
+.tb-flip:focus-visible,
+a:hover > .tb-box,
+a:focus-visible > .tb-box {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  transform: translateY(-4px);
+  box-shadow: 0 26px 50px -30px rgba(0, 0, 0, 0.55);
+}
+.tb-flip:hover *,
+.tb-flip:focus-visible *,
+a:hover > .tb-box *,
+a:focus-visible > .tb-box * {
+  color: inherit !important;
+}
+.tb-box {
+  transition: background-color 0.5s var(--tb-ease), color 0.5s var(--tb-ease),
+    border-color 0.5s var(--tb-ease), transform 0.5s var(--tb-ease), box-shadow 0.5s var(--tb-ease);
+}
+.tb-flip__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tb-flip__go::after {
+  content: "\2192";
+  transition: transform 0.5s var(--tb-ease);
+}
+.tb-flip:hover .tb-flip__go::after {
+  transform: translateX(6px);
+}
+.tb-grid4 .tb-flip {
+  padding: 26px 22px 28px;
+  border-top: 1px solid var(--tb-rule);
+}
+.tb-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  text-decoration: none;
+  text-transform: capitalize;
+  transition: background-color 0.4s var(--tb-ease), color 0.4s var(--tb-ease),
+    border-color 0.4s var(--tb-ease), transform 0.4s var(--tb-ease);
+}
+.tb-chip:hover,
+.tb-chip:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  transform: translateY(-2px);
+}
+#how-we-do-it li a {
+  padding-inline: 14px;
+  transition: background-color 0.4s var(--tb-ease), color 0.4s var(--tb-ease);
+}
+#how-we-do-it li a:hover,
+#how-we-do-it li a:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+}
+#how-we-do-it li a:hover *,
+#how-we-do-it li a:focus-visible * {
+  color: inherit;
+}
+.tb-x__stack a,
+.tb-x__grid a {
+  padding: 0 10px;
+  margin: 0 -10px;
+  transition: background-color 0.35s var(--tb-ease), color 0.35s var(--tb-ease);
+}
+.tb-x__stack a:hover,
+.tb-x__grid a:hover {
+  background: var(--fg);
+  color: var(--bg);
+  text-decoration: none;
+}
+/* Calls to action: two matched buttons and a quiet line under them. */
+.tb-cta__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 16px;
+  margin-top: 36px;
+}
+.tb-pill--lg {
+  min-height: 56px;
+  min-width: min(280px, 100%);
+  padding: 0 36px;
+}
+.tb-pill--outline {
+  color: var(--fg);
+  border-color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+.tb-pill--outline:hover,
+.tb-pill--outline:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+.tb-pill--solid:focus-visible {
+  background: transparent;
+  color: var(--fg);
+}
+.tb-cta__quiet {
+  margin-top: 22px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg-muted);
+}
+.tb-cta__quiet a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+}
+.tb-cta__quiet a:hover {
+  text-decoration-thickness: 2px;
+}
+.tb-ctaband .tb-ctablock__title {
+  font-size: clamp(1.8rem, 1.2rem + 1.8vw, 2.8rem);
+}
+.acc-press {
+  display: block;
+  width: 100%;
+  max-width: 980px;
+  height: auto;
+}
+/* Contact: two blocks of opposite tone side by side. */
+.tb-contact {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1024px) {
+  .tb-contact {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+.tb-contact__half {
+  padding: clamp(64px, 8vw, 120px) var(--tb-gutter);
+}
+.tb-contact__inner {
+  max-width: 580px;
+  margin: 0 auto;
+}
+.tb-contact__list {
+  margin-top: 26px;
+  border-top: 1px solid var(--tb-rule);
+}
+.tb-contact__list > div {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--tb-rule);
+}
+.tb-contact__list dt {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.tb-contact__list dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.45rem);
+  line-height: 1.3;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.tb-contact__list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 85%;
+  background-size: 0 1px;
+  transition: background-size 0.5s var(--tb-ease);
+}
+.tb-contact__list a:hover,
+.tb-contact__list a:focus-visible {
+  background-size: 100% 1px;
+}
+.tb-contact .tb-form {
+  max-width: none;
+  margin: 36px 0 0;
+}
+
+/* Blog index: a featured article, then a grid of photo cards. */
+.tb-feature {
+  display: grid;
+  gap: 32px;
+  color: var(--fg);
+  text-decoration: none;
+}
+@media (min-width: 1024px) {
+  .tb-feature {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: center;
+  }
+}
+.tb-feature__img {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--tb-alt);
+}
+.tb-feature__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.6s var(--tb-ease);
+}
+.tb-feature:hover .tb-feature__img img {
+  transform: scale(1.04);
+}
+.tb-feature__title {
+  display: block;
+  margin-top: 18px;
+  font-size: clamp(2rem, 1.3rem + 2vw, 3.2rem);
+  line-height: 1.08;
+}
+.tb-feature__excerpt {
+  display: block;
+  margin-top: 18px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+.tb-feature:hover .tb-flip__go::after,
+.tb-postcard:hover .tb-flip__go::after,
+a:hover > .tb-box .tb-flip__go::after {
+  transform: translateX(6px);
+}
+.tb-postgrid,
+.tb-cardgrid {
+  display: grid;
+  gap: 56px 32px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .tb-postgrid,
+  .tb-cardgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .tb-postgrid,
+  .tb-cardgrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.tb-postcard {
+  display: block;
+  height: 100%;
+  margin: -16px;
+  padding: 16px;
+  color: var(--fg);
+  text-decoration: none;
+  transition: background-color 0.5s var(--tb-ease), color 0.5s var(--tb-ease),
+    transform 0.5s var(--tb-ease), box-shadow 0.5s var(--tb-ease);
+}
+.tb-postcard:hover,
+.tb-postcard:focus-visible {
+  background: var(--fg);
+  color: var(--bg);
+  transform: translateY(-4px);
+  box-shadow: 0 26px 50px -30px rgba(0, 0, 0, 0.55);
+}
+.tb-postcard:hover *,
+.tb-postcard:focus-visible * {
+  color: inherit !important;
+}
+.tb-postcard:hover .tb-posts__img img {
+  transform: scale(1.05);
+}
+.tb-postcard .tb-posts__title {
+  font-size: 1.45rem;
+}
+
+/* Image cards say where they go on hover. */
+.tb-card__title::after {
+  content: "\2192";
+  display: inline-block;
+  margin-left: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.7em;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.4s var(--tb-ease), transform 0.5s var(--tb-ease);
+}
+.tb-card:hover .tb-card__title::after,
+.tb-card:focus-visible .tb-card__title::after {
+  opacity: 1;
+  transform: none;
+}
+
+/* Long link lists (the neighborhood matrix) flip each row under the cursor. */
+.tb-links-flip a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 10px;
+  margin: 0 -10px;
+  transition: background-color 0.35s var(--tb-ease), color 0.35s var(--tb-ease);
+}
+.tb-links-flip a:hover,
+.tb-links-flip a:focus-visible {
+  background: var(--fg);
+  color: var(--bg) !important;
+}
+.tb-links-flip ul {
+  margin-top: 8px;
+}
+.tb-links-flip li {
+  margin: 0 !important;
+}
+
+.tb-press-link {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 0.5s var(--tb-ease);
+}
+.tb-press-link:hover,
+.tb-press-link:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Blog article header: title on one side, the image on the other. */
+.tb-posthead {
+  padding: clamp(56px, 7vw, 110px) 0;
+}
+.tb-posthead__grid {
+  display: grid;
+  gap: 40px;
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .tb-posthead__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 72px;
+  }
+}
+.tb-posthead__img {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--tb-alt);
+}
+.tb-posthead__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Team profile: photograph beside the bio. */
+.tb-profile {
+  display: grid;
+  gap: 44px;
+  margin-top: 36px;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .tb-profile {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 72px;
+  }
+}
+.tb-profile__photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--tb-alt);
+}
+.tb-profile__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (min-width: 1024px) {
+  .tb-profile__photo {
+    position: sticky;
+    top: 120px;
+  }
+}
+
+/* Check-mark list on the landing pages. */
+.tb-checks {
+  display: grid;
+  gap: 14px;
+  margin-top: 32px;
+  padding: 0;
+  list-style: none;
+}
+.tb-checks li {
+  position: relative;
+  padding-left: 34px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg-muted);
+}
+.tb-checks li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 5px;
+  width: 16px;
+  height: 9px;
+  border-left: 2px solid var(--fg);
+  border-bottom: 2px solid var(--fg);
+  transform: rotate(-45deg);
+}
+
+.tb-notfound {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.tb-related__cta .tb-ctablock__title {
+  font-size: clamp(1.8rem, 1.2rem + 1.8vw, 2.8rem);
+}
+
+/* ---- Chat launcher: a soap bubble ---------------------------------------
+   Almost entirely clear. Three things give it shape:
+   1. A very thin dark slate outline (with a faint light hairline outside it),
+      so the circle reads on a white band, a dark band or a photograph.
+   2. The rainbow film concentrated on ONE side, the way light comes through a
+      real bubble: intense along the lower-right edge, fading to nothing
+      toward the upper-left. It drifts a little rather than spinning.
+   3. A small white glint where the light hits.
+   The icon is dark with a thin white halo, so it reads on anything.
+
+   The skin (.soap-bubble) is a separate layer inside the button so it can be
+   pushed out of round by its own motion (ChatWidget, useBubblePhysics) while
+   the icon stays crisp and the button keeps its own float animation. */
+.soap-launch {
+  position: relative;
+  border-radius: 50%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.soap-launch > .soap-bubble {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.soap-icon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  color: #1c2230;
+}
+.soap-bubble {
+  position: relative;
+  border-radius: 50%;
+  isolation: isolate;
+  color: #1c2230;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 0 60%, rgba(255, 255, 255, 0.1) 100%);
+  border: 1px solid rgba(28, 34, 48, 0.62);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 0 12px rgba(255, 255, 255, 0.18),
+    0 8px 22px rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: saturate(1.25) brightness(1.04);
+  backdrop-filter: saturate(1.25) brightness(1.04);
+  transition: box-shadow 0.5s var(--tb-ease);
+}
+/* The rainbow: a full-colour sweep, masked by a ring whose centre is pulled up
+   and left, so the band is widest on the lower right and thins to nothing. */
+.soap-bubble::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 90deg at 50% 50%,
+    rgba(255, 60, 170, 0.95) 0deg,
+    rgba(255, 150, 40, 0.95) 45deg,
+    rgba(255, 235, 60, 0.9) 80deg,
+    rgba(60, 230, 150, 0.9) 120deg,
+    rgba(40, 190, 255, 0.95) 160deg,
+    rgba(120, 90, 255, 0.95) 200deg,
+    rgba(255, 60, 170, 0.6) 240deg,
+    rgba(255, 60, 170, 0) 290deg,
+    rgba(255, 60, 170, 0) 330deg,
+    rgba(255, 60, 170, 0.95) 360deg
+  );
+  -webkit-mask: radial-gradient(circle at 36% 32%, transparent 0 58%, rgba(0, 0, 0, 0.35) 70%, #000 86%);
+  mask: radial-gradient(circle at 36% 32%, transparent 0 58%, rgba(0, 0, 0, 0.35) 70%, #000 86%);
+  opacity: 0.85;
+  pointer-events: none;
+}
+/* Where the light hits: one bright glint and a softer second one. */
+.soap-bubble::after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  top: 15%;
+  width: 22%;
+  height: 12%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 6px 10px 0 -3px rgba(255, 255, 255, 0.45);
+  filter: blur(0.6px);
+  transform: rotate(-38deg);
+  pointer-events: none;
+}
+.soap-icon svg {
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.6));
+}
+.soap-launch:hover,
+.soap-launch:focus-visible {
+  transform: scale(1.07);
+}
+.soap-launch:hover .soap-bubble,
+.soap-launch:focus-visible .soap-bubble {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    inset 0 0 14px rgba(255, 255, 255, 0.25),
+    0 12px 28px rgba(0, 0, 0, 0.18);
+}
+.soap-launch:hover .soap-bubble::before,
+.soap-launch:focus-visible .soap-bubble::before {
+  opacity: 1;
+}
+/* The greeting beside it: frosted glass, dark enough to keep the words legible
+   over a bright sky. */
+.soap-note {
+  color: #fff;
+  background: rgba(16, 18, 22, 0.62);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .soap-bubble::before {
+    animation: soap-shimmer 7s ease-in-out infinite;
+  }
+  /* The float only moves it; the shape change comes from the physics. */
+  .soap-launch.orb-blob {
+    animation: orb-float 6s ease-in-out infinite;
+  }
+}
+/* The shine slides a little along the edge and back, as a bubble turns. */
+@keyframes soap-shimmer {
+  0%, 100% { transform: rotate(-14deg); }
+  50% { transform: rotate(22deg); }
+}
+
+/* ---- Motion ---------------------------------------------------------------- */
+@keyframes tb-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes tb-settle {
+  from { transform: scale(1.1); }
+  to { transform: scale(1); }
+}
+@keyframes tb-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+@keyframes tb-hero-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+@keyframes tb-rule-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes tb-menu-in {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+@keyframes tb-menu-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero: the active photograph drifts in slowly; the caption rises in order. */
+  /* Same animation on both states, so a slide handing over keeps drifting
+     instead of restarting or snapping. */
+  .tb-hero__slide.is-active,
+  .tb-hero__slide.is-leaving {
+    animation: tb-hero-drift 12s linear both;
+  }
+  .tb-hero__eyebrow { animation: tb-rise 1.2s var(--tb-ease) 0.2s both; }
+  .tb-hero__rule { animation: tb-rule-grow 1.4s var(--tb-ease) 0.45s both; }
+  .tb-hero__title { animation: tb-rise 1.3s var(--tb-ease) 0.6s both; }
+  .tb-hero__sub { animation: tb-rise 1.3s var(--tb-ease) 0.8s both; }
+  .tb-hero__actions { animation: tb-rise 1.3s var(--tb-ease) 0.95s both; }
+
+  .ed-bleed::before,
+  .tb-pagehero--image::before {
+    animation: tb-settle 2.8s var(--tb-ease) both;
+  }
+  .ed-bleed > div > *,
+  .tb-pagehero__inner > * {
+    animation: tb-rise 1.2s var(--tb-ease) both;
+  }
+  .ed-bleed > div > *:nth-child(2),
+  .tb-pagehero__inner > *:nth-child(2) { animation-delay: 0.15s; }
+  .ed-bleed > div > *:nth-child(3),
+  .tb-pagehero__inner > *:nth-child(3) { animation-delay: 0.3s; }
+  .ed-bleed > div > *:nth-child(4),
+  .tb-pagehero__inner > *:nth-child(4) { animation-delay: 0.45s; }
+  .ed-bleed > div > *:nth-child(n + 5),
+  .tb-pagehero__inner > *:nth-child(n + 5) { animation-delay: 0.6s; }
+
+  .tb-carousel__slide.is-active img {
+    animation: tb-drift 7s linear both;
+  }
+
+  /* Scroll entrances. Hidden ONLY behind .reveal-ready, which JavaScript adds —
+     server HTML and no-JS visitors always get the finished page. */
+  .tb-fade-up,
+  .tb-fade,
+  .tb-zoom {
+    transition: opacity 1.25s var(--tb-ease), transform 1.25s var(--tb-ease);
+  }
+  .reveal-ready:not(.in-view) .tb-fade-up,
+  .reveal-ready:not(.in-view).tb-fade-up {
+    opacity: 0;
+    transform: translateY(56px);
+  }
+  .reveal-ready:not(.in-view) .tb-fade,
+  .reveal-ready:not(.in-view).tb-fade {
+    opacity: 0;
+  }
+  .reveal-ready:not(.in-view) .tb-zoom,
+  .reveal-ready:not(.in-view).tb-zoom {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  /* Photographs inside a frame settle from a slight zoom as they arrive. */
+  .tb-frame img,
+  .tb-frame video {
+    transition: transform 2.2s var(--tb-ease);
+  }
+  .reveal-ready:not(.in-view) .tb-frame img,
+  .reveal-ready:not(.in-view).tb-frame img,
+  .reveal-ready:not(.in-view) .tb-frame video {
+    transform: scale(1.14);
+  }
+  .tb-frame:hover img {
+    transform: scale(1.04);
+  }
+  .tb-d1 { transition-delay: 0.15s; }
+  .tb-d2 { transition-delay: 0.3s; }
+  .tb-d3 { transition-delay: 0.45s; }
+  .tb-d4 { transition-delay: 0.6s; }
+  .tb-d5 { transition-delay: 0.75s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tb-ticker {
+    overflow-x: auto;
+  }
+  .tb-ticker__track {
+    animation: none;
+  }
+  .tb-menu,
+  .tb-menu:not(.is-open) {
+    animation: none;
+  }
+}
