@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-09-28T20:04:25.997Z",
+  "covers": "2026-09-21 to 2026-09-28",
+  "previousReport": "content/reports/2026-09-21.json",
+  "site": {
+    "listings": {
+      "coming-soon": 0,
+      "active": 0,
+      "pending": 0,
+      "sold": 0
+    },
+    "blogPosts": 0,
+    "writtenPages": 0,
+    "serviceAreas": 3,
+    "launchReady": false
+  },
+  "tracking": {
+    "metaPixel": false,
+    "googleTag": false,
+    "clarity": false
+  },
+  "leads": {
+    "available": false,
+    "why": "no GHL_API_TOKEN set"
+  },
+  "clarity": {
+    "available": false,
+    "why": "no CLARITY_API_TOKEN set"
+  }
+}

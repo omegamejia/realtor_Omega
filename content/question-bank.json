@@ -1,0 +1,30 @@
+{
+  "_comment": "Questions real buyers and sellers ask, in their words. The daily article job picks from here, furthest-from-existing first. This is the SEED's starter set — generic by design. The question-bank skill replaces it with the agent's own: their inbox, their showings, their Google Business questions, their voice agent transcripts. A bank of generic questions produces generic articles.",
+  "_rules": [
+    "Phrase it the way a person would say it out loud, not as a keyword.",
+    "Nothing about the transaction itself — commissions, buyer agreements, closing mechanics, contingencies. That is the agent's licence to describe, not ours. See .claude/rules/legal-compliance.md section 5d.",
+    "A bank smaller than ~30 questions per article-per-day will run dry inside a month. The job reports when it does rather than writing filler."
+  ],
+  "questions": [
+    "How long does it actually take to sell a house around here?",
+    "Should I fix things up before listing or sell it as it is?",
+    "What makes one neighborhood cost more than the one next to it?",
+    "Is it better to buy first or sell first when I am moving locally?",
+    "What should I expect my first month of owning a home to cost?",
+    "How do I know whether a listing price is realistic?",
+    "What do buyers notice first when they walk in?",
+    "Is a fixer-upper worth it at current prices?",
+    "What does the commute actually look like from this area?",
+    "How much does a kitchen or bathroom update change what I can ask?",
+    "What happens to my timeline if my house does not sell quickly?",
+    "Should I rent my old place out instead of selling it?",
+    "What is the difference between the towns people compare around here?",
+    "How do I choose between two neighborhoods that look similar online?",
+    "What should I look at on a walkthrough that is easy to miss?",
+    "Is new construction a better bet than an older home here?",
+    "What do I do if my home has been sitting on the market?",
+    "How do schools factor into what a home is worth?",
+    "What does downsizing actually look like once the kids are gone?",
+    "Is it a good time to buy, or should I wait?"
+  ]
+}

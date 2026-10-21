@@ -1,0 +1,232 @@
+# The daily article.
+#
+# Runs on GitHub rather than the agent's laptop, deliberately. The alternative —
+# `claude -p` on a schedule on their Mac — costs nothing extra because it rides
+# their Claude Code subscription, and loses a day every time the laptop is shut.
+# "Every day" was the requirement, so this is the trade: a metered API key in
+# exchange for a job that does not care whether anyone is awake.
+#
+# The key comes from Doppler and syncs into this repo's secrets; see
+# .claude/skills/secrets-setup/SKILL.md. The same key runs the chat widget, so
+# it is one paste, not two.
+#
+# The whole chain is live and proven on a real site: topic choice, both dedupe
+# gates, the write, the fact-check, the content checks, a build, then the commit.
+# A day that produces nothing opens an issue rather than passing quietly, because
+# silence must never read as success.
+name: Daily article
+
+on:
+  schedule:
+    # 13:00 UTC is the REQUEST, not the delivery time, and the gap is large.
+    #
+    # Measured on these repos: the weekly report, crontab'd for 13:00 Monday,
+    # actually fired at 18:35, 20:04 and 21:02 UTC on three consecutive weeks,
+    # and a 02:17 Sunday job fired at 08:56. GitHub queues scheduled workflows
+    # behind paid work and runs them when there is capacity, so five to eight
+    # hours late is normal and the top of the hour is the worst slot to ask for.
+    #
+    # That is FINE HERE and the reason this job is on GitHub at all: nobody
+    # cares what time a blog post appears, only that one appears. Do not copy
+    # this schedule to anything a person is waiting for in the morning.
+    - cron: "0 13 * * *"
+  # Run it by hand from the Actions tab any day you want an extra one.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  # Two overlapping runs would pick the same topic and race the same commit.
+  group: daily-article
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Fail loudly and once, rather than every morning for sixty days. A job
+      # that cannot work should say why and stop, not retry into the void —
+      # and GitHub disables a schedule after 60 days of repo inactivity, so a
+      # permanently-failing job eventually dies silently.
+      - name: Is the key wired up?
+        id: key
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::No ANTHROPIC_API_KEY. The daily article cannot run."
+          else
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tell them once, not every day
+        if: steps.key.outputs.missing == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TITLE="Your daily articles are not running"
+          # Only open this if it is not already open. Thirty identical issues a
+          # month is how somebody learns to ignore the one that matters.
+          EXISTING="$(gh issue list --state open --search "$TITLE" --json number --jq '.[0].number' 2>/dev/null)"
+          if [ -z "$EXISTING" ]; then
+            {
+              echo "Your site is set up to write and publish an article every day, and it"
+              echo "is not running, because it has no key yet."
+              echo
+              echo "The same key runs the chat bubble on your site, so turning it on fixes"
+              echo "both."
+              echo
+              echo "Open this project in Claude and say:"
+              echo
+              echo "> set up my API key"
+              echo
+              echo "It takes about two minutes. This issue will not be opened again while"
+              echo "it is still open."
+            } > /tmp/key-issue.md
+            gh issue create --title "$TITLE" --body-file /tmp/key-issue.md
+          fi
+          exit 1
+
+      - name: Write today's article
+        if: steps.key.outputs.missing == 'false'
+        id: run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ARTICLE_COUNT: ${{ vars.ARTICLE_COUNT || '1' }}
+        run: |
+          set -o pipefail
+          # NOT --omit=dev. Next needs tailwindcss and friends to build, and they
+          # are devDependencies — the first live run wrote a perfectly good
+          # article and then failed the build step with "Cannot find module
+          # 'tailwindcss'". The guard did its job and skipped publishing, but
+          # the fault was here, not in the article.
+          npm ci --no-audit --no-fund >/dev/null 2>&1 || npm install >/dev/null 2>&1
+          node scripts/daily-article.mjs --count "$ARTICLE_COUNT" 2>&1 | tee /tmp/out.txt
+
+      # NON-NEGOTIABLE, and the reason is worth stating: without this, a
+      # malformed article is committed, the deploy fails, and the site is down
+      # until a person happens to look. The job proves the site still builds
+      # before anything is allowed to land.
+      - name: Does the site still build?
+        if: steps.key.outputs.missing == 'false'
+        run: npm run build
+
+      - name: Publish it
+        if: steps.key.outputs.missing == 'false'
+        run: |
+          if [ -z "$(git status --porcelain -- content/posts-generated.json)" ]; then
+            echo "Nothing new to commit."
+            exit 0
+          fi
+          git config user.name "daily-article"
+          git config user.email "daily-article@users.noreply.github.com"
+          git add content/posts-generated.json
+          git commit -q \
+            -m "post: $(date -u +%F)" \
+            -m "Written and published automatically by the daily-article workflow." \
+            -m "It passed the content checks, the duplicate check and the fact-check, and the site built with it before this commit was made." \
+            -m "Review with: git show HEAD   Undo with: git revert HEAD"
+          # A protected main refuses this, and that must not read as a crash:
+          # the article is still in the log and the run output either way.
+          git push || echo "::warning::Could not push (protected branch?). The article is in the run log."
+
+      # GETTING IT ONTO THE WEBSITE, three ways, in order of how little setup
+      # they need. Most sites need NONE of this: their host watches the
+      # repository and publishes the commit by itself.
+      #
+      # The reason the other two exist: a real site's host had quietly lost that
+      # link, and for thirteen days the article was committed and the website
+      # never changed. A publisher that depends on something outside itself has
+      # to be able to do the job when that something stops.
+      - name: Get it onto the website
+        if: steps.key.outputs.missing == 'false'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -n "$HOOK" ]; then
+            curl -fsS -X POST "$HOOK" >/dev/null && echo "Asked the website to rebuild."
+          elif [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            # Publishes without the host needing to watch the repository at all.
+            echo "Publishing straight to the website."
+            npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+            npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
+            npx --yes vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+          else
+            echo "Nothing to do here. Relying on the host watching this repository."
+            echo "If the website does not change, the next step is what tells you."
+          fi
+
+      # THE STEP THAT WAS MISSING, and it cost thirteen days on a live site.
+      # Everything above proves the ARTICLE is good. Nothing above proves anybody
+      # can read it. A repository that had quietly lost its link to its host kept
+      # accepting commits, every check passing, while the website stood still.
+      - name: Is it actually on the website?
+        id: published
+        if: steps.key.outputs.missing == 'false'
+        env:
+          # Only needed by a site whose site.config.ts url is deliberately empty
+          # because it has no domain of its own yet. A public web address, so a
+          # repository variable rather than a secret.
+          PUBLISH_CHECK_URL: ${{ vars.PUBLISH_CHECK_URL }}
+        run: node scripts/verify-published.mjs
+
+      # Deliberately separate from the report below. "Nothing was written" and
+      # "it was written and nobody can read it" have different causes and
+      # different fixes, and one issue covering both would send the owner to
+      # look at their question bank while their deploy is down.
+      - name: Report an article that never reached the site
+        if: failure() && steps.published.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TITLE="Your articles are being written but are not reaching your website"
+          EXISTING="$(gh issue list --state open --search "$TITLE" --json number --jq '.[0].number' 2>/dev/null)"
+          if [ -n "$EXISTING" ]; then exit 0; fi
+          {
+            echo "Today's article was written, checked and saved. It is in your files."
+            echo "It is **not on your website**, and that means nothing else saved here"
+            echo "recently has gone live either."
+            echo
+            echo "Nothing is wrong with the article. The part that copies your files"
+            echo "onto the live website has stopped running."
+            echo
+            echo "Open this project in Claude and say:"
+            echo
+            echo "> my website is not updating"
+            echo
+            echo "This issue will not be opened again while it is still open."
+          } > /tmp/publish-issue.md
+          gh issue create --title "$TITLE" --body-file /tmp/publish-issue.md
+
+      # A day that produced nothing has to say so. The guardrail that matters
+      # most here is not the writing, it is that silence never reads as success.
+      - name: Report a day that produced nothing
+        if: failure() && steps.key.outputs.missing == 'false' && steps.published.outcome != 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "The daily article job ran and did not produce anything."
+            echo
+            echo '```'
+            tail -40 /tmp/out.txt 2>/dev/null || echo "(no output captured)"
+            echo '```'
+            echo
+            echo "The most likely cause is the question bank running out — every"
+            echo "question in it is already covered by a post you have. That is"
+            echo "not a bug, it is the bank needing more questions."
+            echo
+            echo "Open this project in Claude and say: **catch me up**"
+          } > /tmp/issue.md
+          gh issue create --title "No article today — $(date -u +%F)" --body-file /tmp/issue.md
