@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+.env
+.env.*
+!.env.local.example
+*.local
+.DS_Store
+.vercel
+next-env.d.ts
+*.tsbuildinfo
+
+# Internal working docs — never ships to an agent's site
+.internal/
+.claude/launch.json
