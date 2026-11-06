@@ -1,7 +1,17 @@
 # Chat widget cost and environment variables
 
-Moved out of the README so the front page stays readable for a non-technical
-owner. Everything here is unchanged and still accurate.
+Moved out of the README so the front page stays readable.
+
+## What the chat box actually knows
+
+It answers only from your own site: the knowledge `lib/knowledge.ts` builds from
+`site.config.ts` and `content/`. That is why filling in your pages makes the chat
+box better, and why the chat box and your pages say the same thing. They read the
+same files.
+
+It will not answer from general knowledge, and it will not guess. If it does not
+know, it says so briefly and points the visitor to your contact page or your phone
+number.
 
 ## Chat widget cost (read before a high-traffic launch)
 
@@ -9,7 +19,7 @@ owner. Everything here is unchanged and still accurate.
 owner's own `ANTHROPIC_API_KEY`. It ships with defenses (see below), but you own the
 spend, so size it before promoting the site.
 
-**Model:** `claude-haiku-4-5` (a fast, low-cost model), `max_tokens: 500` per reply.
+**Model:** `claude-haiku-4-5-20251001` (a fast, low-cost model), `max_tokens: 500` per reply.
 The site knowledge block is sent with prompt caching, so repeat turns are cheap.
 
 **Rough per-message cost** (Haiku 4.5 pricing; verify current rates):
@@ -30,20 +40,20 @@ That's on the order of a fraction of a cent per message. Monthly estimates:
 Cost is low per message but **unbounded without a ceiling**, so the widget enforces:
 
 - **Per-IP rate limit** (`8/min` by default).
-- **Daily spend ceiling** (`CHAT_DAILY_MAX`, default `2000` messages/day) — once hit,
-  the widget falls back to "seed mode" (points visitors to phone/contact) instead of
-  paying for more.
+- **Daily spend ceiling** (`CHAT_DAILY_MAX`, default `2000` messages/day). Once it is
+  hit, the widget falls back to "seed mode" (points visitors to phone/contact) instead
+  of paying for more.
 - Both are **durable across serverless instances when Upstash Redis is configured**
   (`UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`). Without Upstash they fall
-  back to a best-effort in-memory limiter — fine for low traffic, **not a real ceiling
+  back to a best-effort in-memory limiter: fine for low traffic, **not a real ceiling
   under scale**, so wire Upstash before a high-traffic launch. See `lib/ratelimit.ts`.
 
 ## Environment variables
 
 See `.env.local.example`. Server-only (never shipped to the browser):
 
-- `ANTHROPIC_API_KEY` — the on-site chat (optional; without it, chat runs in seed mode).
-- `GHL_API_TOKEN` — contact-form → GoHighLevel lead creation.
-- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — durable rate limiting (recommended before launch).
-- `CHAT_DAILY_MAX` — optional override for the chat daily message ceiling.
-
+- `ANTHROPIC_API_KEY`: the on-site chat (optional; without it, chat runs in seed mode).
+- `GHL_API_TOKEN`: contact-form to GoHighLevel lead creation.
+- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`: durable rate limiting (recommended before launch).
+- `CHAT_DAILY_MAX`: optional override for the chat daily message ceiling.
+- `ALLOW_LIVE_APIS`: set to `1` to let a local or preview build answer live. Off by default, so only production spends money.

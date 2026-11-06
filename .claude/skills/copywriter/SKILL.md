@@ -8,14 +8,14 @@ version: 1.0
 model: opus
 ---
 
-> ## ⚠️ HOUSE RULES — realtor-site-seed (read first)
+> ## ⚠️ HOUSE RULES, realtor-site-seed (read first)
 > This is **Krista's skill, copied verbatim** into this package. Her method stands;
 > **this project's rules override hers wherever they conflict.**
 > - Her vault paths (`Agent-OS/…`, `14-Confidential/`, `_Operations-Log.md`) **do not
 >   exist here.** Voice/VOC/brand inputs come from **`content/brand-voice.md`**
 >   (produced by `content-engine-builder`). Never invent a missing file's contents.
 > - Output must land in the codebase (`content/pages.ts`, `content/posts.ts`,
->   `site.config.ts`) — not in chat, not in a vault.
+>   `site.config.ts`), not in chat, not in a vault.
 > - Never fabricate facts/stats/results. Unknowns = `[PLACEHOLDER: ... to verify]`.
 > - Never hand-write JSON-LD (`lib/schema.ts` generates it). FAQs go in `faqs`.
 > - Nothing ships until `npm run validate:schema` + `npm run launch:check` pass and
@@ -101,7 +101,7 @@ Format:
 
 > "[Name] is a [role / life stage] who [specific daily reality]. Right now they're frustrated because [specific problem in their exact words] and they've tried [what hasn't worked]. At 11pm when they can't sleep, they're thinking '[exact internal monologue].' What they actually want is [desired state] but they believe [limiting belief standing in the way]."
 
-### Step 1a. Intake-Hardening Rule — Refuse Vague Answers
+### Step 1a. Intake-Hardening Rule: Refuse Vague Answers
 
 <!-- Source: Krista's method library. -->
 
@@ -280,12 +280,12 @@ Use this mode when Krista (or a student) hands over an existing high-performing 
 
 When a request names one of these, treat it as shorthand for a pre-set audience + angle combination rather than starting the audience definition from scratch. Still confirm platform, tone, and CTA before drafting.
 
-- **Listing Launch** — new listing announcement, urgency/scarcity angle
-- **Seller Lead** — home value / equity angle, targets likely sellers
-- **Buyer Magnet** — first-time or move-up buyer angle, affordability/process angle
-- **Luxury Market** — high-end inventory, status and exclusivity angle
-- **IG Caption** — short-form, platform-native caption pack
-- **YouTube Hook** — long-form video opener, curiosity/retention angle
+- **Listing Launch**: new listing announcement, urgency/scarcity angle
+- **Seller Lead**: home value / equity angle, targets likely sellers
+- **Buyer Magnet**: first-time or move-up buyer angle, affordability/process angle
+- **Luxury Market**: high-end inventory, status and exclusivity angle
+- **IG Caption**: short-form, platform-native caption pack
+- **YouTube Hook**: long-form video opener, curiosity/retention angle
 
 These are naming conventions for common briefs, not new frameworks. The actual copy still runs through the standard 8-step process.
 

@@ -8,7 +8,7 @@ model: sonnet
 
 ## First: are we even in the right folder?
 
-**Students have at least two of Krista's repositories open on their machine** —
+**Students have at least two of Krista's repositories open on their machine**,
 their website (built from `realtor-site-seed`) and
 `Agent-Authority-Operating-System`, which has its own separate updater. The
 update prompt gets pasted into whichever window is open, and about half the
@@ -25,7 +25,7 @@ test -f site.config.ts && test -f scripts/update-engine.mjs && echo "website"
   say "there is no website update available", which is what it looks like from
   the inside and is the wrong answer. Say:
 
-  > "This folder is your *operating system*, not your website — they update
+  > "This folder is your *operating system*, not your website, they update
   > separately. Open your website folder and paste the same thing there. If
   > you are not sure which one it is, it is the folder with `site.config.ts`
   > in it."
@@ -33,13 +33,13 @@ test -f site.config.ts && test -f scripts/update-engine.mjs && echo "website"
 - **Agent-OS specifically** (there is an `Agent-OS/` directory or a
   `GET-UPDATES.md`) → name it, so they know where they are:
   *"You're in Agent-Authority-Operating-System. That one keeps itself updated
-  too — ask there with 'check for updates'. For the website, open the other
+  too, ask there with 'check for updates'. For the website, open the other
   folder."*
 
 Never guess, and never run `npm` in a folder with no `package.json` just to
 see what happens.
 
-## Finish the install — the mechanism cannot deliver itself
+## Finish the install: the mechanism cannot deliver itself
 
 **Do this check every time, before anything else.** The daily auto-update is a
 hook plus an npm script, and neither can arrive by update, because the two
@@ -53,7 +53,7 @@ file. On a site that has had an update but still has no hook, this is the
 reason, and it is silent: the skills look current and nothing is running.
 
 **1. Is the script there?** `.claude/scripts/skills-update.sh` arrives with the
-instruction layer. If it is missing, the update has not run yet — do that first.
+instruction layer. If it is missing, the update has not run yet, do that first.
 
 **2. Is it executable?** `chmod +x .claude/scripts/skills-update.sh`.
 
@@ -91,7 +91,7 @@ Then commit all of it, so the next session starts clean.
 Because **CLAUDE.md does not auto-update and this does.**
 
 The background updater (`.claude/scripts/skills-update.sh`) syncs
-`.claude/skills`, `.claude/rules` and `docs` — deliberately not `CLAUDE.md`,
+`.claude/skills`, `.claude/rules` and `docs`, deliberately not `CLAUDE.md`,
 which every site customises. So routing that lives only in CLAUDE.md reaches
 nobody who already has a site. Any instruction that has to reach existing
 agents has to live in the instruction layer, which means in here.
@@ -99,7 +99,7 @@ agents has to live in the instruction layer, which means in here.
 ## The command may not exist yet, and that is the normal case
 
 `update:skills` ships in this update. **A site that has not had it yet does
-not have it** — the thing that delivers the fix cannot be delivered by itself.
+not have it**, the thing that delivers the fix cannot be delivered by itself.
 So never assume the npm script is there:
 
 ```bash
@@ -113,7 +113,7 @@ ignores it rather than failing:
 grep -q "SKILLS_ONLY" scripts/update-engine.mjs && echo safe || echo use-plain-git
 ```
 
-If that says `use-plain-git`, do NOT run `npm run update:skills` — on that
+If that says `use-plain-git`, do NOT run `npm run update:skills`, on that
 copy the flag means nothing and it performs the full engine update over their
 site. Use the git commands below, which replace the updater too.
 
@@ -147,7 +147,7 @@ Scoped to `.claude/skills`, `.claude/rules` and `docs`. It **cannot** reach
 `scripts/` or `CLAUDE.md`. That is enforced by the scope list in
 `scripts/update-engine.mjs`, not by convention.
 
-Most of the time it has already run on its own — the hook fires once a day in
+Most of the time it has already run on its own, the hook fires once a day in
 the background. Running it by hand is for when somebody asks.
 
 ## Never reach for `update:engine` on a site somebody has designed
@@ -170,17 +170,17 @@ before running it. Never pass `--force` on their behalf.
    Entries tagged `content` or `decision` are the ones that involve them:
    *"there's a new check that makes sure your page headings match their web
    addresses"* beats a list of file paths. Do not read 21 filenames aloud.
-3. **Apply it**, unless they say no. This is instructions, not their site —
+3. **Apply it**, unless they say no. This is instructions, not their site,
    there is nothing of theirs to lose, so there is nothing to weigh up.
 4. **Run `npm run catchup`.** This is the half people forget. An update ships
-   files, and some arrive **inert** — reporting, pixels, heatmaps, the AI
+   files, and some arrive **inert**, reporting, pixels, heatmaps, the AI
    caller and IDX all need an account or an ID before the shipped code does
    anything. `catchup` is the only thing that reports what is switched off.
    Telling somebody they are "up to date" right after pulling a feature that
    needs an API key is wrong.
 5. **Then run the gate** (`npm run gate`) if anything tagged `content` landed.
    A new rule flagging an old page is the gate working, not the update
-   breaking their site — say that out loud, because it does not look that way
+   breaking their site, say that out loud, because it does not look that way
    to somebody who just ran an update and now sees failures.
 6. **Never fix flagged content silently.** Show them, explain why it matters,
    let them choose.
@@ -189,7 +189,7 @@ before running it. Never pass `--force` on their behalf.
 
 Two sentences, not a report:
 
-> "Pulled in Krista's latest — mostly improvements to how I write your area
+> "Pulled in Krista's latest, mostly improvements to how I write your area
 > pages, plus a new rule about photo captions. Nothing you need to do, except
 > one thing: your site can send you a weekly report and it isn't switched on.
 > Want me to set that up?"
@@ -197,7 +197,7 @@ Two sentences, not a report:
 ## If they ask for it to happen automatically
 
 It already does, once a day, in the background, when they open the project.
-`.claude/state/last-skills-update.log` is the record — *"what did my last
+`.claude/state/last-skills-update.log` is the record, *"what did my last
 update bring in?"* reads it back. If that file is missing or stale, the hook
 is not running: check `.claude/settings.json` has the `SessionStart` entry and
 that `.claude/scripts/skills-update.sh` is executable.

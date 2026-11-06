@@ -1,4 +1,4 @@
-# Content Model — how every page and post is written
+# Content Model: how every page and post is written
 
 This is the canonical spec. It comes from current (2026) real estate SEO research.
 Follow it exactly. The page templates already render this shape; your job is the words.
@@ -88,7 +88,7 @@ Proof · [City] [Niche] FAQ · Final CTA.
 Delivers [Niche] · Our Process / What You Get · [Niche] Across the Cities We Serve · FAQ · CTA.
 
 Every page's scaffold (rendered when unwritten) lists these sections with per-section
-guidance and word targets — read the live scaffold page as your brief.
+guidance and word targets, read the live scaffold page as your brief.
 
 
 ## Niches: five specialties MINIMUM, beyond plain buying and selling
@@ -132,7 +132,7 @@ two that are aspirational.
 
 Each specialty gets a niche pillar (`/buyers/<niche>` or `/sellers/<niche>`) plus a
 money page per area (`/areas/<area>/<niche>`). One area with seven specialties is a
-better site than five areas with two — depth beats breadth, and the specialty pages
+better site than five areas with two, depth beats breadth, and the specialty pages
 are where the traffic actually is.
 
 
@@ -244,7 +244,7 @@ safe. Anything about people is not.
 ## The CLIENT REQUIREMENT (on every location/service page)
 
 Each page must (a) name and talk about the company, (b) say specifically how the team
-serves THIS area, and (c) show expertise. Never swap-and-repeat another city's text —
+serves THIS area, and (c) show expertise. Never swap-and-repeat another city's text,
 Google flags ~95%-identical templates as doorway pages.
 
 ## Keyword strategy
@@ -252,10 +252,10 @@ Google flags ~95%-identical templates as doorway pages.
 - Exactly ONE primary keyword per page + 3–5 secondary/long-tail + a semantic halo.
 - Primary keyword pattern: money page = `{niche} in {city}`; area hub = `{city} neighborhoods`.
 - Place the primary keyword in: H1 (near front), first 100 words, title tag (<60 chars),
-  meta description (first 120 chars), URL slug, ≥1 H2, and the closing CTA section — once each.
+  meta description (first 120 chars), URL slug, ≥1 H2, and the closing CTA section, once each.
 - Density ~1–2% (never over 3%). After the anchor placements, prefer synonyms over repetition.
 
-## Interlinking — HARD RULES
+## Interlinking: HARD RULES
 
 - Every page links back to the home page (the `RelatedLinks` block + brand mentions do this).
 - Every page has a CTA linking to `/contact`.
@@ -275,11 +275,11 @@ the title/intro/body; link in-content to the relevant money page(s); end with a 
 
 Use ONLY facts the agent has confirmed. Any local statistic (median price, days on market,
 school rating, appreciation) you don't have MUST be written literally as
-`[PLACEHOLDER: local stat to verify]` — never invented. Never add scope words ("nationally")
+`[PLACEHOLDER: local stat to verify]`: never invented. Never add scope words ("nationally")
 or volume claims ("thousands", "most") that aren't verified. `launch:check` blocks any page
 still containing placeholders or filler, so unverified data cannot ship.
 
-## Schema (automatic — don't hand-write it)
+## Schema (automatic: don't hand-write it)
 
 The engine (`lib/schema.ts`) generates all JSON-LD from config + content: Organization,
 WebSite, RealEstateAgent (LocalBusiness) with OfferCatalog + geo + areaServed, one Person
@@ -292,7 +292,7 @@ automatically emits FAQPage schema.
 Add a `faqs` array to a page's content (3–5 real Q&As, direct answer first). This both
 renders the on-page FAQ and emits FAQPage schema for AI Overviews / People Also Ask.
 
-## Paragraphs travel — write every one so it survives being moved
+## Paragraphs travel: write every one so it survives being moved
 
 These pages are **assembled**, not written top to bottom. A paragraph you write
 for one section gets placed under a different heading on 22 other pages, and the
@@ -301,7 +301,7 @@ out of that, and both shipped hundreds of times before the gate caught them.
 
 **1. Never write a paragraph that has no main verb.**
 
-Descriptor phrases are useful — they are *ingredients*, meant to be dropped inside
+Descriptor phrases are useful, they are *ingredients*, meant to be dropped inside
 a sentence. Emitted on their own they become nonsense with a period after it:
 
 > ✗ A Saturday farmers market in City Park that has outlived the farm town it
@@ -314,7 +314,7 @@ statement. Give every sentence someone or something performing a verb:
 > the farm town it started in. It is the most competitive market out here, where
 > good homes move fast.
 
-The same descriptor works perfectly once a carrier sentence holds it — *"You are
+The same descriptor works perfectly once a carrier sentence holds it, *"You are
 looking at the levees, the docks, and a community that is not a commuter town."*
 The fragment was never the problem; publishing it unwrapped was.
 
@@ -336,7 +336,7 @@ Write the referent into the paragraph itself:
 > which is which before you fall for one.
 
 Opening with *So* or *And* is fine **when the setup is the paragraph directly
-above and always will be** — inside a hand-written page like `/process`, that
+above and always will be**, inside a hand-written page like `/process`, that
 reads well. It is not fine in any content that gets assembled into slots.
 
 **The test before you move on:** read the paragraph completely alone, with no

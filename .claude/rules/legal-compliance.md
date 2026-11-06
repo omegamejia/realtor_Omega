@@ -11,12 +11,12 @@ goal is content that is both good and lawful, not content that is timid.
 
 ---
 
-## 1. Fair Housing Act — the one that matters most
+## 1. Fair Housing Act: the one that matters most
 
 Every page on these sites is **advertising by a licensed real estate
 professional**, which puts it squarely under the FHA. Protected classes: race,
 color, national origin, religion, sex (including sexual orientation and gender
-identity), familial status, and disability. Many states and cities add more —
+identity), familial status, and disability. Many states and cities add more,
 California adds source of income, marital status, age, and others.
 
 **The rule that resolves nearly every case: describe the PROPERTY, never the PEOPLE.**
@@ -40,7 +40,7 @@ residents. Amenities, distances, dimensions, and verifiable facts are always saf
 **Accessibility is a Fair Housing matter too.** Disability is a protected class,
 and inaccessible real-estate websites are an active area of litigation. The
 design system already carries this (44px touch targets, AA contrast, visible
-focus, semantic headings) — do not regress it.
+focus, semantic headings), do not regress it.
 
 ## 2. Licensee disclosure
 
@@ -77,11 +77,11 @@ The never-fabricate rule already covers most of this, but stated explicitly:
   a general promise is a problem; as a described specific past sale it is fine.
 - **Endorsements that were compensated must say so.**
 - **Statistics need a real source.** Any market figure without one is
-  `[PLACEHOLDER: local stat to verify]` — the gate blocks it either way.
+  `[PLACEHOLDER: local stat to verify]`: the gate blocks it either way.
 - **Time-based claims rot.** "17 years" and "since 2008" need re-confirming
   annually; prefer "more than two decades" which stays true.
 
-## 5. Privacy law — get the basis right
+## 5. Privacy law: get the basis right
 
 **Do not tell an agent "CCPA applies to you." It usually does not.** CCPA/CPRA
 applies to a for-profit business that meets at least one threshold: gross revenue
@@ -96,7 +96,7 @@ agents and small teams are outside CCPA entirely.
 from California residents must **conspicuously post a privacy policy**. There is no
 revenue threshold. A contact form collecting a name and email triggers it.
 
-So the privacy policy is required — just cite the right reason. It is also a
+So the privacy policy is required, just cite the right reason. It is also a
 practical requirement: Meta, Google, and most ad platforms will not run traffic to
 a page without one, and these sites exist to be advertised to.
 
@@ -173,7 +173,7 @@ Carrier filtering blocks non-consented SMS and can flag the sending sub-account.
 - Consent language must say who is contacting them, that message and data rates
   apply, and how to stop.
 - Never pre-tick a consent box.
-- A privacy policy must exist and be linked wherever data is collected — required
+- A privacy policy must exist and be linked wherever data is collected, required
   by CalOPPA for any site collecting PII from California residents (see §5), and
   by every major ad platform before they will run traffic to the page.
 
@@ -199,7 +199,7 @@ Carrier filtering blocks non-consented SMS and can flag the sending sub-account.
 
 Everything else on this page is judgment, and judgment is the human's job. When
 something is genuinely ambiguous, say so and let the agent decide with their
-broker — never quietly guess.
+broker, never quietly guess.
 
 ## 9. Advertising pixels and analytics
 
@@ -216,7 +216,7 @@ policy describe what is collected and who receives it, and Meta's and Google's
 own terms require the same of anyone running their tag. `npm run launch:check`
 fails a site whose privacy policy never names a configured vendor. Write that
 paragraph **with** the agent: what the tag does, who receives the data, and how a
-visitor opts out — their browser's settings, and the platform's own ad settings.
+visitor opts out, their browser's settings, and the platform's own ad settings.
 
 **Campaign data is not personal data, and the line is the referrer.** The site
 records the campaign tags and the ad platforms' own click IDs with each lead
@@ -234,7 +234,7 @@ event says a lead happened, never who.
 **CPRA "sharing".** Targeted advertising counts as sharing personal information
 under California law. Most solo agents sit under the CCPA/CPRA thresholds (§5),
 so the "Do Not Sell or Share My Personal Information" link is usually not
-required — but a team that meets one does need it, and that is a question for
+required, but a team that meets one does need it, and that is a question for
 their counsel rather than a guess from us.
 
 **Outside the US.** Advertising into the EU or UK requires consent *before* the

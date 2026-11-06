@@ -1,26 +1,32 @@
 #!/bin/bash
-# skills-update.sh — zero-click instruction updates.
+# skills-update.sh: zero-click instruction updates.
 #
-# Runs in the background when Claude opens this project (SessionStart hook), at
-# most once a day. Pulls Krista's latest SKILLS, RULES and DOCS and commits
-# them, so an agent gets improvements without ever asking — the same
-# arrangement Agent-Authority-Operating-System uses for its kit.
+# Runs in the background when Claude opens this project (SessionStart hook in
+# .claude/settings.json), at most once a day. Pulls the seed's latest SKILLS,
+# RULES and DOCS and commits them, so an owner gets improvements without ever
+# asking.
 #
 # ---------------------------------------------------------------------------
 # WHAT IT CAN AND CANNOT TOUCH, AND WHY THAT IS THE WHOLE DESIGN
 #
-# It runs `npm run update:skills`, which is scoped to .claude/skills,
-# .claude/rules and docs. It CANNOT reach site.config.ts, content/, app/,
-# components/, lib/, public/, scripts/ or CLAUDE.md. That is not a convention,
-# it is the scope list in scripts/update-engine.mjs.
+# It runs `npm run update:skills`, whose scope is the INSTRUCTION_LAYER list in
+# scripts/update-engine.mjs: .claude/skills, .claude/rules, .claude/scripts
+# (this updater), docs, and scripts/update-engine.mjs itself. It CANNOT reach
+# site.config.ts, content/, app/, components/, lib/, public/, the rest of
+# scripts/ or CLAUDE.md.
 #
-# This matters because the obvious version of this script — one that runs a
-# full engine update — is dangerous. Measured on a real site built from this
+# That list is read from update-engine.mjs (`--print-scope`), never written out
+# here. A second copy here once left out .claude/scripts and update-engine.mjs,
+# so the first update that touched either failed this script's own guard and
+# was reset, silently, every day after.
+#
+# This matters because the obvious version of this script, one that runs a
+# full engine update, is dangerous. Measured on a real site built from this
 # seed and then designed, a full apply would have replaced app/globals.css
 # (729 lines different), app/page.tsx (422) and app/layout.tsx (63) with the
 # seed's generic versions. Nothing automatic should be able to do that.
 #
-# Skills are instructions to Claude, not the agent's work. Nobody hand-edits
+# Skills are instructions to Claude, not the owner's work. Nobody hand-edits
 # one, there is nothing of theirs inside to lose, and once the new skills land
 # Claude knows how to keep the site current by itself. That is the half worth
 # automating and the only half that is safe to.
@@ -44,10 +50,6 @@ LOG="$STATE_DIR/last-skills-update.log"
 STAMP="$STATE_DIR/last-skills-update.stamp"
 LOCK="$STATE_DIR/.skills-update-lock"
 
-# Exactly what update:skills is allowed to write. Used for the dirty-tree guard
-# and for the commit, so neither can ever see the agent's own work.
-SCOPE=(".claude/skills" ".claude/rules" "docs")
-
 mkdir -p "$STATE_DIR" 2>/dev/null || exit 0
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$LOG" 2>/dev/null; }
 
@@ -55,7 +57,7 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$LOG" 2>/dev/null; }
 #
 # MUST be a hard reset, not `git checkout -- .`. `git checkout <ref> -- <path>`
 # writes the INDEX as well as the working tree, so checking out "." afterwards
-# restores the staged new version and undoes precisely nothing — the damage
+# restores the staged new version and undoes precisely nothing: the damage
 # stays, staged and ready to be committed by the next thing that runs. This is
 # already documented in scripts/update-engine.mjs and I reproduced it anyway:
 # the abort logged "reverting, nothing committed" while leaving every
@@ -95,17 +97,17 @@ touch "$STAMP" 2>/dev/null
 # exclusion is load-bearing: the stamp is written a few lines above, so without
 # it the guard trips on the updater's own footprint and the auto-update never
 # runs again on any clone where .claude/state/ is not gitignored. Caught on the
-# first real run — "SKIP working tree has uncommitted changes" on a tree whose
+# first real run ("SKIP working tree has uncommitted changes") on a tree whose
 # only change was the file this script had just created.
 if [ -n "$(git status --porcelain -- . ':!.claude/state' 2>/dev/null)" ]; then
-  log "SKIP working tree has uncommitted changes — will try again next session"
+  log "SKIP working tree has uncommitted changes; will try again next session"
   exit 0
 fi
 
 # Only on their main line. Never auto-commit onto a branch under review.
 BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 if [ "$BRANCH" != "main" ] && [ "$BRANCH" != "master" ]; then
-  log "SKIP on branch '$BRANCH' — auto-update only runs on main"
+  log "SKIP on branch '$BRANCH'; auto-update only runs on main"
   exit 0
 fi
 
@@ -117,7 +119,7 @@ if [ $? -ne 0 ]; then
 fi
 # The preview heads its list with "FILES (n)". An earlier version grepped for
 # a sentence the script does not print, so every run logged "already up to
-# date" on a clone that was 21 files behind — a silent no-op that looked
+# date" on a clone that was 21 files behind: a silent no-op that looked
 # exactly like success.
 if ! printf '%s' "$PREVIEW" | grep -qE "^FILES \([1-9]"; then
   log "OK already up to date"
@@ -127,18 +129,34 @@ fi
 # --- apply -------------------------------------------------------------------
 APPLIED="$(npm run --silent update:skills -- --apply 2>&1)"
 if [ $? -ne 0 ]; then
-  log "ERROR apply failed — run 'npm run update:skills' by hand to see why"
+  log "ERROR apply failed; run 'npm run update:skills' by hand to see why"
   printf '%s\n' "$APPLIED" >> "$LOG" 2>/dev/null
   undo
   exit 0
 fi
 
-# Belt and braces: the scope list lives in update-engine.mjs, and this is the
-# one place a mistake there would become an automatic commit over somebody's
-# website. Refuse to commit anything outside the instruction layer.
-STRAY="$(git status --porcelain -- . ':!.claude/skills' ':!.claude/rules' ':!docs' ':!.claude/state' ':!.engine-version' 2>/dev/null)"
+# Exactly what update:skills is allowed to write, read from update-engine.mjs
+# AFTER the apply, because the apply may have just delivered a newer copy of it.
+# Used for the stray check and for the commit, so neither can ever see the
+# owner's own work. A copy too old to answer is a failure, not an empty list.
+SCOPE=()
+while IFS= read -r p; do
+  [ -n "$p" ] && SCOPE+=("$p")
+done < <(node scripts/update-engine.mjs --print-scope 2>/dev/null)
+if [ "${#SCOPE[@]}" -eq 0 ]; then
+  log "ERROR could not read the update scope from scripts/update-engine.mjs; reverting, nothing committed"
+  undo
+  exit 0
+fi
+
+# Belt and braces: this is the one place a mistake in the update would become
+# an automatic commit over somebody's website. Refuse to commit anything the
+# update touched outside its own declared scope.
+EXCLUDE=()
+for p in "${SCOPE[@]}"; do EXCLUDE+=(":!$p"); done
+STRAY="$(git status --porcelain -- . "${EXCLUDE[@]}" ':!.claude/state' ':!.engine-version' 2>/dev/null)"
 if [ -n "$STRAY" ]; then
-  log "ABORT update touched files outside skills/rules/docs — reverting, nothing committed"
+  log "ABORT update touched files outside its scope; reverting, nothing committed"
   printf '%s\n' "$STRAY" >> "$LOG" 2>/dev/null
   undo
   exit 0
@@ -156,8 +174,8 @@ git -c user.name="skills-update" \
     commit -q -m "chore: pull latest skills and rules from the seed
 
 $COUNT instruction file(s) updated automatically by
-.claude/scripts/skills-update.sh. Only .claude/skills, .claude/rules and
-docs can be touched — the site itself is out of scope.
+.claude/scripts/skills-update.sh. Only the instruction layer named in
+scripts/update-engine.mjs can be touched; the site itself is out of scope.
 
 Review with: git show HEAD
 Undo with:   git revert HEAD" >/dev/null 2>&1 \

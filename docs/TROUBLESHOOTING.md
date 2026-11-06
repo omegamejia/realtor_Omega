@@ -1,14 +1,14 @@
 # When something goes wrong
 
 Written for someone who does not work in software. Nothing here is your fault, and
-none of it will break your website — everything below is recoverable.
+none of it will break your website, everything below is recoverable.
 
 **The fastest fix for almost anything: paste the error into Claude and say
 "this happened, what do I do?"** It can read the message, work out what it means,
 and usually fix it for you. The rest of this page is for when you would rather
 understand it yourself.
 
-**Nothing broken, only wondering?** `docs/FAQ.md` is the page for that — will this
+**Nothing broken, only wondering?** `docs/FAQ.md` is the page for that, will this
 replace my existing website, do I need my domain yet, what does "locally" mean, do
 my partner and I each build one, what is Vercel.
 
@@ -22,7 +22,7 @@ Your site refuses to go live while it still contains placeholder text or unwritt
 pages. You will see something like:
 
 ```
-✗ NOT READY TO LAUNCH — 1931 issue(s).
+✗ NOT READY TO LAUNCH, 1931 issue(s).
    • 51 page(s) have not been written yet
    • 157 placeholder value(s) still need your real details
 ```
@@ -31,7 +31,7 @@ That looks alarming and is completely normal on a new site. It is a to-do list, 
 a fault. Say **"keep setting up my site"** and Claude works through it with you.
 
 It will stop saying this when the site is genuinely finished, which is exactly the
-point — nothing half-built can go live by accident.
+point, nothing half-built can go live by accident.
 
 ---
 
@@ -94,10 +94,10 @@ Almost always a stale preview rather than a real problem.
 
 **Fix, in order:**
 
-1. **Hard refresh** the page — `Cmd+Shift+R` on Mac, `Ctrl+Shift+R` on Windows.
+1. **Hard refresh** the page, `Cmd+Shift+R` on Mac, `Ctrl+Shift+R` on Windows.
 2. If that does not do it, ask Claude to **restart the preview**.
 3. If you see `__webpack_modules__ is not a function`, the preview got confused.
-   Ask Claude to "clear the build cache and restart" — it deletes a temporary
+   Ask Claude to "clear the build cache and restart", it deletes a temporary
    folder and starts fresh. Nothing of yours is lost.
 
 ---
@@ -105,7 +105,7 @@ Almost always a stale preview rather than a real problem.
 ## Vercel says the build failed
 
 Your site did not publish. The live site keeps showing the last working version, so
-visitors never see a broken page — you have time to fix it.
+visitors never see a broken page, you have time to fix it.
 
 **Fix:** open the failed deployment in Vercel, copy the red error text, and paste it
 to Claude. Build errors are specific and usually a one-line fix.
@@ -114,7 +114,7 @@ to Claude. Build errors are specific and usually a one-line fix.
 
 ## "I made my copy on GitHub, but there is no folder to open"
 
-This is the most common place to get stuck, and nothing is broken — there is just
+This is the most common place to get stuck, and nothing is broken, there is just
 one step missing.
 
 **The short version: ask Claude to do it.** Say *"connect my GitHub and clone my
@@ -126,15 +126,15 @@ put anything on your computer yet. Those are two different places, and Claude ca
 only work on files that are actually on your machine.
 
 *GitHub is a filing cabinet in an office across town. Your files are safely in
-there — but to work on one, you need a copy on your own desk.*
+there, but to work on one, you need a copy on your own desk.*
 
-**The fix — about two minutes:**
+**The fix, about two minutes:**
 
 1. Install **GitHub Desktop** from [desktop.github.com](https://desktop.github.com)
    if you have not already, and sign in with your GitHub account.
 2. **File → Clone repository.**
 3. Pick your repository from the list.
-4. Note the **Local path** it shows — that is the folder it will create.
+4. Note the **Local path** it shows, that is the folder it will create.
 5. Click **Clone**.
 
 Now open that folder in Claude Code. ("Clone" only means "make me a copy I can work
@@ -156,7 +156,7 @@ template yet.
 
 The chat widget needs its own Claude API key, and it runs in a limited mode without
 one. It will point visitors to your phone number and contact page instead of
-answering — so nothing is broken, it is just quieter.
+answering, so nothing is broken, it is just quieter.
 
 **Fix:** ask Claude to "set up the chat assistant" and it will walk you through
 getting a key. See [CHAT-COSTS.md](CHAT-COSTS.md) for what it costs.
@@ -168,8 +168,8 @@ getting a key. See [CHAT-COSTS.md](CHAT-COSTS.md) for what it costs.
 If GoHighLevel is not connected yet, submissions are accepted and logged but not
 sent anywhere. That is the expected behavior before setup, not a failure.
 
-**Fix:** ask Claude to "test the GHL connection." It runs a real end-to-end check —
-creates a test contact, confirms every field arrived, and deletes it — and tells
+**Fix:** ask Claude to "test the GHL connection." It runs a real end-to-end check,
+creates a test contact, confirms every field arrived, and deletes it, and tells
 you exactly what is wrong if anything is.
 
 ---
@@ -190,7 +190,7 @@ Tell Claude what you were doing when it went wrong. If you need to go back:
 
 The search lives in a frame served by your IDX provider, and a provider only
 serves it to web addresses you have told them about. An address they do not
-recognise gets nothing — not an error message, just an empty rectangle.
+recognise gets nothing, not an error message, just an empty rectangle.
 
 **Almost always one of two moments:**
 
@@ -205,8 +205,8 @@ recognise gets nothing — not an error message, just an empty rectangle.
 authorised domains, and add the address the site is actually on. Then reload
 `/listings`.
 
-**If that is not it**, check the setting itself. Ask Claude to run `npm run gate`
-— it will tell you if `idx.embedUrl` is empty, is still a placeholder, or starts
+**If that is not it**, check the setting itself. Ask Claude to run `npm run gate`:
+it will tell you if `idx.embedUrl` is empty, is still a placeholder, or starts
 with `http://` instead of `https://`. A browser silently refuses an `http://`
 frame inside a secure page, which looks exactly the same as the whitelist
 problem.

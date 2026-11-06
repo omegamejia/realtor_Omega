@@ -1,7 +1,7 @@
 ---
 name: listings-manager
 description: >-
-  Manage the agent's property listings on their site — add a new listing, update
+  Manage the agent's property listings on their site, add a new listing, update
   one, and mark a listing sold (with the closing details). Use when someone says
   "add a listing", "new listing at [address]", "update the [address] listing",
   "I just sold [address]", "mark [address] sold", "put [address] pending", or asks
@@ -14,20 +14,20 @@ model: sonnet
 
 ## Two rules that come before everything else on this page
 
-### 1. A listing comes from the agent — never from a website
+### 1. A listing comes from the agent: never from a website
 
 **They are the listing agent. They already hold every fact.** A listing record is
 built from one of exactly three places:
 
-- **What they tell you.** One question — *"what are you working on right now?"* —
+- **What they tell you.** One question, *"what are you working on right now?"*,
   beats any amount of research, and costs them ten seconds.
 - **Their Agent-OS `04-Listings/<address>/` folder**, if they have Agent-OS. It
   holds `Listing-Details.md`, the long description and the photos, and **the
-  folder an address sits in IS its status** — one under `06-Pipeline/` is not the
+  folder an address sits in IS its status**, one under `06-Pipeline/` is not the
   same as one under `99-Archive/`.
 - **An MLS link they hand you.** That is the record their licence is attached to.
 
-**Never build a listing by reading a website — not a portal, and not even their
+**Never build a listing by reading a website, not a portal, and not even their
 own current site.** A website is a snapshot somebody stopped maintaining, and
 you cannot tell which parts stopped.
 
@@ -36,7 +36,7 @@ listings pass harvested seven properties from the "Featured Listings" block on
 the agent's own homepage. That site turned out to carry **two different property
 sets**: the homepage block, and a separate `/listings/` section holding five
 completely different addresses. They disagreed about which properties existed at
-all, and about status — a homepage card read *"PENDING, multiple offers,
+all, and about status, a homepage card read *"PENDING, multiple offers,
 $100,000+ over asking"* while that same property's own page read *"JUST
 LISTED"*. Nothing flagged it. Both looked equally official, and a set of wrong
 listings very nearly shipped onto a licensed agent's live site.
@@ -45,7 +45,7 @@ So:
 
 - **If you are handed a website as the source anyway**, treat everything on it as
   a candidate needing confirmation, and **say which page you read each fact
-  from**. If two pages on the same site disagree, show the agent both and ask —
+  from**. If two pages on the same site disagree, show the agent both and ask,
   never quietly pick the more specific-sounding one.
 - **Never re-harvest silently.** If the listings look out of date, that is a
   question for the agent, not a reason to go back to the web and overwrite.
@@ -97,18 +97,18 @@ Nothing failed. Nothing warned. `npm run launch:check` now catches that case.
 
 ## Add a listing
 
-### Step 0 — Ask for a link, not fifteen facts
+### Step 0: Ask for a link, not fifteen facts
 
 **Never open with the field list.** Collecting address, city, price, beds, baths,
 sqft, lot size, garage, type, stories, year built, features, description, photo
-and listed date by asking is fifteen questions for one house — and an agent with
+and listed date by asking is fifteen questions for one house, and an agent with
 five listings will not sit through seventy-five. They also already typed all of
 it once, into the MLS.
 
 **The agent is the source of truth, and it is not close.** They are the listing
 agent. They wrote the MLS entry, they hired the photographer, they know the
 price, the status and the closing date. Everything below is a way of not making
-them retype what they already wrote — it is never a way of finding out something
+them retype what they already wrote, it is never a way of finding out something
 they did not tell you.
 
 **Look where they have already written it, before you ask anything.**
@@ -119,15 +119,15 @@ often has the whole listing already. Locate the vault the way
 
 | Where | What is in it |
 |---|---|
-| `04-Listings/<address-slug>/Listing-Details.md` | MLS info, price, status — the record itself |
+| `04-Listings/<address-slug>/Listing-Details.md` | MLS info, price, status, the record itself |
 | `04-Listings/<address-slug>/Listing-Description-Long.md` | **The site description.** Long-form, written for a landing page, already in their voice |
 | `04-Listings/<address-slug>/Photos/` | Their own photos, or a link to where they are |
 | `06-Pipeline/<address-slug>/Timeline.md` | Under contract, with the real milestone dates including closing |
-| `99-Archive/Listings/<year>/<address-slug>/` | Closed — a sold listing |
+| `99-Archive/Listings/<year>/<address-slug>/` | Closed, a sold listing |
 | `10-Daily/<newest>-morning-brief.md` | Its **Active listings** and **Pipeline deals** sections are a current snapshot of what they have |
 
-Two details worth knowing. **`Listing-Description-Long.md` is the one you want**
-— `Listing-Description-MLS.md` sitting beside it is the portal copy, and that is
+Two details worth knowing. **`Listing-Description-Long.md` is the one you want**:
+`Listing-Description-MLS.md` sitting beside it is the portal copy, and that is
 the one that is duplicated across Zillow and everywhere else. And a listing's
 **folder location is its status**: `04-Listings` is active, `06-Pipeline` is
 under contract, `99-Archive/Listings` is sold. Read the status from where the
@@ -142,7 +142,7 @@ weeks ago. Use it to know what to ask about, never as the current state.
 already there. Never go fishing for anything else, and say what you found before
 you use it.
 
-**3. Ask them — and the MLS link is the one outside source.** If none of the
+**3. Ask them, and the MLS link is the one outside source.** If none of the
 above has it:
 
 > "Easiest way: send me the MLS link or the listing sheet for it, and I'll pull
@@ -154,38 +154,38 @@ Three reasons, each sufficient: those pages are third-party copies that lag the
 MLS, so a price or status from one can be wrong on their site under their
 licence; the photos on them are not theirs to give (see below); and the text is
 the syndicated portal copy. The agent's own MLS link, handed to you by the
-agent, is a different thing — that is their listing, from the system of record.
+agent, is a different thing, that is their listing, from the system of record.
 
-### Step 0b — What you may take, and the three things you may not
+### Step 0b: What you may take, and the three things you may not
 
 Everything you pull is a **candidate, never a fact**
 (`.claude/rules/truth-verification.md`). Extract it, then show it as one compact
-list and ask *"what's wrong here?"* — one question instead of fifteen, and the
+list and ask *"what's wrong here?"*, one question instead of fifteen, and the
 corrections are the confirmation.
 
 Three exceptions, and they matter:
 
 1. **The description depends entirely on where it came from.**
 
-   - **Their own long-form description** — `Listing-Description-Long.md` in their
-     Agent-OS, or anything they wrote for this purpose — is exactly right. It is
+   - **Their own long-form description**: `Listing-Description-Long.md` in their
+     Agent-OS, or anything they wrote for this purpose, is exactly right. It is
      theirs, it is already in their voice, and it was written for a page like
      this one. Use it, and show it to them before it goes live.
    - **The MLS remarks and any portal copy are not.** Two separate reasons and
      either is enough: that paragraph is already syndicated across a dozen sites,
      so republishing it gives their page nothing Google has not indexed
-     elsewhere — and MLS content carries display rules (`legal-compliance.md` §7)
+     elsewhere, and MLS content carries display rules (`legal-compliance.md` §7)
      that an IDX embed satisfies and a copy-paste does not. Read it for the
      facts, then **write a fresh one in their voice** and have them approve it.
 
 2. **Photos come from them, never off a page.** Listing photos are almost always
-   the **photographer's** copyright, licensed to the listing brokerage — not to
+   the **photographer's** copyright, licensed to the listing brokerage, not to
    the agent personally, and not to us. The `Photos/` folder in their own
    Agent-OS listing folder is the good case: those are the files they were sent.
    Pulling the same images off Zillow is not.
 
    When there is no folder, ask: *"can you send me the photos? Whatever your
-   photographer sent you, or the folder your brokerage has — the actual files
+   photographer sent you, or the folder your brokerage has, the actual files
    rather than the ones on a listing site, because those are usually licensed to
    the brokerage rather than to you."* If they are confident they hold the rights
    to images on their own brokerage page, that is their call to make, and it goes
@@ -197,9 +197,9 @@ Three exceptions, and they matter:
    the single most load-bearing number on the page, and status decides whether
    the phone assistant offers the house at all. Even a file in their own vault is
    a snapshot of the day it was written. One sentence, every listing, every time:
-   *"$625,000 and active — both still right today?"*
+   *"$625,000 and active, both still right today?"*
 
-### Step 0c — Then do the parts they cannot
+### Step 0c: Then do the parts they cannot
 
 Do not hand any of this back to them:
 
@@ -208,15 +208,15 @@ Do not hand any of this back to them:
 - **Work out the slug, the listed date** from what they sent, and the property
   type from the facts.
 - **Say which fields you could not find**, name them, and ask only for those.
-  That is the short list the agent actually has to answer — usually HOA, the
+  That is the short list the agent actually has to answer, usually HOA, the
   photos, and whatever the sheet left blank.
 
-### Step 1 — The record
+### Step 1: The record
 
 **Collect** (now mostly filled in from the harvest above): address, city, list
 price, beds, baths, sqft, lot size, garage, property type, stories, year built,
 features, a description in the agent's voice, a photo, and the listed date.
-2. **Get the coordinates — you do this, never the agent.** Look the address up
+2. **Get the coordinates, you do this, never the agent.** Look the address up
    yourself and put the latitude and longitude in `geo`. **This is required and
    the gate fails without it.** Never estimate them from the town centre: a pin
    in the middle of town is confidently wrong in a way nobody notices, and the
@@ -224,7 +224,7 @@ features, a description in the agent's voice, a photo, and the listed date.
 
    Asking an agent to find coordinates is asking them to read a web address and
    pick two numbers out of it. If you genuinely cannot resolve the address, say
-   which address failed and ask them to confirm it is right — a geocode that
+   which address failed and ask them to confirm it is right, a geocode that
    finds nothing usually means a typo in the street name, not a missing skill.
 3. Add the `Listing` object to `content/listings.ts` with a slug from the address
    (e.g. `123-main-st`) and `status: "active"`.
@@ -267,7 +267,7 @@ When the agent says "I just sold [address]":
 1. Congratulate them.
 2. Set the listing's `status: "sold"`, and add `soldDate` and `soldPrice`.
 3. If the agent wants, offer to pull the closing details from their email/CRM to
-   fill `soldDate` / `soldPrice` — but ECHO IT BACK and get confirmation before
+   fill `soldDate` / `soldPrice`, but ECHO IT BACK and get confirmation before
    writing (a sale price is a load-bearing number; never guess it). If you can't
    confirm, leave it and ask.
 4. Sold listings drop out of the default `/listings` view (they're kept for the
@@ -282,16 +282,16 @@ confirmation. Never auto-write a price without the human confirming it.
 
 - **Chat widget** (`/api/chat`) answers visitor questions from the site's own data.
   It runs live when the owner sets `ANTHROPIC_API_KEY`; otherwise it points visitors
-  to the phone/contact page. It's a paid API per message — keep the rate limit and
+  to the phone/contact page. It's a paid API per message, keep the rate limit and
   see the README cost note before a high-traffic launch.
 - **Voice/text search** on `/listings` searches the agent's OWN listings (beds,
   baths, max price, keywords). It does NOT search the MLS.
 
-## IDX / MLS search — the simple, zero-friction path
+## IDX / MLS search: the simple, zero-friction path
 
 Full MLS search (every listing, auto-updating) is easy to add and stays MLS-compliant:
 
-1. The agent already has (or signs up for) an **IDX provider** — IDX Broker,
+1. The agent already has (or signs up for) an **IDX provider**: IDX Broker,
    iHomefinder, Showcase IDX, Realtyna, or their MLS's own IDX. The provider is the
    one with MLS permission; that's the point.
 2. The provider gives an **embed URL** (an iframe). Paste it into
@@ -317,11 +317,11 @@ Never promise MLS auto-sync beyond the IDX embed.
 
 ## Where listing data may come from
 
-**The full rule is at the top of this page** — the agent, their Agent-OS
+**The full rule is at the top of this page**, the agent, their Agent-OS
 `04-Listings/` folder, or an MLS link they provide, and never a website.
 
-Restated here because it is the one people reach for mid-task: listing facts —
-address, price, beds, baths, square footage, status — are **confirmed or
+Restated here because it is the one people reach for mid-task: listing facts,
+address, price, beds, baths, square footage, status, are **confirmed or
 absent.** Never carry a number over from a portal listing, an old flyer, a web
 page or memory without the agent confirming it. A wrong price or square footage
 on a licensee's own site is a correctness problem before it is an SEO one.

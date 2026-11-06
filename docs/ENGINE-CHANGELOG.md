@@ -1,6 +1,6 @@
 # What changed in the engine
 
-Your site is two things. **Your site** is `site.config.ts` and `content/` — your
+Your site is two things. **Your site** is `site.config.ts` and `content/`, your
 facts, your words, your photos. **The engine** is everything else: the page
 templates, the schema generator, the design system, the skills Claude uses, and
 the launch gate. `npm run update:engine` replaces the engine and never touches
@@ -25,7 +25,7 @@ any of it conflicts with what you have written, and asks before doing anything.
 
 ---
 
-## 2026-10-02 — IDX has a written procedure, and the gate can see it
+## 2026-10-02: IDX has a written procedure, and the gate can see it
 
 ### `decision` · Two things about IDX that everybody gets wrong
 
@@ -35,7 +35,7 @@ both expensive.
 
 **IDX will not help you rank.** The MLS search sits in a frame served by your
 provider, and Google credits content inside a frame to the address the frame
-points at — your provider's, not yours. What IDX actually buys is retention:
+points at, your provider's, not yours. What IDX actually buys is retention:
 somebody who wants to browse the whole market does it on your site, next to your
 phone number, instead of leaving for Zillow. That is a good enough reason to buy
 it. It is not an SEO reason, and an agent who buys it expecting rankings has
@@ -45,7 +45,7 @@ bought the wrong product.
 data licence, the MLS approves the vendor and the specific web address, then the
 provider hands over a link. Days to weeks. Pasting the link in is the two-minute
 part. **If you want IDX, the thing to do today is ask your broker and ask your
-MLS for their approved-vendor list** — not wait for a step in your setup.
+MLS for their approved-vendor list**, not wait for a step in your setup.
 
 The whole procedure, including what to say and a checklist to copy, is now in
 **`docs/IDX-SETUP.md`**.
@@ -53,14 +53,14 @@ The whole procedure, including what to say and a checklist to copy, is now in
 ### `content` · The launch check now looks at your IDX setting
 
 A blank setting is reported as a perfectly finished state rather than nagged
-about — plenty of agents never buy a provider and the listings page works without
+about, plenty of agents never buy a provider and the listings page works without
 one.
 
 A setting that is filled in **wrongly** now stops the launch: a placeholder left
 in place, an address that is not `https://`, something that is not a web address
 at all, or a value that never reaches the page.
 
-It also says plainly what it **cannot** check — whether your provider's search
+It also says plainly what it **cannot** check, whether your provider's search
 actually loads. That frame belongs to them, so nothing on our side can see inside
 it, and an address your provider has not approved shows an empty box rather than
 an error. Which is why the last step is always a person opening the page.
@@ -75,26 +75,26 @@ nothing else.
 
 ### New troubleshooting entry: "the MLS search is an empty grey box"
 
-This happens to nearly everybody twice — once on the first deploy, and again the
+This happens to nearly everybody twice, once on the first deploy, and again the
 day the real domain is connected, because your provider's permission is granted
 per web address. A new domain is a new address.
 
 ---
 
-## 2026-09-24 — Your listings come from you, and each one gets its own page
+## 2026-09-24: Your listings come from you, and each one gets its own page
 
-### `decision` · Claude will stop reading listings off a website — including yours
+### `decision` · Claude will stop reading listings off a website: including yours
 
 Two rules, and both came out of a real near-miss on a working site.
 
 **Where a listing comes from.** From now on Claude builds a listing from one of
 three places only: **what you tell it**, **your Agent-OS `04-Listings/` folder**
-if you have one, or **an MLS link you hand it**. Never from a web page — not
+if you have one, or **an MLS link you hand it**. Never from a web page, not
 Zillow, and not your own current website.
 
 Why that last one matters: on a real agent's site, Claude pulled seven
 properties off the "Featured Listings" strip on her homepage. That site turned
-out to have **two different sets of listings** — the homepage strip, and a
+out to have **two different sets of listings**, the homepage strip, and a
 separate listings section with five completely different addresses. They
 disagreed about which houses existed, and about status: a homepage card said
 *"PENDING, multiple offers, $100,000+ over asking"* while that same property's
@@ -106,18 +106,18 @@ is no way to tell which parts stopped being true. You know which houses you are
 working on. Claude will ask.
 
 **One listing, one page.** Every property gets its own page at
-`/listings/<address>` — one record, one page, named for the address. A
+`/listings/<address>`: one record, one page, named for the address. A
 "featured" strip on your homepage is a *view* of those pages, never a separate
 list. That is what stops the two-sets-of-listings problem happening on your
 site.
 
 **What this asks of you:** nothing changes on your site. Next time you add a
-listing, Claude asks you rather than going looking — which is faster anyway, and
+listing, Claude asks you rather than going looking, which is faster anyway, and
 it means the AI phone assistant answers callers from facts you confirmed.
 
 ---
 
-## 2026-09-23 — Straight answers to the questions everyone asks
+## 2026-09-23: Straight answers to the questions everyone asks
 
 ### `machinery` · A page of plain answers: `docs/FAQ.md`
 
@@ -129,7 +129,7 @@ office address · what is Vercel and does it cost money · do I still need IDX.
 
 `docs/TROUBLESHOOTING.md` is still the page for when something looks broken. This
 one is for when nothing is broken and you want to know what is going on. You can
-also ask Claude any of it in your own words — it reads from the same page, so you
+also ask Claude any of it in your own words, it reads from the same page, so you
 get the same answer every time rather than a fresh guess.
 
 ### `machinery` · Setup no longer sounds like it is going to delete your website
@@ -139,20 +139,20 @@ Two wording fixes, both from watching people freeze on a live call.
 The question about how the new site should **look** used to offer a "fresh start",
 and more than one agent heard that as *we are about to replace the site I already
 have*. It now says plainly that it is asking about the look of the new site and
-that your existing one is not affected either way — and setup says so the moment
+that your existing one is not affected either way, and setup says so the moment
 you mention having a site, rather than waiting for you to ask.
 
 The second is the domain. You do not need one to build this, and being asked about
 it early made people think a decision was due. Setup now explains what "locally"
-means — it lives on your computer, it looks and works like a real site, you are
-the only person who can see it — and leaves the domain until the end, where it
+means, it lives on your computer, it looks and works like a real site, you are
+the only person who can see it, and leaves the domain until the end, where it
 belongs.
 
 **What this asks of you:** nothing. No page of yours changes.
 
 ---
 
-## 2026-09-15 — Your own Facebook and Google tracking, if you run ads
+## 2026-09-15: Your own Facebook and Google tracking, if you run ads
 
 ### `decision` · Put your own pixel on your site
 
@@ -161,7 +161,7 @@ Analytics, your site can now carry your own tracking tags. Ask Claude and it wil
 set them up from two IDs you copy out of your own accounts.
 
 They are **your** tags on **your** accounts. Nothing reports to KMC or to anyone
-else, and nothing loads at all until you supply an ID — so a site that never asks
+else, and nothing loads at all until you supply an ID, so a site that never asks
 for this stays completely free of other companies' scripts.
 
 What you get: every page view counted, and a **lead** recorded the moment someone
@@ -170,7 +170,7 @@ actually landed in your CRM. What is never sent: the person's name, email or
 phone. The event says a lead happened, not who it was.
 
 **What this asks of you:** two things, if you want it. The IDs, and a paragraph
-in your privacy policy naming the companies involved — Claude writes it with you,
+in your privacy policy naming the companies involved, Claude writes it with you,
 and the launch check refuses to let a site go live with tracking that the policy
 does not mention.
 
@@ -187,7 +187,7 @@ It hides what visitors type into forms, and that stays hidden.
 ### `machinery` · Tracking is checked before launch, not only at it
 
 Your site's pre-flight checklist is skipped while you are still building, which
-is right — it would only ever report your own unfinished pages. One rule now runs
+is right, it would only ever report your own unfinished pages. One rule now runs
 anyway: if a tracking tag is switched on, your privacy policy has to name the
 company behind it. Sites are online and visited long before they launch, and a
 pixel does not wait for launch day to start watching.
@@ -204,7 +204,7 @@ you without a Monday report. It copies them now.
 ### `machinery` · Every lead now says which advert brought it
 
 When somebody fills in a form, the campaign they arrived from is saved with them
-in your CRM — the source line and the contact's timeline. So "which ad produced
+in your CRM, the source line and the contact's timeline. So "which ad produced
 this person?" is answered where you already look, instead of only inside
 Facebook's or Google's own dashboards.
 
@@ -216,8 +216,8 @@ ad platform adds itself. The site a visitor came from is reduced to its name
 
 ### `decision` · A weekly report that tells you what to change
 
-Every Monday your site collects its own numbers — leads, what is on the site, and
-what Clarity saw — whether or not your computer is on. Then you say to Claude
+Every Monday your site collects its own numbers, leads, what is on the site, and
+what Clarity saw, whether or not your computer is on. Then you say to Claude
 **"walk me through this week's report"** and get it in plain English: what
 happened, whether last week's suggestions worked, and the two or three things
 worth changing next.
@@ -231,13 +231,13 @@ version to read first.
 
 ---
 
-## 2026-09-14 — Keeping your own website? Your phone assistant can still know your listings
+## 2026-09-14: Keeping your own website? Your phone assistant can still know your listings
 
 ### `decision` · A route for agents who are not using this site
 
 If you already have a website you are happy with, your AI phone assistant can
 still know every one of your listings. Instead of the assistant reading your
-pages, Claude writes the facts of each home straight into its knowledge base —
+pages, Claude writes the facts of each home straight into its knowledge base,
 the same information, published to one place instead of two. No hosting, no
 domain, nothing to deploy.
 
@@ -252,7 +252,7 @@ still the better answer for most people, and this is here for when it isn't.
 
 ---
 
-## 2026-09-11 — Your assistants no longer read placeholders out loud
+## 2026-09-11: Your assistants no longer read placeholders out loud
 
 ### `machinery` · Unfinished details are left out of what your assistants read
 
@@ -284,7 +284,7 @@ HOA details will read "not on record" rather than "none".
 
 You do not have to go looking for those. When Claude sets up or re-syncs your AI
 phone assistant, it now reads your listings first and asks you about the gaps in
-one short list — the HOA on each home, a year built it doesn't have, one story or
+one short list, the HOA on each home, a year built it doesn't have, one story or
 two. Answer what you know, and it writes those in; the rest stays "not on record"
 and goes on your open-items list.
 
@@ -322,7 +322,7 @@ If you did, ask Claude to check whether that update is still in place.
 
 ---
 
-## 2026-09-11 — Setup can start with your listings, and remembers where it stopped
+## 2026-09-11: Setup can start with your listings, and remembers where it stopped
 
 ### `decision` · Start with your listings and phone assistant, if you like
 
@@ -360,7 +360,7 @@ apply this update and ask Claude to re-sync it.
 
 ---
 
-## 2026-09-11 — Team pages in your phone assistant are now your choice
+## 2026-09-11: Team pages in your phone assistant are now your choice
 
 ### `decision` · One question when you set up your AI caller
 
@@ -384,7 +384,7 @@ address through a redirect; it now uses the new one directly.
 
 ---
 
-## 2026-09-11 — The chat button becomes a soap bubble
+## 2026-09-11: The chat button becomes a soap bubble
 
 ### `machinery` · A new look for the chat button, and nothing to do
 
@@ -404,7 +404,7 @@ chat styles in `app/globals.css`, the updater will say so before replacing them.
 
 ---
 
-## 2026-08-26 — Your AI phone assistant can finally answer "what do you have?"
+## 2026-08-26: Your AI phone assistant can finally answer "what do you have?"
 
 ### `decision` · A new setup step, and it needs two minutes in GoHighLevel
 
@@ -453,7 +453,7 @@ changed for a human. What the machines read roughly tripled.
 
 ---
 
-## 2026-08-24 — Your listings become readable by machines
+## 2026-08-24: Your listings become readable by machines
 
 ### `content` · Every listing now needs its coordinates
 
@@ -507,7 +507,7 @@ are still yours alone.
 
 ---
 
-## 2026-08-18 — Geographic branding, and two gate rules
+## 2026-08-18: Geographic branding, and two gate rules
 
 ### `content` · The page has to say what its URL promises
 
@@ -570,8 +570,8 @@ can widen. A sentence about where **a town** is is a fact and stays. Your
 keywords are never swept, because your pages still rank for them and you still
 work there.
 
-**The decision that is yours:** anything with a name attached — a lead magnet, a
-guide, a downloadable PDF — is not renamed by a sweep, because the file, the
+**The decision that is yours:** anything with a name attached, a lead magnet, a
+guide, a downloadable PDF, is not renamed by a sweep, because the file, the
 funnel and the email sequence outside this repo still carry the old name. Claude
 will ask rather than rename.
 

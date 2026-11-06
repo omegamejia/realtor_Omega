@@ -21,7 +21,7 @@ that is the part worth starting first.
 
 The seed renders your provider's search as an `iframe` on `/listings`. Google can
 crawl inside a frame, but it attributes that content to the URL the frame points
-at — your provider's domain, not yours. So thousands of listings appearing on
+at, your provider's domain, not yours. So thousands of listings appearing on
 your page add **nothing** to your own search visibility.
 
 What IDX is actually worth is **retention**: a visitor who wants to browse the
@@ -38,7 +38,7 @@ and an agent who buys IDX expecting rankings has bought the wrong thing.
 
 ---
 
-## 1. Check they are even eligible — ask four questions first
+## 1. Check they are even eligible: ask four questions first
 
 Nobody can have IDX without all four of these. Ask before anything else, because
 a "no" on any of them changes the whole conversation.
@@ -56,7 +56,7 @@ still works, and the site is complete without this. Put it on
 
 ---
 
-## 2. The MLS and broker track — start this on day one
+## 2. The MLS and broker track: start this on day one
 
 This runs in parallel with everything else and it is the long pole.
 
@@ -65,7 +65,7 @@ This runs in parallel with everything else and it is the long pole.
    matter how good it is. Ask the MLS for the list rather than guessing from a
    provider's marketing.
 2. **The broker signs the MLS data licence agreement.** This is the document that
-   actually grants the feed. It is signed by the participant — the broker — not
+   actually grants the feed. It is signed by the participant, the broker, not
    by the agent.
 3. **Submit the IDX request to the MLS**, naming the vendor and the domain the
    data will display on. Some MLSs do this through a member portal, some by email
@@ -77,7 +77,7 @@ This runs in parallel with everything else and it is the long pole.
 
 > **Two things to tell the student while they wait.** The domain gets named on the
 > request, so if they are still on a `*.vercel.app` preview address, this is the
-> point where buying the real domain stops being optional — see
+> point where buying the real domain stops being optional, see
 > `domain-setup`. And the feed arrives over a **RESO Web API** connection in most
 > markets now, replacing the older **RETS**; some boards still run RETS or both.
 > They do not need to care which, their provider does, but if a provider only
@@ -85,7 +85,7 @@ This runs in parallel with everything else and it is the long pole.
 
 ---
 
-## 3. Choose the integration pattern — and know which one this seed does
+## 3. Choose the integration pattern, and know which one this seed does
 
 There are three ways IDX reaches a website. **This seed does the first one.**
 
@@ -93,7 +93,7 @@ There are three ways IDX reaches a website. **This seed does the first one.**
 |---|---|---|---|---|
 | **1. Embed / iframe** *(this seed)* | The provider's search rendered in a frame on your page | **None** | Minutes | Handled by the provider inside the frame |
 | **2. Provider-hosted subdomain** | `search.youragency.com` run entirely by the provider | None to your main domain | Hours, plus DNS | Handled by the provider |
-| **3. Direct feed, your own pages** | You pull RESO Web API data and render a page per listing | **Real** — the pages are yours | Weeks, and ongoing | **Yours.** Every display rule becomes your problem |
+| **3. Direct feed, your own pages** | You pull RESO Web API data and render a page per listing | **Real**, the pages are yours | Weeks, and ongoing | **Yours.** Every display rule becomes your problem |
 
 **Pattern 3 is the only one that earns rankings, and it is a different project.**
 It means per-listing pages on your domain, a sync job, handling listings that go
@@ -106,7 +106,7 @@ site. Choose it deliberately and say why.
 
 ---
 
-## 4. Wire it up in the repo — the two-minute part
+## 4. Wire it up in the repo: the two-minute part
 
 Once the provider has given you an embed URL:
 
@@ -143,7 +143,7 @@ nothing to style.
 them.** That order is deliberate and must not be flipped: their listings are why
 somebody is on that page, and the IDX feed is the catch-all for everything else.
 
-Leave `embedUrl` blank and the IDX block does not render at all — no empty
+Leave `embedUrl` blank and the IDX block does not render at all, no empty
 heading, no grey box. **Blank is a complete, correct, passing state.**
 
 ---
@@ -156,7 +156,7 @@ heading, no grey box. **Blank is a complete, correct, passing state.**
 
 - Blank is fine and says so, rather than nagging
 - A value still containing a placeholder or a bracket **fails**
-- A value that is not `https://` **fails** — a browser silently refuses an
+- A value that is not `https://` **fails**, a browser silently refuses an
   `http://` frame inside an `https://` page and renders nothing, with no error
   anywhere a non-technical owner would find it
 - A value that is not a valid URL **fails**
@@ -174,7 +174,7 @@ too. This is the single most common way an IDX setup is "finished" and broken.
 
 ---
 
-## 6. Compliance — why the iframe is fine, and when it stops being fine
+## 6. Compliance: why the iframe is fine, and when it stops being fine
 
 Every MLS that offers IDX sets display rules. The common ones:
 
@@ -189,7 +189,7 @@ which is why there is nothing to add in this repo and why
 compliance. That is accurate *for this pattern*.
 
 **It stops being accurate the moment anybody moves to pattern 3.** Pulling the
-feed and rendering your own pages makes every display rule yours, on every view —
+feed and rendering your own pages makes every display rule yours, on every view,
 grid cards and map thumbnails as well as detail pages. If a student ever asks for
 "IDX listings on my own URLs", that is the conversation to have first.
 
@@ -205,7 +205,7 @@ governing version.
 
 | What they see | Almost always |
 |---|---|
-| **An empty rectangle where the search should be** | The provider has not whitelisted this domain. Most common on a first deploy, and again the day the real domain is connected — **the whitelist is per-domain, so connecting a domain means telling the provider about it** |
+| **An empty rectangle where the search should be** | The provider has not whitelisted this domain. Most common on a first deploy, and again the day the real domain is connected, **the whitelist is per-domain, so connecting a domain means telling the provider about it** |
 | **Nothing renders at all, no box** | `idx.embedUrl` is blank, or the site has not rebuilt. Check the config, then redeploy |
 | **Works locally, blank once deployed** | The preview URL was whitelisted and the production one was not |
 | **A browser console error about mixed content** | The embed URL is `http://`. The gate catches this before deploy |
@@ -216,7 +216,7 @@ governing version.
 
 ## 8. The replicable checklist
 
-For a student to copy. Everything above `—` is other people; everything below is
+For a student to copy. Everything above the dashed line is other people; everything below is
 fifteen minutes.
 
 ```
@@ -232,7 +232,7 @@ MLS AND BROKER  (days to weeks, start first)
 [ ] MLS approval received
 [ ] Provider provisions the feed and issues an embed URL
 [ ] Domain added to the provider's whitelist
-—
+----------
 IN THE REPO  (minutes)
 [ ] Paste the embed URL into site.config.ts -> idx.embedUrl  (https:// only)
 [ ] npm run gate
@@ -272,7 +272,7 @@ On the timeline, which is the thing they will not expect:
 On deciding not to:
 
 > "Completely fine, and the site is finished without it. Your own listings are
-> the reason anyone is on that page anyway. We can add it any time — it is one
+> the reason anyone is on that page anyway. We can add it any time, it is one
 > line of settings once your provider gives you the link."
 
 ---
@@ -286,7 +286,7 @@ On deciding not to:
 | The gate layer | `scripts/launch-check.mjs` → `checkIdx()` |
 | The setup conversation | `.claude/skills/realtor-site-setup/SKILL.md` Phase 5f |
 | Revisiting a deferred IDX | `.claude/skills/listings-routine/SKILL.md` |
-| The agent's own listings | `.claude/skills/listings-manager/SKILL.md` — separate from this, and both coexist on the page |
+| The agent's own listings | `.claude/skills/listings-manager/SKILL.md`, separate from this, and both coexist on the page |
 | MLS content rules | `.claude/rules/legal-compliance.md` §7 |
 
 ---
@@ -297,11 +297,11 @@ Checked 2 October 2026. Provider names, prices and per-MLS rules change; the
 structure does not.
 
 - NAR, [Internet Data Exchange (IDX) Policy, Policy Statement 7.58](https://www.nar.realtor/handbook-on-multiple-listing-policy/advertising-print-and-electronic-section-1-internet-data-exchange-idx-policy-policy-statement-7-58)
-- [IDX Broker — MLS approval process and terms](https://blog.idxbroker.com/mls-approval-popular-terms-clearly-explained/)
-- [MLSListings — IDX FAQ](https://support.mlslistings.com/s/article/IDX-FAQ)
-- [RESO — moving to replication via the RESO Web API](https://www.reso.org/moving-replication-reso-web-api/)
-- [GSMLS — IDX display guidelines](https://forms.gsmls.com/IDX/idxdisplayguidelines.pdf) (an example of per-MLS display rules, not a national standard)
-- Google Search Central, [`indexifembedded` robots tag](https://developers.google.com/search/blog/2022/01/robots-meta-tag-indexifembedded) — on how iframed content is attributed
+- [IDX Broker: MLS approval process and terms](https://blog.idxbroker.com/mls-approval-popular-terms-clearly-explained/)
+- [MLSListings: IDX FAQ](https://support.mlslistings.com/s/article/IDX-FAQ)
+- [RESO, moving to replication via the RESO Web API](https://www.reso.org/moving-replication-reso-web-api/)
+- [GSMLS: IDX display guidelines](https://forms.gsmls.com/IDX/idxdisplayguidelines.pdf) (an example of per-MLS display rules, not a national standard)
+- Google Search Central, [`indexifembedded` robots tag](https://developers.google.com/search/blog/2022/01/robots-meta-tag-indexifembedded), on how iframed content is attributed
 
 **Per-MLS rules are not on this page on purpose.** There are hundreds of MLSs and
 their rules differ. Get them from the MLS the agent actually belongs to, and if a

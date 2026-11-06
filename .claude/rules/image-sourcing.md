@@ -6,7 +6,7 @@ Referenced by `image-creator` (Krista's skill, copied verbatim) and by
 
 ---
 
-## 1. Where to look, in order — and ASK before you scrape
+## 1. Where to look, in order, and ASK before you scrape
 
 Stop at the first that works. The order matters: the earlier options are higher
 quality, legally simpler, and faster than the later ones.
@@ -14,7 +14,7 @@ quality, legally simpler, and faster than the later ones.
 1. **Files already on their machine.** **Ask this first, every time, before
    anything else:**
 
-   > "Before I go hunting — do you have photos saved on your computer? A folder
+   > "Before I go hunting, do you have photos saved on your computer? A folder
    > from a photographer, your phone's camera roll synced to the laptop, an old
    > marketing folder. If you point me at the folder I'll take it from there."
 
@@ -27,22 +27,22 @@ quality, legally simpler, and faster than the later ones.
 
 2. **Their existing website.** Only after asking about local files. Images on a
    site they own are usually theirs, but **"on their site" is not proof of
-   ownership** — brokerages, IDX feeds, past photographers and stock libraries
+   ownership**, brokerages, IDX feeds, past photographers and stock libraries
    all end up there. Pull them as *candidates*, show the agent what you found,
    and ask which are theirs to use. See `.claude/rules/truth-verification.md`:
    harvested is a candidate, never a fact.
 
-3. **Their other profiles.** Google Business Profile first — those photos are
+3. **Their other profiles.** Google Business Profile first, those photos are
    already theirs, already local, and already associated with the business in
    Google's eyes. Then Instagram, Facebook, Canva, the brokerage asset library,
    a photographer's delivery link.
 
-4. **Properly-licensed free stock** — Unsplash, Pexels, Openverse. Verify the
+4. **Properly-licensed free stock**: Unsplash, Pexels, Openverse. Verify the
    licence per image; commercial use must be permitted.
 
 5. **Paid stock** the agent buys.
 
-6. **AI-generated** — generic or abstract only (textures, backgrounds,
+6. **AI-generated**: generic or abstract only (textures, backgrounds,
    concepts). `image-creator` writes the prompt; this repo does not generate or
    host images itself.
 
@@ -53,13 +53,36 @@ They decide it looks unfinished, and they lose momentum before they ever see
 what it will be. So when a slot has nothing for it, source stock and **place
 it** rather than leaving a gap.
 
+**HARD RULE: a site is never shown without photos, at any stage of the build.**
+Not the first look at a fresh copy, not a half-filled setup, not a test site,
+not a screenshot. The seed ships generic photos in `public/images/stock/seed/`,
+already set in `site.config.ts`, so this holds from the very first build.
+
+**Photos are chosen for this business and this place, never random.** The
+seed's photos in `public/images/stock/seed/` are generic: they exist only so a
+fresh copy is never blank. As soon as setup knows what the business is and
+where, the `stand-in-photos` skill replaces every one with licensed stock
+searched for the business type, each page's subject and the look of the
+agent's region, before they first see the site. `npm run launch:check` fails
+while any generic seed photo is still showing. Keep it holding:
+
+- **Never empty a photo slot.** Replace a stand-in with a real photo or another
+  stand-in, never with `""`.
+- **A new buyer, seller or area page** falls back to `business.heroImageUrl`,
+  so it opens on a photo too. Give it its own when one fits better.
+- **`npm run check:photos`** fails the gate when any page header would open
+  with no photo. It runs on every gate and in CI. A failure there is fixed by
+  adding a photo, never by skipping the check.
+- **Listings are the exception.** A listing shows photos of that home or none.
+  Only the seed's example listing carries a stand-in.
+
 - **Fill every image slot**, not a representative few.
 - **Duplicates are fine.** The same licensed photo in three places beats one
   photo and two empty frames. The job is letting them see the finished shape of
   the site, not winning an art direction award. Vary them where it is cheap to.
 - **Match the region, not the address.** A California suburb for a California
   agent, not a Manhattan loft. On a location page the image should be
-  *plausible* for that place — see §3 for the line it must not cross.
+  *plausible* for that place, see §3 for the line it must not cross.
 - **Never stock for a person.** No headshot, no team photo, ever. A face that is
   not theirs is the one image nobody forgives, and it is the one slot that stays
   empty.
@@ -74,8 +97,8 @@ is illustration and it is fine. That same image with alt text reading
 "Downtown Brentwood" is a false statement about a real place, published by a
 licensed professional. The image can stay; the claim cannot.
 
-So on a location page a stand-in gets **descriptive** alt text — "a suburban
-street on a clear morning" — never **locative** alt text. When a real local
+So on a location page a stand-in gets **descriptive** alt text, "a suburban
+street on a clear morning", never **locative** alt text. When a real local
 photo is genuinely unavailable and the page needs to say something true about
 the place, a map embed is the honest alternative.
 
@@ -91,19 +114,19 @@ gaps are now covered. Without a marker, stock becomes permanent by accident.
 So every stand-in is **placed under `public/images/stock/`**. That path is the
 marker, it survives a renamed file and an unmaintained list, and
 `npm run launch:check` counts what is still there and says so. It warns rather
-than fails — launching with some stock is a legitimate choice — but it never
+than fails, launching with some stock is a legitimate choice, but it never
 goes silent.
 
 Also: put each one on `content/OPEN-ITEMS.md`, and **say plainly, in one line,
 which images are stand-ins** when you hand the site back. Not buried:
 
-> "The neighbourhood shots are licensed stock for now — send me your own and
+> "The neighbourhood shots are licensed stock for now, send me your own and
 > they'll look far better, because yours will actually be those streets."
 
 ## 5. Provenance
 
-Every non-agent image gets a line in `public/images/CREDITS.md` — source and
-licence — so nothing untraceable ever ships.
+Every non-agent image gets a line in `public/images/CREDITS.md`, source and
+licence, so nothing untraceable ever ships.
 
 ## Approved AI image tools
 

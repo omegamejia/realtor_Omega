@@ -1,36 +1,72 @@
 #!/usr/bin/env node
 /**
- * Pull the latest ENGINE from the seed, without touching the agent's own site.
+ * Pull the latest ENGINE from the seed, without touching the owner's own site.
  *
  * A site generated from the template has no shared history with the seed, so
  * there is nothing to merge and no upstream to pull from. But `git checkout
  * <ref> -- <path>` does not care about shared history, so specific paths can be
  * taken from the seed directly.
  *
- * The whole design rests on one line already true of this project: the agent's
- * site is site.config.ts and content/, and everything else is the engine. That
- * separation is what makes an update safe.
+ * WHICH PATHS: exactly the files listed in the seed's `SEED.sha256`, the
+ * seed-managed manifest: the shared engine (ENGINE.sha256, identical in every
+ * seed) plus this seed's own shared code, its gate, its launch check and its
+ * pages. `lib/seed-id.mjs` says which paths those are, `check-engine.mjs
+ * --write` turns them into the manifest, and this script delivers it. Nothing
+ * off that list is touched: site.config.ts, content/ and the site's own images
+ * and README are never replaced by an update.
  *
  *   npm run update:engine            preview, changes nothing
  *   npm run update:engine -- --apply actually writes
+ *   npm run update:skills            the instruction layer only (see below)
  *
  * The preview is the point. An update can add a RULE, and a rule lands on
- * content the agent already wrote — so replacing files silently is how somebody
+ * content the owner already wrote, so replacing files silently is how somebody
  * discovers three weeks later that their gate has been failing. This reports
  * what changed in plain language (docs/ENGINE-CHANGELOG.md), flags any engine
  * file they have customised and would lose, and asks.
  */
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
-// The seed moved to the Krista-Mashore-Coaching organization. GitHub redirects
-// the old address, but a redirect is not a promise, so point at the real one.
-const SEED_REPO = "https://github.com/Krista-Mashore-Coaching/realtor-site-seed.git";
 const REMOTE = "seed";
 const REF = `${REMOTE}/main`;
+const MANIFEST = "SEED.sha256";
 const APPLY = process.argv.includes("--apply");
-/** Instruction layer only — skills, rules and docs. See INSTRUCTION_LAYER. */
+/** Instruction layer only: skills, rules and docs. See INSTRUCTION_LAYER. */
 const SKILLS_ONLY = process.argv.includes("--skills");
+/** Print the instruction layer, one path per line, and stop. Read by
+ *  .claude/scripts/skills-update.sh so its guard and this scope are one list. */
+const PRINT_SCOPE = process.argv.includes("--print-scope");
+
+const git = (...a) => execFileSync("git", a, { encoding: "utf8" }).trim();
+
+/**
+ * THIS seed's repository, never a sibling's.
+ *
+ * Pointing an update at the wrong seed delivers another industry's skills and
+ * rules to the site, so the address is not written here: this file is the same
+ * in every seed. It comes from, in order:
+ *
+ *   1. SEED_REPO in the environment, for testing against a fork;
+ *   2. SEED_REPO in lib/seed-id.mjs, the seed's own constants;
+ *   3. the `seed` remote a previous update already added, for a site whose
+ *      lib/seed-id.mjs predates that constant.
+ */
+async function seedRepo() {
+  if (process.env.SEED_REPO) return process.env.SEED_REPO;
+  try {
+    const ids = await import(new URL("../lib/seed-id.mjs", import.meta.url).href);
+    if (typeof ids.SEED_REPO === "string" && ids.SEED_REPO) return ids.SEED_REPO;
+  } catch {
+    /* no constants file: fall through to the remote */
+  }
+  try {
+    return git("remote", "get-url", REMOTE);
+  } catch {
+    return "";
+  }
+}
 
 /**
  * Reject a flag this version does not understand, instead of ignoring it.
@@ -40,58 +76,65 @@ const SKILLS_ONLY = process.argv.includes("--skills");
  * --skills: the flag meant nothing, so the script did the wide thing under
  * the name of the narrow one. Failing loudly turns that into a message.
  */
-{
-  const known = new Set(["--apply", "--skills", "--force"]);
+async function rejectUnknownFlags() {
+  const known = new Set(["--apply", "--skills", "--force", "--print-scope"]);
   const unknown = process.argv.slice(2).filter((a) => a.startsWith("--") && !known.has(a));
-  if (unknown.length) {
-    console.error(
-      `\nThis version does not understand ${unknown.join(", ")}.\n\n` +
-        "Your copy of scripts/update-engine.mjs is older than the command you ran.\n" +
-        "Update it first, then try again:\n\n" +
-        "  git fetch https://github.com/Krista-Mashore-Coaching/realtor-site-seed.git main\n" +
-        "  git checkout FETCH_HEAD -- scripts/update-engine.mjs\n"
-    );
-    process.exit(1);
-  }
+  if (!unknown.length) return;
+  const repo = (await seedRepo()) || "<this seed's repository>";
+  console.error(
+    `\nThis version does not understand ${unknown.join(", ")}.\n\n` +
+      "Your copy of scripts/update-engine.mjs is older than the command you ran.\n" +
+      "Update it first, then try again:\n\n" +
+      `  git fetch ${repo} main\n` +
+      "  git checkout FETCH_HEAD -- scripts/update-engine.mjs\n"
+  );
+  process.exit(1);
 }
+
 /** Records the seed commit the engine last came from, so the next update can
- *  tell "the seed changed this" apart from "the agent changed this". */
+ *  tell "the seed changed this" apart from "the owner changed this". */
 const STAMP = ".engine-version";
 const CHANGELOG = "docs/ENGINE-CHANGELOG.md";
 
 /**
- * THE INSTRUCTION LAYER — `npm run update:skills`.
+ * THE INSTRUCTION LAYER: `npm run update:skills`.
  *
- * The default update replaces the whole engine, app code included, and that is
- * where the danger is. Measured on a real site built from this seed and then
- * designed: a full apply would have overwritten app/globals.css (729 lines
- * different), app/page.tsx (422) and app/layout.tsx (63) with the seed's
- * generic versions. Months of design work, gone to a command that announced
- * itself as an update.
+ * The full update replaces shared app code too, and that is where the danger
+ * is. Measured on a real site built from a seed and then designed: a full
+ * apply with no record of what was theirs would have overwritten
+ * app/globals.css (729 lines different), app/page.tsx (422) and app/layout.tsx
+ * (63) with the seed's generic versions. Months of design work, gone to a
+ * command that announced itself as an update. That is why the full update
+ * judges every file against this site's SEED.sha256 before touching it.
  *
- * This scope is the part that is safe to replace and carries almost all of the
- * value: the skills, the rules and the docs. Nobody hand-edits a skill file —
- * they are Krista's instructions to Claude, not the agent's site — so there is
- * nothing of theirs to lose, and once the new skills land Claude knows how to
- * keep the site current by itself. On the first real site checked, these were
- * 2,895 lines behind the seed.
+ * This scope is the part that is safe to replace without asking and carries
+ * almost all of the value: the skills, the rules and the docs. Nobody
+ * hand-edits a skill file (they are the seed's instructions to Claude, not the
+ * owner's site), so there is nothing of theirs to lose, and once the new skills
+ * land Claude knows how to keep the site current by itself. On the first real
+ * site checked, these were 2,895 lines behind the seed.
  *
  * What is deliberately NOT here:
- *   CLAUDE.md   genuinely site-customised — 69 lines added and 129 removed on
+ *   CLAUDE.md   genuinely site-customised: 69 lines added and 129 removed on
  *               the one site measured. Overwriting it loses their own notes.
  *   scripts/    the gate, but also where a site keeps bespoke tooling.
  *   app/ components/ lib/ public/   their site. Never.
  *
  * `.claude/scripts` is in scope because the auto-updater lives there and
- * otherwise could never reach an existing site — the mechanism cannot deliver
- * itself. Nothing in that folder is agent-authored; it is the background
+ * otherwise could never reach an existing site: the mechanism cannot deliver
+ * itself. Nothing in that folder is owner-authored; it is the background
  * updater and nothing else. `.claude/settings.json` and `package.json` stay
- * OUT, because those carry the agent's own permissions and dependencies: the
+ * OUT, because those carry the owner's own permissions and dependencies: the
  * `site-updates` skill adds the two missing entries by hand instead, which is
  * a merge rather than a replacement.
  *
- * A skill the agent has that the seed does not (a bespoke listing pipeline,
- * say) is untouched: `git checkout <ref> -- <path>` only writes files that
+ * .claude/scripts/skills-update.sh commits only what is on this list, and reads
+ * it from here (`--print-scope`), so the two can never disagree again. They did:
+ * its own copy left out .claude/scripts and this file, so the first update that
+ * touched either was reverted, silently, every day.
+ *
+ * A skill the owner has that the seed does not (a bespoke pipeline, say) is
+ * untouched: `git checkout <ref> -- <path>` only writes files that
  * exist in the seed, and never deletes. Verified on a real site: 16 files
  * updated, 0 deleted, every bespoke skill intact.
  */
@@ -104,48 +147,60 @@ const INSTRUCTION_LAYER = [
   //
   // An old copy does not understand `--skills` and silently IGNORES it, so
   // `npm run update:skills` on a site that has not had this file runs the
-  // FULL engine update — the wide one, over their designed pages, under the
-  // name of the safe command. Verified on a real old clone.
+  // FULL engine update (the wide one) under the name of the safe command.
+  // Verified on a real old clone.
   //
   // One file, not the whole of scripts/: the rest is the gate and whatever
   // bespoke tooling a site has grown.
   "scripts/update-engine.mjs",
 ];
 
-/** Shared machinery. Safe to replace: none of it is agent-specific. */
-const ENGINE = [
-  "components",
-  "lib",
-  "scripts",
-  ".claude",
-  "app/globals.css",
-  "app/layout.tsx",
-  "app/page.tsx",
-  "app/process",
-  "app/areas",
-  "app/buyers",
-  "app/sellers",
-  "app/blog",
-  "app/team",
-  "app/listings",
-  "app/ai-brief",
-  "app/contact",
-  "app/free",
-  "app/api",
-  "app/sitemap.ts",
-  "app/robots.ts",
-  "app/not-found.tsx",
-  "docs",
-  "CLAUDE.md",
-  // The automated checks and the weekly report job. Without this an existing
-  // site could never receive them: an agent would run update:engine, be told it
-  // was up to date, and still have no Monday report — because the job lives
-  // here and nowhere else.
-  ".github/workflows",
-];
+/**
+ * THE SCOPE: every path in the seed's SEED.sha256, plus the manifest itself,
+ * so the site's own `check:engine` compares against the files it just got.
+ *
+ * Read from the SEED's manifest, not this site's, so a file the seed has just
+ * started delivering reaches the site in the same update. Falls back to the
+ * local manifest only when the seed has none, and refuses when neither exists:
+ * an update with no list of what it may touch must not guess one.
+ */
+/** `sha256  path` lines into a Map of path to hash. */
+function parseManifest(text) {
+  const out = new Map();
+  for (const line of text.split("\n")) {
+    const m = line.trim().match(/^([0-9a-f]{64})\s+(.+)$/);
+    if (m) out.set(m[2], m[1]);
+  }
+  return out;
+}
+
+function seedManifest() {
+  try {
+    return parseManifest(git("show", `${REF}:${MANIFEST}`));
+  } catch {
+    return new Map();
+  }
+}
+
+const sha = (f) => createHash("sha256").update(readFileSync(f)).digest("hex");
+
+function engineScope() {
+  let paths = [...seedManifest().keys()];
+  if (!paths.length && existsSync(MANIFEST)) {
+    paths = [...parseManifest(readFileSync(MANIFEST, "utf8")).keys()];
+  }
+  if (!paths.length) {
+    console.error(
+      `\nNo ${MANIFEST} in the seed or here, so there is no list of engine files to\n` +
+        "update. Nothing was changed."
+    );
+    process.exit(1);
+  }
+  return [...new Set([...paths, MANIFEST])];
+}
 
 /**
- * NEVER touched. This is the agent's actual site: their facts and their words.
+ * NEVER touched. This is the owner's actual site: their facts and their words.
  * Kept as an explicit list rather than an exclude pattern, because the failure
  * mode here is silently overwriting somebody's business.
  */
@@ -156,8 +211,6 @@ const THEIRS = [
   ".env.local",
   "README.md",
 ];
-
-const git = (...a) => execFileSync("git", a, { encoding: "utf8" }).trim();
 
 /** What the seed says about this update, in words rather than file paths. */
 function changelogSince(stamp) {
@@ -172,20 +225,64 @@ function changelogSince(stamp) {
   return entries.filter((e) => (e.match(/## (\d{4}-\d{2}-\d{2})/) || [])[1] > stamp.date);
 }
 
-/** Engine files the agent has edited themselves. An update overwrites these, so
- *  they are the only real conflict this script can detect, and it can only do it
- *  when a previous update left a stamp to compare against. */
+/**
+ * Does the stamp name a commit this clone actually has? A stamp can outlive its
+ * commit (a seed history rewrite, a shallow fetch), and every comparison
+ * against a commit that is not there fails.
+ */
+function hasBaseline(stamp) {
+  if (!stamp?.commit) return false;
+  try {
+    // Quiet: a missing commit is an expected answer here, not an error to print.
+    execFileSync("git", ["cat-file", "-e", `${stamp.commit}^{commit}`], { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Which of these files has the owner changed themselves? An update overwrites
+ * them, so they are the only real conflict this script can detect.
+ *
+ * Returns { edited, unknown }, or null for "cannot tell at all", in which case
+ * the caller takes the safe add-only path.
+ *
+ * JUDGED AGAINST THIS SITE'S OWN SEED.sha256 when it has one: the hash of
+ * every seed-managed file as this site last received it. A file that still has that
+ * hash is untouched and safe to replace; one that does not was edited here. A
+ * file the record does not cover is `unknown` and is kept.
+ *
+ * The stamp commit is the fallback for a site that predates the manifest, and
+ * it is a weaker baseline. It compares against the SEED's commit, so after an
+ * add-only update (files kept, stamp written anyway) every file the seed had
+ * since changed read as "you edited this", and every later update refused.
+ * Found by running this against a real copy of a seed, not by reading it. And
+ * a stamp whose commit this clone does not have used to read as "no
+ * conflicts", because every git error below was swallowed as "file did not
+ * exist then"; it is now null, so the add-only path runs.
+ */
 function localEdits(paths, stamp) {
-  if (!stamp?.commit) return null;
-  const out = [];
-  for (const f of paths) {
+  const files = paths.filter((f) => f !== MANIFEST);
+  if (existsSync(MANIFEST)) {
+    const mine = parseManifest(readFileSync(MANIFEST, "utf8"));
+    if (mine.size) {
+      return {
+        edited: files.filter((f) => mine.has(f) && existsSync(f) && sha(f) !== mine.get(f)),
+        unknown: files.filter((f) => !mine.has(f) && existsSync(f)),
+      };
+    }
+  }
+  if (!hasBaseline(stamp)) return null;
+  const edited = [];
+  for (const f of files) {
     try {
-      if (git("diff", "--name-only", stamp.commit, "--", f)) out.push(f);
+      if (git("diff", "--name-only", stamp.commit, "--", f)) edited.push(f);
     } catch {
       /* file did not exist at that commit; not a conflict */
     }
   }
-  return out;
+  return { edited, unknown: [] };
 }
 
 function readStamp() {
@@ -197,12 +294,17 @@ function readStamp() {
   }
 }
 
-function main() {
+async function main() {
+  await rejectUnknownFlags();
+  if (PRINT_SCOPE) {
+    console.log(INSTRUCTION_LAYER.join("\n"));
+    return;
+  }
   if (!existsSync(".git")) {
     console.error("Run this from the root of your site (the folder with .git in it).");
     process.exit(1);
   }
-  // `.claude/state/` is per-clone bookkeeping — the auto-updater's log and its
+  // `.claude/state/` is per-clone bookkeeping: the auto-updater's log and its
   // once-a-day stamp. It is excluded deliberately, and the exclusion is
   // load-bearing: the background updater writes its stamp before calling this,
   // so without it every automatic run refuses with "you have uncommitted
@@ -217,10 +319,21 @@ function main() {
   }
 
   const remotes = git("remote").split("\n");
-  if (!remotes.includes(REMOTE)) git("remote", "add", REMOTE, SEED_REPO);
+  if (!remotes.includes(REMOTE)) {
+    const repo = await seedRepo();
+    if (!repo) {
+      console.error(
+        "\nThis site does not say which seed it came from (no SEED_REPO in\n" +
+          "lib/seed-id.mjs, and no `seed` remote), so there is nowhere safe to\n" +
+          "update from. Nothing was changed."
+      );
+      process.exit(1);
+    }
+    git("remote", "add", REMOTE, repo);
+  }
   git("fetch", "--quiet", REMOTE);
 
-  const scope = SKILLS_ONLY ? INSTRUCTION_LAYER : ENGINE;
+  const scope = SKILLS_ONLY ? INSTRUCTION_LAYER : engineScope();
   const changed = scope.filter((p) => {
     try {
       return git("diff", "--name-only", REF, "--", p).length > 0;
@@ -250,7 +363,7 @@ function main() {
         console.log(`   [${m[1].toUpperCase().padEnd(9)}] ${m[2]}`);
       }
     }
-    // Counted separately, because they ask different things of the agent. A
+    // Counted separately, because they ask different things of the owner. A
     // `decision` is a question for them, not a rule their pages have to meet,
     // and lumping the two together told people their pages might be affected
     // when nothing about their pages had changed.
@@ -275,7 +388,13 @@ function main() {
   console.log("\n" + "=".repeat(72));
   console.log("CONFLICTS WITH YOUR SITE");
   console.log("=".repeat(72));
-  const edited = localEdits(files, stamp);
+  // In --skills mode the record (SEED.sha256) is the only judge. Skills and
+  // rules carry nothing of the owner's (see INSTRUCTION_LAYER), so without a
+  // record nothing is judged: the stamp fallback would call every skill the
+  // seed changed since an add-only run an owner's edit, and refuse.
+  const judged =
+    SKILLS_ONLY && !existsSync(MANIFEST) ? { edited: [], unknown: [] } : localEdits(files, stamp);
+  const edited = judged === null ? null : judged.edited;
   if (edited === null) {
     console.log(
       "\n  Cannot tell yet. This site has no record of which engine version it\n" +
@@ -296,7 +415,7 @@ function main() {
      * REFUSE, rather than warn and do it anyway.
      *
      * This printed the list above and then overwrote every one of them. A
-     * warning that proceeds is not a guard — it is a receipt, handed over
+     * warning that proceeds is not a guard; it is a receipt, handed over
      * after the fact, to somebody who has already lost their work.
      *
      * It matters more now than it did: the background updater writes
@@ -312,7 +431,7 @@ function main() {
       console.error(
         "\n" + "=".repeat(72) + "\n" +
           "STOPPED. Nothing was changed.\n" + "=".repeat(72) + "\n\n" +
-          `Those ${edited.length} file(s) are yours — you edited them after the last\n` +
+          `Those ${edited.length} file(s) are yours: you edited them after the last\n` +
           "update, and applying would replace them with the seed's versions.\n\n" +
           "  • To update only the SKILLS, RULES and DOCS, which can never touch\n" +
           "    your site:            npm run update:skills -- --apply\n" +
@@ -351,33 +470,46 @@ function main() {
   /**
    * WITHOUT A BASELINE, NEVER REPLACE SITE CODE THAT ALREADY EXISTS.
    *
-   * `localEdits()` can only spot the agent's own changes when a previous update
-   * left a stamp. On a clone that has never been stamped it returns null, and
-   * this used to overwrite everything anyway — treating "we cannot tell whether
-   * this is yours" as "it is not yours." On a designed site that is destructive,
-   * not merely risky (see the measurements above).
+   * `localEdits()` can only spot the owner's own changes against this site's
+   * record (SEED.sha256), or failing that a stamp whose commit this
+   * clone still has. Without either it returns null, and this used to
+   * overwrite everything anyway, treating "we cannot tell whether this is
+   * yours" as "it is not yours." On a designed site that is destructive, not
+   * merely risky (see the measurements above).
    *
-   * So an unstamped clone gets the safe half: add what the seed has added,
-   * touch nothing that already exists, and write the stamp so the next update
-   * can tell the difference properly.
+   * So a clone with no baseline gets the safe half: add what the seed has
+   * added, touch nothing that already exists, and write the record so the next
+   * update can tell the difference properly.
    *
    * THE INSTRUCTION LAYER IS THE EXCEPTION. Treating it the same way was wrong:
    * on the first real site this ran against it updated three docs and NONE of
-   * the skills, because every skill file already existed — while that site was
+   * the skills, because every skill file already existed, while that site was
    * 2,895 lines behind on exactly those files. Skills and rules carry nothing
-   * of the agent's, and leaving them stale defeats the point. So `--skills`
+   * of the owner's, and leaving them stale defeats the point. So `--skills`
    * replaces; a full engine run on an unstamped clone does not.
    */
-  const unstamped = !stamp?.commit && !SKILLS_ONLY;
-  const additions = unstamped ? files.filter((f) => !existsSync(f)) : changed;
-  const skipped = unstamped ? files.filter((f) => existsSync(f)) : [];
+  const unstamped = edited === null && !SKILLS_ONLY;
+  const FORCE = process.argv.includes("--force");
+  let additions;
+  let skipped;
+  if (SKILLS_ONLY) {
+    additions = changed;
+    skipped = [];
+  } else if (unstamped) {
+    additions = files.filter((f) => !existsSync(f));
+    skipped = files.filter((f) => existsSync(f));
+  } else {
+    // Files the record does not cover are kept unless --force says otherwise.
+    skipped = FORCE ? [] : judged.unknown;
+    additions = files.filter((f) => !skipped.includes(f));
+  }
 
-  if (unstamped && skipped.length) {
+  if (skipped.length) {
     console.log("\n" + "=".repeat(72));
     console.log(`KEPT YOURS (${skipped.length})`);
     console.log("=".repeat(72));
     console.log(
-      "\nThis site has no record of which engine version it came from, so there is\n" +
+      "\nThis site's record (SEED.sha256) does not cover these, so there is\n" +
         "no way to tell a file the seed changed from one you changed. Rather than\n" +
         "guess, these were LEFT EXACTLY AS THEY ARE:\n"
     );
@@ -385,15 +517,33 @@ function main() {
     if (skipped.length > 25) console.log(`    ...and ${skipped.length - 25} more`);
     console.log(
       "\nAsk Claude to go through these one at a time if you want the newer version\n" +
-        "of any of them. From this update onward the record is kept, so the next\n" +
-        "one can update them safely on its own."
+        "of any of them. Every file this update did take is now on the record, so\n" +
+        "the next update can replace those safely on its own."
     );
   }
 
   if (additions.length) git("checkout", REF, "--", ...additions);
-  else if (unstamped) console.log("\nNothing new to add — every engine file already exists here.");
+  else if (unstamped) console.log("\nNothing new to add: every engine file already exists here.");
 
-  // Stamp what we just took, so the next update can tell the agent's own edits
+  // THIS SITE'S RECORD: the seed's line for every seed-managed file this site
+  // now holds exactly, and no line for a file it kept. The record is what the
+  // next update judges "did the owner change this?" against, so it may only
+  // claim what is true. (The seed's whole manifest, taken as is, would claim
+  // the kept files were current, and the next update would then call every one
+  // of them an owner's edit.)
+  if (!SKILLS_ONLY) {
+    const seed = seedManifest();
+    if (seed.size) {
+      const lines = [...seed]
+        .filter(([f, h]) => existsSync(f) && sha(f) === h)
+        .map(([f, h]) => `${h}  ${f}`)
+        .sort((a, b) => a.slice(66).localeCompare(b.slice(66)));
+      writeFileSync(MANIFEST, lines.join("\n") + "\n");
+      git("add", "--", MANIFEST);
+    }
+  }
+
+  // Stamp what we just took, so the next update can tell the owner's own edits
   // apart from the seed's. Without this the conflict check has no baseline.
   const commit = git("rev-parse", REF);
   let date = new Date().toISOString().slice(0, 10);
@@ -422,4 +572,4 @@ function main() {
   console.log(`       git reset --hard && rm ${STAMP}\n`);
 }
 
-main();
+await main();

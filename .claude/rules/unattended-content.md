@@ -1,4 +1,4 @@
-# Unattended content — what has to be true before a machine publishes
+# Unattended content: what has to be true before a machine publishes
 
 Referenced by the `daily-articles` skill and by `scripts/lib/check-article.mjs`.
 This is the rule for anything that reaches the public **without a person reading
@@ -6,7 +6,7 @@ it first**. It governs machine-published writing the way
 `legal-compliance.md` governs claims and `truth-verification.md` governs data.
 
 **The whole rule in one line: a human reviewing it is the only guardrail that
-scales down, so everything else has to scale up — and that includes checking
+scales down, so everything else has to scale up, and that includes checking
 that the thing actually got published, which is the one nobody writes.**
 
 A draft a person reads is allowed to be wrong, because the person catches it. A
@@ -47,7 +47,7 @@ are not the same question.
 
 A real site went thirteen days like this. The daily job picked a topic, wrote
 the article, sourced its claims, passed every content check, proved the site
-still built, and committed — correctly, every single morning. The host had
+still built, and committed, correctly, every single morning. The host had
 quietly lost its link to the repository days earlier. Twelve commits accumulated
 and the website never changed. **Not one check noticed, because every check was
 about the article.**
@@ -74,8 +74,8 @@ times in one feature.**
 | Pattern | What it caught | What it was for |
 |---|---|---|
 | `commission` | "the Planning **Commission** voted" | a fee being described |
-| `diagnos\w*` | "a plumber will **diagnose** the leak" | a medical diagnosis |
-| `guarantee` | *(kept — see below)* | a promise nobody made |
+| `diagnos\w*` | "we will **diagnose** the leak" | a medical diagnosis |
+| `guarantee` | *(kept; see below)* | a promise nobody made |
 
 Each time, a correct-looking regex held back a good article, and each time the
 fix was the same: **put the context in the pattern.** A fee sense needs a
@@ -96,9 +96,9 @@ Two corollaries worth stating, because they are not obvious:
 
 Not softened. Not hedged. **Cut.**
 
-An uncited market statistic is already a launch blocker
-(`legal-compliance.md` §4), and a writer producing one a day is the fastest way
-to put a licensed professional's name on a figure nobody can source.
+An uncited statistic is already a launch blocker (see the section on claims in
+this seed's `legal-compliance.md`), and a writer producing one a day is the
+fastest way to put a business's name on a figure nobody can source.
 
 - Every factual claim is either cited in the sentence or removed.
 - **A vaguer true sentence always beats a precise invented one.**
@@ -116,10 +116,10 @@ that is what marketing copy sounds like in its training data. "#1 in town",
 are advertising claims a real business has to be able to back up, and the writer
 can back up nothing.
 
-This is shared across every seed. **What is NOT shared:** Fair Housing is
-housing law and belongs to real estate. HIPAA belongs to the seeds that serve
-health practices. Putting either in the shared layer sends the wrong law to the
-wrong business.
+This is shared across every seed. **What is NOT shared:** the law of one
+industry. It belongs to the seed whose businesses it governs, in that seed's
+article profile and compliance pack. Putting it in the shared layer sends the
+wrong law to the wrong business.
 
 ## 6. Two duplicate gates, because one cannot see the other's failure
 
@@ -140,7 +140,7 @@ Each question is written once and never again. A bank smaller than
 every single morning.
 
 **Running out is not a bug and must not be reported as one.** It is the bank
-needing more questions, and the message has to say so, or an agent files a
+needing more questions, and the message has to say so, or an owner files a
 support request about a working system.
 
 Volume is also not free in the other direction. **Ship at one a day.** Five a
@@ -162,8 +162,8 @@ fallback, so it read as working.
 
 ## Applying it
 
-Any new unattended writer — a different seed, a different medium, a social
-post, an email — starts from this file, not from the last implementation. The
+Any new unattended writer (a different seed, a different medium, a social
+post, an email) starts from this file, not from the last implementation. The
 shared engine is `scripts/daily-article.mjs` and friends; what differs goes in
 `scripts/lib/article-profile.mjs`. If you are about to copy the engine instead
 of writing a profile, read §3 and §5 again and reconsider.

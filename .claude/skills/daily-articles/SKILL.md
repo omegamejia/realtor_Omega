@@ -1,6 +1,6 @@
 ---
 name: daily-articles
-description: The blog that writes and publishes itself. Use when the owner asks how many articles a day, wants more or fewer, wants it paused, asks whether it ran, says no article appeared, or asks what it costs. Not the writer — this is the dial.
+description: 'The blog that writes and publishes itself. Use when the owner asks how many articles a day, wants more or fewer, wants it paused, asks whether it ran, says no article appeared, or asks what it costs. Not the writer: this is the dial.'
 model: sonnet
 ---
 
@@ -71,7 +71,7 @@ node -e "console.log(require('./content/question-bank.json').questions.length + 
 ```
 
 Fewer questions than `count × 45`, add questions first. The question bank is
-the spine — it also feeds the FAQ schema and the AI phone assistant, so time
+the spine: it also feeds the FAQ schema and the AI phone assistant, so time
 spent there is never only for the blog.
 
 ## Pausing and stopping
@@ -100,15 +100,16 @@ In order, because the first one is almost always it:
    Add questions.
 2. **The key is gone or out of credit.** `npm run catchup`.
 3. **The article was held back.** It said something it could not source, or
-   wandered into something only the licensed owner may describe (for a
-   realtor, commissions, buyer agreements and closing costs; for other trades,
-   whatever their compliance pack holds back). The run log says which.
+   wandered into something this kind of business may not publish: whatever
+   this seed's article profile and compliance pack hold back
+   (`scripts/lib/article-profile.mjs`, `scripts/compliance/packs/`). The run
+   log says which.
 4. **The build broke**, so publishing was skipped on purpose. The article was
    fine; something else on the site was not.
 
 In every one of those four the job opens an issue on their repo. **A silent day
 cannot happen, and that is the design.** If they say "it just stopped saying
-anything", check the workflow is still enabled — GitHub switches off a schedule
+anything", check the workflow is still enabled: GitHub switches off a schedule
 after 60 days with no activity in the repo.
 
 ## "The articles are being written but my website never changes"
@@ -161,10 +162,10 @@ Worth saying unprompted, because it is what makes it safe to leave alone:
 
 - **Never a statistic it could not source.** It cuts the sentence instead of
   softening it. A vaguer true sentence beats a precise invented one.
-- **Never the mechanics of the transaction** — commissions, buyer agreements,
-  closing costs, escrow, contingencies. Those vary by state and belong to the
-  licensee.
-- **Never Fair Housing steering language.** Same list the launch gate enforces.
+- **Never what this kind of business may not publish.** Whatever this seed's
+  article profile and compliance pack (`scripts/compliance/packs/*`) hold back,
+  the writer is told up front and the article is checked against before it
+  publishes. Same rules the launch gate enforces.
 - **Never a near-duplicate.** It checks the question against existing titles
   before writing, and the finished article against every existing body after.
 - **Never publishes into a broken site.** It builds first. A failed build skips

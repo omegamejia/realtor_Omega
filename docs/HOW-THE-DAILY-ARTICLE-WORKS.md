@@ -4,7 +4,7 @@
 fact-checks and publishes one new blog article a day, on its own, and tells the
 owner when it cannot.
 
-This document is the full mechanical description — what runs, in what order,
+This document is the full mechanical description, what runs, in what order,
 what each step refuses to let through, what it costs, and why it runs where it
 runs. It assumes no prior knowledge of the codebase.
 
@@ -29,13 +29,25 @@ Steps 1 and 5 are two different duplicate checks and both are needed. Step 7's
 last clause is the one most publishing systems leave out, and leaving it out is
 what let a real site go thirteen days committing articles nobody could read.
 
+### What is shared and what is this seed's
+
+The writer is shared code: `scripts/daily-article.mjs`,
+`scripts/lib/write-article.mjs` and `scripts/lib/check-article.mjs` are
+byte-for-byte identical in every seed. Everything this seed does differently
+(what the business is called, whether a post must name the town, which topics
+are refused, which law applies to its claims, the shape of a post) lives in one
+file, `scripts/lib/article-profile.mjs`, behind a contract of sixteen named
+exports that the header of that file lists. `npm run check:profile` asserts
+every one of them, and CI runs it on every push. Adding a seed means writing one
+profile and nothing else.
+
 ---
 
 ## 2. Picking the topic
 
 ### Where the questions come from
 
-Every site has a **question bank** — a plain list of things its customers
+Every site has a **question bank**, a plain list of things its customers
 actually ask. On a real-estate site that is `content/question-bank.json`, moving
 to `content/questions.ts`, which is the better home because the same list also
 feeds the FAQ sections, the FAQ structured data, the website chat widget and the
@@ -57,7 +69,7 @@ and containment).
 - Score **0.42 or above** → skipped
 
 0.42 was not chosen by taste. Below it, genuinely different questions about the
-same town start colliding — *"what Brentwood costs"* and *"why Brentwood is
+same town start colliding, *"what Brentwood costs"* and *"why Brentwood is
 expensive"* score about 0.45 and really are the same article. Above it,
 paraphrases slip through.
 
@@ -66,8 +78,8 @@ wins**. Questions too vague to write from (fewer than three meaningful words) ar
 discarded.
 
 Some subjects are refused outright before a word is written. On a real-estate
-site that is the mechanics of the transaction — commissions, buyer agreements,
-closing costs, escrow, contingencies — because those vary by state and are the
+site that is the mechanics of the transaction, commissions, buyer agreements,
+closing costs, escrow, contingencies, because those vary by state and are the
 licensed agent's to describe, not a writer's. On a site that might be a clinic,
 it is anything clinical.
 
@@ -75,7 +87,7 @@ it is anything clinical.
 
 Each question is used once, so the bank depletes. A bank smaller than
 `articles-per-day × 45` runs dry inside a month. **Running dry is not an error
-and is deliberately not reported as one** — it is the bank needing more
+and is deliberately not reported as one**, it is the bank needing more
 questions, and the message says exactly that, because telling an owner their
 system is broken when it is working is how you lose their trust in it.
 
@@ -126,13 +138,13 @@ two links to pages that actually sell something, and a closing call to action.
 
 **Voice:** if the site has a `content/brand-voice.md` that has actually been
 filled in, it is passed through verbatim so the writing sounds like the owner.
-If it is still a scaffold, it is ignored rather than used — a template voice is
+If it is still a scaffold, it is ignored rather than used, a template voice is
 worse than a neutral one.
 
 The writer is also handed the titles of up to 40 existing posts and told to pick
 a genuinely different angle.
 
-### Then it checks its own work — in a separate call
+### Then it checks its own work: in a separate call
 
 The draft goes to a **second, independent model call** with web search on, asked
 to do one thing: find every claim a reader could check, search for it, and report
@@ -186,7 +198,7 @@ the full body of every existing post, and anything scoring **0.55 or above** is
 held back.
 
 This is the gate that catches a genuinely different question that produced
-genuinely the same article — the failure that builds a doorway-page site one
+genuinely the same article, the failure that builds a doorway-page site one
 honest-looking day at a time. 0.55 matches the launch gate's own threshold, so an
 article that passes today is not flagged by the site's own checks tomorrow.
 
@@ -203,7 +215,7 @@ reads.
 
 **The merge happens at the single source, not further down**, and that detail is
 load-bearing. On a live site the merge was done inside the sorted accessor while
-the function that renders an individual post read the raw list — so a generated
+the function that renders an individual post read the raw list, so a generated
 article appeared on the blog index and its own page returned 404. The title card
 still returned an image from a fallback, which made it look like it was working.
 
@@ -215,7 +227,7 @@ Nothing special, which is the point. A generated post is an ordinary post:
 - listed on `/blog`, newest first
 - a generated share image for social and search, built from the title
 - `BlogPosting` structured data, produced from the post's own fields by
-  `lib/schema.ts` — **never hand-written**, so it can never disagree with the
+  `lib/schema.ts`: **never hand-written**, so it can never disagree with the
   visible page
 - a canonical URL, a sitemap entry, and links into the pages that sell
 
@@ -239,7 +251,7 @@ One setting controls volume: a repository variable `ARTICLE_COUNT`, **default 1*
 One thing turns the whole system on: the site owner's Anthropic API key, kept in
 **Doppler** (a free secrets manager) and synced into GitHub automatically. The
 same key runs the website's chat widget, so it is one key and one bill, not two.
-With no key, the job does not fail silently — it opens a single issue on the
+With no key, the job does not fail silently, it opens a single issue on the
 repository explaining what to do, and does not open it again while it is still
 open.
 
@@ -253,18 +265,18 @@ open.
    article included. **If the build fails, nothing is committed.** This is
    non-negotiable: without it, a malformed article lands, the deploy fails, and
    the site is down until a person happens to look. This guard has already
-   earned itself once — a perfectly good article was written and the build step
+   earned itself once, a perfectly good article was written and the build step
    failed, and publishing was correctly skipped.
 4. **Save it.** A commit named `post: 2026-10-12`, authored by the job, with the
    undo instruction in the commit message (`git revert HEAD`).
 5. **Get it onto the website.** Three routes, in order of how little setup they
-   need: the host watching the repository (most sites — nothing to configure), a
+   need: the host watching the repository (most sites, nothing to configure), a
    deploy hook, or a direct publish with a token. The second and third exist
    because a publisher that depends on something outside itself has to be able
    to finish the job when that something stops.
 6. **Confirm a stranger can read it.** The job fetches the article from the
    site's real public address and checks the content is on the page. **A 200 is
-   not proof** — a catch-all route, a custom 404 page and a stale cached index
+   not proof**, a catch-all route, a custom 404 page and a stale cached index
    all answer 200.
 7. **If anything failed, say so in plain language**, as an issue on the
    repository, which emails the owner.
@@ -281,7 +293,7 @@ none asked whether anybody could read it.
 A commit is not a publication.
 
 The failure message also distinguishes the two causes, because they look
-identical from outside — both are a 404 on the article — and need opposite
+identical from outside, both are a 404 on the article, and need opposite
 fixes. Before blaming the deploy it fetches the home page: if that address is
 serving a *different website*, the problem is the domain, not the deploy. On the
 site this was built for, that was exactly the case.
@@ -306,7 +318,7 @@ allowance that a one-a-day site sits comfortably inside.
 
 It can do five. On a new site it should not, and the reason is worth saying out
 loud rather than just refusing: five a day is 150 articles by Christmas, and the
-pages that actually sell — the town pages, the seller pages — get buried
+pages that actually sell, the town pages, the seller pages, get buried
 underneath. Search engines have a name for a site that is 90% blog posts and it
 is not a flattering one. The sensible ladder is one a day for the first month or
 two, two or three once the money pages are ranking and the bank holds 60+
@@ -346,9 +358,9 @@ The laptop was shut, or asleep, or the process was killed, or a hung run blocked
 the next one. **A schedule that depends on a computer being awake is not a
 schedule, it is a hope.**
 
-GitHub's servers have no such dependency. Its scheduled runs are *late* — we
+GitHub's servers have no such dependency. Its scheduled runs are *late*, we
 measured 5 to 8 hours past the requested time, because free scheduled jobs queue
-behind paid work — but they **arrive**, which for a blog post is the only
+behind paid work, but they **arrive**, which for a blog post is the only
 property that matters. Nobody cares what minute an article appears.
 
 ### The job's output is a commit, and a commit needs the repository
@@ -381,7 +393,7 @@ those, and a site owner who sells houses will not debug a second platform.
 
 ### Where a routine is still the right tool
 
-A routine has the whole assistant available — judgment, the full repository,
+A routine has the whole assistant available, judgment, the full repository,
 every skill. So the division is:
 
 | The work | Where |
@@ -392,8 +404,8 @@ every skill. So the division is:
 | Anything needing judgment across many files | **A routine** |
 
 The weekly reporting job already splits exactly this way: the scheduled job
-*collects* the figures and commits them, and the interpretation — what they mean,
-whether last week's changes worked — is a conversation, because that is judgment
+*collects* the figures and commits them, and the interpretation, what they mean,
+whether last week's changes worked, is a conversation, because that is judgment
 and the other is a cron.
 
 ---
@@ -405,7 +417,7 @@ sits on the weaker side of it.
 
 **The principle: anything that must happen on a schedule should not depend on a
 particular computer being awake, connected and willing to answer.** If it does,
-its real delivery rate is not what the schedule says — ours measured 17.5%.
+its real delivery rate is not what the schedule says, ours measured 17.5%.
 
 Four pieces are reusable as they stand:
 
@@ -431,7 +443,7 @@ Four pieces are reusable as they stand:
 A hung run is worth calling out on its own: one of our routines has been stuck
 "running" for 38 hours and is blocking every run behind it. Any scheduled job
 needs a timeout and a watchdog that notices a run which started and never
-finished — something the listing pipeline in this same repository already
+finished, something the listing pipeline in this same repository already
 implements and which could be lifted straight across.
 
 None of this requires new tooling. It is the same four habits applied to work

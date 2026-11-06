@@ -12,7 +12,7 @@ Almost nothing, and you do not have to understand any of it.
 
 Three of these tools live inside your own Facebook and Google accounts, and those
 companies will not let Claude sign in as you. So for each one, Claude tells you
-**one screen to open** — and then:
+**one screen to open**, and then:
 
 > **You do not have to find the right number.** Open the screen and send Claude
 > whatever is on it: the whole code, the whole web address, or a screenshot.
@@ -21,12 +21,12 @@ companies will not let Claude sign in as you. So for each one, Claude tells you
 Two more things worth knowing before you start:
 
 - **You never paste code into your website.** Every one of these tools ends by
-  offering you some code to install. Ignore it every time — your site already
+  offering you some code to install. Ignore it every time, your site already
   knows how to load them. That screen is where most people give up, and you can
   skip it.
 - **If someone else runs your ads, you do not have to learn their job.** Claude
   writes the message to forward to them, and it says explicitly that nothing
-  needs installing on the website — so they don't go looking for a way in.
+  needs installing on the website, so they don't go looking for a way in.
 
 You can stop after any step. Each piece works on its own, and Claude will tell
 you plainly what you are giving up by leaving one out.
@@ -34,7 +34,7 @@ you plainly what you are giving up by leaving one out.
 ## What you get
 
 **Heatmaps and recordings.** You can watch, anonymously, how people actually use
-your site: where they scroll to, what they click, and — the useful one — what
+your site: where they scroll to, what they click, and, the useful one, what
 they click that *isn't* a button. This runs on Microsoft Clarity, which is free
 with no limit on how much traffic you have. It keeps recordings for 90 days.
 
@@ -49,7 +49,7 @@ it never shows up in your CRM.
 
 **Every lead says where it came from.** When someone fills in a form, the advert
 or post that first brought them to your site is saved with them in your contact
-system — so "which ad produced this person?" is answered where you already look,
+system, so "which ad produced this person?" is answered where you already look,
 instead of only inside Facebook's or Google's dashboards. It records the
 campaign, never anything about the person.
 
@@ -72,7 +72,7 @@ tags are free. The weekly collection runs on your own repository, free.
 reports back to KMC or anyone else.
 
 **It never records who someone is.** When a form is submitted, the event says "a
-lead happened" — never the person's name, email or phone. Those go where they
+lead happened", never the person's name, email or phone. Those go where they
 always went: your CRM. Clarity hides what people type into forms, and that stays
 on.
 
@@ -83,7 +83,7 @@ dashboard *with you* instead, when it matters.
 ## One thing you have to do
 
 If you turn any of this on, your privacy policy has to name the companies
-involved — that is the law in California and it is also Meta's and Google's own
+involved, that is the law in California and it is also Meta's and Google's own
 rule for anyone using their tags. Claude writes that paragraph with you, and your
 site's pre-launch checklist refuses to pass without it. It takes two minutes and
 it is not optional.
@@ -98,17 +98,17 @@ looking at. Starting from zero visitors gives you a very short report.
 If you are handing this to an agent, this is the whole of what they need. Send it
 as-is:
 
-> Hey — there's an update to your website that lets it measure itself: heatmaps
+> Hey, there's an update to your website that lets it measure itself: heatmaps
 > of what people do on your pages, ad tracking if you advertise, and a plain
 > English report every Monday about what to change.
 >
-> It's all free and it's all on your own accounts — nothing reports back to us.
+> It's all free and it's all on your own accounts, nothing reports back to us.
 >
 > Open your site folder in Claude and say:
 >
-> **"There was an update — please set up my reporting, walk me through it, and
+> **"There was an update, please set up my reporting, walk me through it, and
 > teach me how to read it."**
 >
 > It'll take you through it one step at a time. You won't need to install
-> anything or know what any of it means — when it asks you to open a screen, send
+> anything or know what any of it means, when it asks you to open a screen, send
 > it whatever you see there and it does the rest.

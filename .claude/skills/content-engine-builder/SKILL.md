@@ -10,14 +10,14 @@ version: v1.1
 model: opus
 ---
 
-> ## ⚠️ HOUSE RULES — realtor-site-seed (read first)
+> ## ⚠️ HOUSE RULES, realtor-site-seed (read first)
 > This is **Krista's skill, copied verbatim** into this package. Her method stands;
 > **this project's rules override hers wherever they conflict.**
 > - Her vault paths (`Agent-OS/…`, `14-Confidential/`, `_Operations-Log.md`) **do not
 >   exist here.** Voice/VOC/brand inputs come from **`content/brand-voice.md`**
 >   (produced by `content-engine-builder`). Never invent a missing file's contents.
 > - Output must land in the codebase (`content/pages.ts`, `content/posts.ts`,
->   `site.config.ts`) — not in chat, not in a vault.
+>   `site.config.ts`), not in chat, not in a vault.
 > - Never fabricate facts/stats/results. Unknowns = `[PLACEHOLDER: ... to verify]`.
 > - Never hand-write JSON-LD (`lib/schema.ts` generates it). FAQs go in `faqs`.
 > - Nothing ships until `npm run validate:schema` + `npm run launch:check` pass and
@@ -33,10 +33,10 @@ model: opus
 A guided one-conversation build that produces a portable "Content Engine" file.
 
 The engine file contains four foundational pieces:
-- **Ideal Dream Client** — who exactly you serve and what makes them tick
-- **Authority Stand** — your contrarian POV vs. the industry default
-- **Voice DNA** — your actual speech patterns, stories, frameworks, proof
-- **Hook Menu** — platform-ready hooks built from your stand and voice
+- **Ideal Dream Client**: who exactly you serve and what makes them tick
+- **Authority Stand**: your contrarian POV vs. the industry default
+- **Voice DNA**: your actual speech patterns, stories, frameworks, proof
+- **Hook Menu**: platform-ready hooks built from your stand and voice
 
 Once built, the engine file is one document. Paste it into any Claude, ChatGPT, or Perplexity chat. That tool now sounds like you.
 
@@ -72,9 +72,9 @@ Seven sections:
 Only applies when running inside a vault with a Brand System folder.
 
 If Brand System files exist at `Agent-OS/11-Brand-System/` (or equivalent student path):
-1. Read `07-Voice-Rules.md` — voice patterns to pre-load
-2. Read `02-Ideal-Client.md` — buyer context to pre-load
-3. Read `01-Brand-Brain.md` — strategic positioning
+1. Read `07-Voice-Rules.md`, voice patterns to pre-load
+2. Read `02-Ideal-Client.md`, buyer context to pre-load
+3. Read `01-Brand-Brain.md`, strategic positioning
 
 If these files exist, tell the user what you found and ask: "I found your brand files. Want me to use those as a starting point, or build fresh from scratch?" Then proceed accordingly.
 
@@ -113,7 +113,7 @@ Wait for the answer. Save it as their **Professional Type**. Use it throughout t
 - Frame questions correctly (agents have "buyers and sellers," coaches have "clients," local professionals have "patients" or "customers," etc.)
 - Adjust the vocabulary in all output (never call a dentist's patients "buyers")
 - Shape the Authority Stand questions (what counts as "the industry" for them)
-- Calibrate the Proof Stack language (transactions, clients served, revenue generated, results delivered — use what fits their world)
+- Calibrate the Proof Stack language (transactions, clients served, revenue generated, results delivered, use what fits their world)
 
 Do not ask this question again. It is context, not a step. After they answer, say: "Got it. Let's build your Content Engine. Step 1 of 7." Then begin.
 
@@ -127,18 +127,18 @@ Do not ask this question again. It is context, not a step. After they answer, sa
 
 Build the ideal client profile from 8 questions, then produce an 11-section Ideal Dream Client profile.
 
-**Multiple buyer types:** Many people serve more than one type of client. A real estate agent might work with upsizers, downsizers, first-time buyers, and veterans. A coach might have beginner and advanced clients. Before diving into the questions, ask: "Do you serve more than one type of client?" If yes, say: "We'll build your primary Ideal Dream Client first — the one you most want more of, or that's most profitable. Who is that?" Then proceed with the 8 questions for that person only. After the primary is built, ask: "Do you want to add profiles for your other client types?" If yes, run abbreviated versions (questions 5-8 only) for each and label them Ideal Dream Client B, Ideal Dream Client C, etc. The Voice DNA, Authority Stand, and everything else in the engine file stays consistent across all client types. Only the Ideal Dream Client sections change.
+**Multiple buyer types:** Many people serve more than one type of client. A real estate agent might work with upsizers, downsizers, first-time buyers, and veterans. A coach might have beginner and advanced clients. Before diving into the questions, ask: "Do you serve more than one type of client?" If yes, say: "We'll build your primary Ideal Dream Client first, the one you most want more of, or that's most profitable. Who is that?" Then proceed with the 8 questions for that person only. After the primary is built, ask: "Do you want to add profiles for your other client types?" If yes, run abbreviated versions (questions 5-8 only) for each and label them Ideal Dream Client B, Ideal Dream Client C, etc. The Voice DNA, Authority Stand, and everything else in the engine file stays consistent across all client types. Only the Ideal Dream Client sections change.
 
-Ask these 8 questions ONE AT A TIME (use the Professional Type context to phrase them naturally — ask a real estate agent about "buyers and sellers," ask a coach about "clients," ask a local professional about "patients" or "customers"):
+Ask these 8 questions ONE AT A TIME (use the Professional Type context to phrase them naturally, ask a real estate agent about "buyers and sellers," ask a coach about "clients," ask a local professional about "patients" or "customers"):
 
 1. What does your business do? 1-2 sentences max.
 2. What's your average revenue per client?
 3. What's the typical stage of your ideal buyer? (just starting, growing, plateaued, or scaling)
 4. How big is your buyer's team, if they have one?
 5. What's the ONE biggest problem your work solves for them?
-6. Name 3 real clients — first names are fine — and give me one specific result for each.
+6. Name 3 real clients, first names are fine, and give me one specific result for each.
 7. What do buyers say when they first contact you? Their actual words if you remember them.
-8. What does your buyer believe that keeps them stuck — something they think is true but isn't?
+8. What does your buyer believe that keeps them stuck, something they think is true but isn't?
 
 After all 8 answers, build the 11-section Ideal Dream Client profile:
 
@@ -160,7 +160,7 @@ Show the profile. Ask to refine or move on. Then ask if they want to add seconda
 
 ### Step 2: Authority Stand
 
-Find 1-3 contrarian positions the user can own publicly. Each needs a "receipt" — a specific moment, client, or number that proves it's real, not just an opinion.
+Find 1-3 contrarian positions the user can own publicly. Each needs a "receipt", a specific moment, client, or number that proves it's real, not just an opinion.
 
 Run through 6 lenses ONE AT A TIME. Briefly describe each lens, then ask the question.
 
@@ -201,9 +201,9 @@ Extract the user's actual voice from real material. Produces six layers of Voice
 
 Present three paths and ask which one they want:
 
-**Path A:** Paste a transcript or text from recorded content — podcast episode, sales call, voice memo, live training. 20+ minutes of material works best.
+**Path A:** Paste a transcript or text from recorded content, podcast episode, sales call, voice memo, live training. 20+ minutes of material works best.
 
-**Path B:** Paste text from existing written content — LinkedIn posts, emails, newsletter issues, website copy, articles. 10-15 pieces minimum.
+**Path B:** Paste text from existing written content, LinkedIn posts, emails, newsletter issues, website copy, articles. 10-15 pieces minimum.
 
 **Path C:** Interview. Answer 12 questions here. Takes about 20 minutes.
 
@@ -213,7 +213,7 @@ Wait for their choice, then execute.
 
 **If Path C:** Ask the 12 questions ONE AT A TIME:
 
-1. How would you describe what you do to someone at a dinner party? Not the formal pitch — the real answer.
+1. How would you describe what you do to someone at a dinner party? Not the formal pitch, the real answer.
 2. What's the story of how you got into this? Give me the actual version, not the polished one.
 3. Tell me about a client win that still makes you proud. Real name or first name is fine. What happened?
 4. What do you say when someone asks why they should trust you?
@@ -221,9 +221,9 @@ Wait for their choice, then execute.
 6. What's a phrase or line you catch yourself saying constantly?
 7. What do you do when you're most "on"? Describe the energy.
 8. What's a word or phrase you'd never use? Something that sounds wrong coming from you.
-9. When you teach, do you use stories, systems, data, humor — or a combination? Describe your style.
+9. When you teach, do you use stories, systems, data, humor, or a combination? Describe your style.
 10. What do your clients say you're like to work with?
-11. Who's a person — not necessarily in your field — whose communication style you admire and why?
+11. Who's a person, not necessarily in your field, whose communication style you admire and why?
 12. What's something you believe that you'd never find in a textbook?
 
 **6-Layer Extraction (run after any path):**
@@ -232,7 +232,7 @@ Wait for their choice, then execute.
 - Signature phrases (exact phrases they use repeatedly)
 - Sentence patterns (how they start sentences, how they land points)
 - Rhythm (short and punchy vs. longer builds, where they pause)
-- Tone markers (urgent, warm, dry, direct, playful — pick theirs)
+- Tone markers (urgent, warm, dry, direct, playful, pick theirs)
 - Energy words (words they use when most alive)
 - Personality tells (habits that only they would have)
 
@@ -311,20 +311,20 @@ Tell the user: "The Voice Filter is active. Anytime you paste content into a cha
 
 ### Step 6: Weekly Pulse
 
-Explain the full weekly rhythm. Do NOT run it now — there's no published content yet. Give them the complete operating instructions so they know exactly what to do when they come back Friday.
+Explain the full weekly rhythm. Do NOT run it now, there's no published content yet. Give them the complete operating instructions so they know exactly what to do when they come back Friday.
 
 Tell the user:
 
 "The Weekly Pulse starts after you've published for at least 7 days. Here's the full system.
 
 **What to track as you publish (30 seconds per post):**
-Every time you put content out, jot down these five things in a running note — your phone, a doc, anywhere you'll find it Friday:
+Every time you put content out, jot down these five things in a running note, your phone, a doc, anywhere you'll find it Friday:
 
 - Date and platform
 - Content type (reel, post, carousel, email, YouTube video)
 - Opening line or hook (first 8-10 words exactly)
 - Topic or Stand you used
-- (Leave the numbers blank — you'll add those Friday)
+- (Leave the numbers blank, you'll add those Friday)
 
 **Friday: add the numbers (5 minutes):**
 Go into each platform's analytics and fill in the performance for each post:
@@ -355,7 +355,7 @@ Tell me:
 5. Give me 3 specific hook angles for next week based on what worked.
 ---
 
-The AI cross-references your real numbers against your engine file — your Voice DNA, your Stands, your buyer profile — and tells you what's actually landing with your specific audience and why. Week 1 you're learning. Week 4 you have clear patterns. Week 12 you know exactly what your audience responds to.
+The AI cross-references your real numbers against your engine file, your Voice DNA, your Stands, your buyer profile, and tells you what's actually landing with your specific audience and why. Week 1 you're learning. Week 4 you have clear patterns. Week 12 you know exactly what your audience responds to.
 
 **The Monday-to-Friday cycle:**
 Monday (30 min): Load your engine file, ask for the week's hooks for [platform].
@@ -398,7 +398,7 @@ For each Stand:
 **The Stand:** [Exact statement]
 **What most people believe:** [The default view]
 **What I believe:** [The contrarian position]
-**My proof:** [The receipt — moment, client, or number]
+**My proof:** [The receipt, moment, client, or number]
 **Use cases:** [Types of content this Stand fits]
 
 ---
@@ -409,13 +409,13 @@ For each Stand:
 [Signature phrases, sentence patterns, rhythm, tone markers, energy words, personality tells]
 
 **Story Library:**
-[Each story — headline, key beats, reusability score]
+[Each story, headline, key beats, reusability score]
 
 **Framework Library:**
 [Named and unnamed frameworks]
 
 **Proof Stack:**
-[Specific numbers, names, results — formatted as "[result] for [who] in [timeframe]"]
+[Specific numbers, names, results, formatted as "[result] for [who] in [timeframe]"]
 
 **Banned Phrases:**
 [Their personal list plus the standard AI-tell list]
@@ -429,12 +429,12 @@ For each Stand:
 
 Use these rules every time you generate content from this engine file:
 
-- Use the signature phrases from the Voice DNA above — they signal this is not generic AI
-- Apply the rhythm profile: [short-punchy / longer-builds / mixed — whatever matches their pattern]
+- Use the signature phrases from the Voice DNA above, they signal this is not generic AI
+- Apply the rhythm profile: [short-punchy / longer-builds / mixed, whatever matches their pattern]
 - Every piece should reflect at least one Authority Stand as the underlying worldview
 - Pull from the Story Library and Proof Stack. Use real names and real numbers. "11 clients" not "many clients."
 - Never use anything from the Banned Phrases list above
-- No em dashes anywhere — use a period or comma instead
+- No em dashes anywhere, use a period or comma instead
 - Short sentences. Under 20 words when possible. 6th-grade reading level.
 - Contractions throughout. "you're" not "you are." "I've" not "I have."
 - Plainspoken professional tone. Operator to operator. Not coach to student.
@@ -448,7 +448,7 @@ Every time you want to create content:
 
 1. Open your operating system (or Claude, ChatGPT, any AI tool)
 2. Start a fresh chat
-3. Load this engine file (in your operating system it's already in your vault — just point your system at it; in any other tool, paste this entire file as your first message)
+3. Load this engine file (in your operating system it's already in your vault, just point your system at it; in any other tool, paste this entire file as your first message)
 4. Ask for what you need
 
 The AI will respond in your voice because all four pillars are loaded.
@@ -463,7 +463,7 @@ Voice Filter: Before anything goes live, paste the draft and say "run the Voice 
 Rebuild cadence:
 - Ideal Dream Client: Rebuild only if you pivot your offer or move to a completely different buyer.
 - Authority Stand: Add new Stands as you build conviction with new receipts. Don't replace HOT Stands unless they go cold.
-- Voice DNA: Refresh quarterly. Feed it new spoken content — a recent call, your best recent posts.
+- Voice DNA: Refresh quarterly. Feed it new spoken content, a recent call, your best recent posts.
 - Hook Menu: Generated weekly. Doesn't need to live permanently in the engine file.
 
 ---
@@ -473,7 +473,7 @@ Rebuild cadence:
 Copy, paste, and swap the brackets.
 
 **LinkedIn Post:**
-"Using my Content Engine file above, write a LinkedIn post using Stand #[N] that tells the story of [client first name] — the one where [brief result]. Lead with a curiosity-gap hook. End with a direct call to comment or share. Max 250 words."
+"Using my Content Engine file above, write a LinkedIn post using Stand #[N] that tells the story of [client first name], the one where [brief result]. Lead with a curiosity-gap hook. End with a direct call to comment or share. Max 250 words."
 
 **Short-Form Video Script:**
 "Using my Content Engine file above, write a 60-second reel script for [topic]. Use Stand #[N] as the main POV. Open with a verbal hook that stops the scroll in the first 3 seconds. Close with one clear action. Write it the way I'd actually say it out loud."
@@ -488,12 +488,12 @@ Copy, paste, and swap the brackets.
 
 ## SECTION 7: WHAT'S LIVE IN MY ENGINE
 
-- [x] Ideal Dream Client — built
-- [x] Authority Stand — [N] HOT Stands locked
-- [x] Voice DNA — extracted via Path [A/B/C]
-- [x] Hook Menu — built for [platform]
-- [x] Voice Filter — active
-- [ ] Weekly Pulse — starts after 7+ days of published content
+- [x] Ideal Dream Client, built
+- [x] Authority Stand, [N] HOT Stands locked
+- [x] Voice DNA, extracted via Path [A/B/C]
+- [x] Hook Menu, built for [platform]
+- [x] Voice Filter, active
+- [ ] Weekly Pulse, starts after 7+ days of published content
 ```
 
 ---

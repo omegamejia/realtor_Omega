@@ -1,7 +1,7 @@
 ---
 name: realtor-content-writer
 description: >-
-  Write and maintain the content for a real estate site built from this seed —
+  Write and maintain the content for a real estate site built from this seed,
   area pages, buyer/seller pages, location×service "money" pages, and blog posts,
   each to the word-count and SEO bar in content-model.md (900-1,400 words
   depending on page type) with enforced interlinking. Use when someone
@@ -15,13 +15,13 @@ model: opus
 # Realtor Content Writer + Maintainer
 
 You write publish-quality content for a site built from this seed, and you keep it
-growing. **Read `content-model.md` in this folder first — it is the spec** (word
+growing. **Read `content-model.md` in this folder first, it is the spec** (word
 counts, sections, keyword rules, interlinking hard rules, verified-facts guardrail).
 
 ## How words get written here (this is not optional)
 
 This skill owns **structure, SEO, and interlinking**. It does **not** own voice or
-persuasion — Krista's skills do, and they ship in this package for exactly this
+persuasion, Krista's skills do, and they ship in this package for exactly this
 reason. Writing a page without them produces competent, generic, obviously-generated
 copy that passes the gate and still sounds like nobody.
 
@@ -30,11 +30,11 @@ copy that passes the gate and still sounds like nobody.
 1. **`content/brand-voice.md` must be filled first.** It carries the Ideal Dream
    Client, the VOC phrases in the client's real words, the authority stand, the
    voice DNA, and the banned words. If it still has `[BRACKETS]`, **stop and run
-   `content-engine-builder`** — do not write around it. Writing without a voice
+   `content-engine-builder`**, do not write around it. Writing without a voice
    file means inventing a voice, which this repo forbids.
 2. **`hooks`** for anything that has to earn attention: the H1, section headings,
    meta titles, CTA button text. Descriptive headings are not hooks.
-3. **`copywriter`** for the body — its 8-step process, the 14-criteria rubric
+3. **`copywriter`** for the body, its 8-step process, the 14-criteria rubric
    (**minimum 70 to ship, target 85+**), and the Krista Humanizer pass. If the
    draft scores under 70, rewrite before it goes in `content/*.ts`.
 4. **Then** this skill's structure, keywords, and interlinking rules.
@@ -42,7 +42,7 @@ copy that passes the gate and still sounds like nobody.
 
 **Never generate page content programmatically.** No scripts, no templates filled
 by loop, no "generate 25 money pages from one shape." That is precisely how
-swap-and-repeat duplicate content gets made — the gate now fails it, and it skips
+swap-and-repeat duplicate content gets made, the gate now fails it, and it skips
 the voice and quality process entirely. Each page is written. If that makes 25
 money pages expensive, that is the real cost of 25 money pages; say so up front
 rather than faking it.
@@ -66,7 +66,7 @@ rather than faking it.
 ## Write a page (area hub, niche pillar, or money page)
 
 1. Open the live scaffold for that page (`npm run dev`, visit the URL). The scaffold
-   IS your brief — it lists every section, its purpose, and its word target.
+   IS your brief, it lists every section, its purpose, and its word target.
 2. Write each section to the bar, in the agent's voice, verified facts only.
 3. Add an entry to `content/pages.ts` keyed by the page's URL path, with:
    `metaTitle, metaDescription (150-160 chars), h1, primaryKeyword, secondaryKeywords,
@@ -78,31 +78,31 @@ rather than faking it.
 ## Write the homepage body
 
 The homepage has a long-form SEO body just like any other page, and it renders its
-scaffold (with filler) until written — so `launch:check` **fails on `/` until you
+scaffold (with filler) until written, so `launch:check` **fails on `/` until you
 write it.** It's easy to miss because it's the one page nobody thinks of as "a page
 to write." Write it the same way as any other:
 
-1. Visit `/` on `npm run dev` — the body scaffold below the hero is your brief.
-2. Add an entry to `content/pages.ts` keyed exactly `"/"` — same `PageContent` shape
+1. Visit `/` on `npm run dev`, the body scaffold below the hero is your brief.
+2. Add an entry to `content/pages.ts` keyed exactly `"/"`, same `PageContent` shape
    as every other page (`metaTitle, metaDescription, h1, primaryKeyword,
    secondaryKeywords, sections[{heading, html}], ctas[], faqs[]`). Primary keyword is
    usually `real estate agent in [city]` / `[city] realtor`.
 3. Note: the hero headline, the two `I'm buying`/`I'm selling` cards, and the "Find
    me" map block above the body are fixed layout in `app/page.tsx`, not content you
-   write here — changing those strings is a `site-design-system` job. You're writing
+   write here, changing those strings is a `site-design-system` job. You're writing
    the SEO body beneath them.
 4. Run the gates.
 
 ## Write a blog post
 
 **0. First: make sure the post has somewhere to link.** Blogs exist to support the
-money pages. A post on a topic with no matching service page is an orphan — it
+money pages. A post on a topic with no matching service page is an orphan, it
 captures a keyword and then has nothing to funnel the reader into, breaks
 hub-and-spoke, and usually fails the 5-internal-link rule anyway.
 
 Before writing, check the topic has **both**:
-- a niche (service) page — `/buyers/<niche>` or `/sellers/<niche>`, and
-- a money page for the relevant area — `/areas/<area>/<niche>`.
+- a niche (service) page, `/buyers/<niche>` or `/sellers/<niche>`, and
+- a money page for the relevant area, `/areas/<area>/<niche>`.
 
 If either is missing, **build it as part of this job** (see "Add a new service"
 below) rather than linking somewhere vaguely related. Example: a post about
@@ -110,14 +110,14 @@ downsizing with no `downsizing` niche → add the niche to `site.config.ts`, wri
 `/sellers/downsizing` and `/areas/<area>/downsizing`, *then* write the post
 linking into them.
 
-**Say the cost first.** One new niche multiplies across every area — with four
+**Say the cost first.** One new niche multiplies across every area, with four
 areas that's a pillar page plus four money pages, all needing real content and all
 blocked by the gate until written. If the agent only wants the topic covered for
 one area, add the niche and write that area's money page now; the rest can follow.
 
 New pages are picked up by the sitemap automatically and get their schema from
 `lib/schema.ts` (Service, Place, BreadcrumbList, plus FAQPage when the page has
-`faqs`). Never hand-write schema, and never leave a route out of the sitemap — the
+`faqs`). Never hand-write schema, and never leave a route out of the sitemap, the
 gates discover pages from it, so an unlisted route is never checked.
 
 1. Pick a topic that supports a money page (e.g., "How to sell your home in [City]"
@@ -132,7 +132,7 @@ gates discover pages from it, so an unlisted route is never checked.
 
 The agent started offering something new (e.g., "downsizing"):
 1. Add a `Niche` to `buyerNiches` or `sellerNiches` in `site.config.ts`.
-2. Build — new pages appear automatically as scaffolds: `/[buyers|sellers]/[niche]`
+2. Build, new pages appear automatically as scaffolds: `/[buyers|sellers]/[niche]`
    and `/areas/[every-city]/[niche]`.
 3. Write the niche pillar first, then the highest-priority city money pages.
 4. Run the gates before deploy.
@@ -140,8 +140,8 @@ The agent started offering something new (e.g., "downsizing"):
 ## Add a new area/neighborhood
 
 The agent expanded into a new city:
-1. Add a `ServiceArea` to `serviceAreas` in `site.config.ts`. Put its `lat`/`lng` and (optionally) `nearby` slugs right on that object — one source of truth. (The legacy `areaGeo` map still works as a fallback but new areas shouldn't use it.)
-2. Build — the area hub + every niche money page for it appear as scaffolds.
+1. Add a `ServiceArea` to `serviceAreas` in `site.config.ts`. Put its `lat`/`lng` and (optionally) `nearby` slugs right on that object, one source of truth. (The legacy `areaGeo` map still works as a fallback but new areas shouldn't use it.)
+2. Build, the area hub + every niche money page for it appear as scaffolds.
 3. Write the area hub first, then the money pages, then a supporting blog post.
 4. Run the gates.
 
@@ -158,5 +158,5 @@ A site that stops publishing stops ranking. Recommended rhythm:
 ## What you never touch
 
 You never hand-write JSON-LD (the engine does it) and never edit `lib/schema.ts` to
-add content — you add data to `site.config.ts` / `content/*`. Schema, maps, nav, and
+add content, you add data to `site.config.ts` / `content/*`. Schema, maps, nav, and
 interlinking blocks are automatic.

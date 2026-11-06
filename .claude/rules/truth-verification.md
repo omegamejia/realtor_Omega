@@ -1,4 +1,4 @@
-# Truth verification — where every value on this site is allowed to come from
+# Truth verification: where every value on this site is allowed to come from
 
 This is the rule that governs data, the way `legal-compliance.md` governs claims.
 Read it before writing anything into `site.config.ts` or `content/`.
@@ -19,14 +19,14 @@ so they are never traded off against each other.
 |---|---|---|
 | **Confirmed** | The agent said it, or saw it and said yes | **Yes** |
 | **Computed** | Derived from confirmed data (a slug, a geocode, a title) | **Yes** |
-| **Harvested** | Pulled from their site, a profile, a document — *not yet shown to them* | **No — confirm first** |
-| **Default** | A value the seed shipped | **No — treat as empty** |
+| **Harvested** | Pulled from their site, a profile, a document, *not yet shown to them* | **No, confirm first** |
+| **Default** | A value the seed shipped | **No, treat as empty** |
 
 Harvested data is a **candidate, never a truth.** The step that turns a candidate
 into a fact is the agent seeing it and saying yes. There is no other step.
 
 **Why this rule exists in this exact form:** a real setup run put 45 of 127 facts
-onto a live site without the agent ever seeing them — including the office
+onto a live site without the agent ever seeing them, including the office
 address. Nothing failed. Every gate passed. The data was simply wrong and
 confident, which is the worst combination available.
 
@@ -34,14 +34,14 @@ confident, which is the worst combination available.
 
 A default that renders is a claim nobody made. `priceRange: "$$"` shipped into
 `LocalBusiness` schema on every page of a site whose owner was never asked about
-pricing — and because it never appears on screen, no human would ever catch it.
+pricing, and because it never appears on screen, no human would ever catch it.
 
 - **Never treat a seed default as an answer.** If the agent didn't set it, it is
   empty.
 - **Prefer an empty field to a plausible one.** `clean()` in `lib/schema.ts` drops
   empty values from schema entirely, so blank costs nothing structurally.
 - If a default asserts something about the agent's business, it does not belong in
-  the seed at all — fix the seed, not the instance.
+  the seed at all, fix the seed, not the instance.
 
 ## 3. NAP gets a higher bar than everything else
 
@@ -51,7 +51,7 @@ ranking signal. One source is not a source.
 - **Two independent sources agreeing**, or **explicit confirmation from the
   agent.** A single footer on their old site is neither.
 - **A Google Business Profile is authoritative when one exists.** It settles the
-  address, the coordinates, and the hours together — and it is the record Google
+  address, the coordinates, and the hours together, and it is the record Google
   is already matching against, so disagreeing with it is the expensive error.
 - **Surface conflicts, never resolve them silently.** If the brokerage page, the
   GBP, and their old footer disagree, say so and ask. A conflict is information;
@@ -65,12 +65,12 @@ fact, their licence is attached to it, and a wrong status or price on a property
 is the kind of error they get to explain to their broker.
 
 **A listing is built from the agent, their Agent-OS `04-Listings/` folder, or an
-MLS link they provide. Never from a website — including their own.**
+MLS link they provide. Never from a website, including their own.**
 
 A website is a snapshot somebody stopped maintaining, and you cannot tell which
 parts stopped. In September 2026 a harvest of an agent's own live site produced
 seven properties from its homepage while a separate `/listings/` section of the
-*same site* carried five different ones — disagreeing about which properties
+*same site* carried five different ones, disagreeing about which properties
 existed and about their status, one page reading "PENDING, multiple offers,
 $100,000+ over asking" where that property's own page read "JUST LISTED".
 Nothing flagged it. Both looked authoritative.
@@ -87,7 +87,7 @@ working version of both rules.
 Research costs Claude's time. Interrogation costs the agent's, and they have less
 of it and less patience for it. So:
 
-- Go find it — Google Business Profile, Facebook, Instagram, LinkedIn, YouTube,
+- Go find it, Google Business Profile, Facebook, Instagram, LinkedIn, YouTube,
   Zillow, Realtor.com, Yelp, the brokerage bio.
 - Then ask **one** question about what you found: *"Which of these are yours, and
   are they current?"*

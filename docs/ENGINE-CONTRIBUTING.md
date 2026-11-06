@@ -1,7 +1,7 @@
 # Changing the engine without breaking somebody's site
 
 **Who this is for:** anyone editing the seed itself, or hand-applying an engine
-change to a live agent site — Jerry, Cheryl, Edison, Claude. **Not** for an agent
+change to a live agent site, whether a person or Claude. **Not** for an agent
 building their own site; nothing here applies to writing content or filling in
 `site.config.ts`.
 
@@ -25,7 +25,7 @@ You want `main` and no output. Anything else, stop and find out why.
 **What happened (October 2026, `local-service-site-seed`).** A branch was cut
 from whatever the working directory happened to be on. That turned out to be
 `feat/config-is-the-contract`, a long-lived branch with ten commits and an open
-PR of its own — and the tree was dirty with two files of somebody else's
+PR of its own, and the tree was dirty with two files of somebody else's
 unfinished work. The new PR therefore contained ten unrelated commits and two
 files of work in progress that belonged to another person. It had to be closed,
 the WIP restored by hand from a saved patch, and the whole branch rebuilt.
@@ -58,7 +58,7 @@ one command is how the mistake above was eventually caught.
 ## 3. Read what upstream already has before you "fix" it
 
 **Before patching an engine file, look at the current `origin/main` version of
-it — not your local copy, and not the version you remember.**
+it, not your local copy, and not the version you remember.**
 
 ```bash
 git fetch -q origin main && git show origin/main:app/layout.tsx | head -40
@@ -67,7 +67,7 @@ git fetch -q origin main && git show origin/main:app/layout.tsx | head -40
 **What happened.** A canonical-and-Open-Graph fix was written for the realtor
 seed and copied to `service-site-seed` (since folded into
 `local-service-site-seed` and deleted), whose `main` had **already solved all of
-it** — a `lib/metadata.ts` with per-path canonicals, Open Graph, Twitter tags and
+it**, a `lib/metadata.ts` with per-path canonicals, Open Graph, Twitter tags and
 a generated favicon, better documented than the replacement and taking a
 deliberately different approach. The copy would have been a regression shipped
 as an improvement. It was caught only because a rebase conflicted.
@@ -82,7 +82,7 @@ believe anything it tells you.**
 
 This cost two wrong conclusions in a single session, in both directions:
 
-- A seed was declared broken — relative canonical, missing social image —
+- A seed was declared broken, relative canonical, missing social image,
   because the server had been started before the build finished. It was fine.
 - A build that had **failed** was then "verified" against a stale `.next` from
   an earlier run, and reported as passing.
@@ -96,7 +96,7 @@ build, start, and check something that could only exist in the new build.
 you know is broken and watch it fail before you ship it.
 
 Layers 11 and 12 (canonical, social preview) were written and confirmed passing
-on 67 pages — which proves only that they do not crash. The useful evidence came
+on 67 pages, which proves only that they do not crash. The useful evidence came
 from running them against a site that genuinely lacked both tags, which is also
 how the real before/after number was measured. Prefer that order.
 
@@ -107,12 +107,14 @@ different config shapes:
 
 | seed | identity | brand colours |
 |---|---|---|
-| `realtor-site-seed` | `agent{}` | `primaryColor`, `accentColor` |
+| `realtor-site-seed` (this one) | `agent{}` | `primaryColor`, `accentColor` |
 | `local-service-site-seed` | `owner{}` | `primaryColor`, `accentColor` |
+| `coaches-site-seed` | `owner{}` | `primaryColor`, `accentColor` |
 
 Shared code resolves identity by trying known paths in order
 (`lib/brand-mark.ts`); it never reads `site.agent.name` directly. A new seed with
-a new field name should need one entry added to that list and no new file.
+a new field name should need one entry added to that list and no new file. The
+full list of what is shared and how it is verified is in `docs/ENGINE.md`.
 
 And watch for assumptions that are not about field names at all: the first
 shared mark drew a **house**, which is correct on a realtor site and wrong the
@@ -120,25 +122,45 @@ moment the same file renders a plumber's or a dentist's share card.
 
 ## 7. Say which half of an update actually lands
 
-An engine update ships **files**. Some are complete on arrival — canonical tags
+An engine update ships **files**. Some are complete on arrival, canonical tags
 started working everywhere the day they landed. Others arrive **inert**:
 reporting, pixels, heatmaps, the AI caller and IDX all need a person to create
 an account, paste an ID or set a secret first.
 
 So after any engine change, ask which kind yours is, and say so in the PR. If it
 is the inert kind, it needs a line in `docs/ENGINE-CHANGELOG.md` tagged
-`content` or `decision`, and it should be visible to `npm run catchup` — which
+`content` or `decision`, and it should be visible to `npm run catchup`, which
 exists precisely because the gate reports what is *wrong* and an inert feature is
 neither wrong nor working.
+
+## 8. The seed carries no `.engine-version`
+
+`scripts/update-engine.mjs` writes a `.engine-version` stamp on the site it
+updates, naming the seed commit the files came from. The seed itself used to
+ship one too, and it was wrong by construction: it named whichever commit
+somebody last stamped by hand (twelve commits behind at the last audit) and
+nothing kept it current, so every clone started life claiming an engine version
+it did not have.
+
+It is not needed. A clone's baseline for "did the owner change this file" is
+`SEED.sha256`, which the seed does keep current (`node scripts/check-engine.mjs
+--write`), and the updater only falls back to the stamp's commit when that
+manifest is missing. Without a stamp the changelog summary shows the latest
+three entries, the `X-Built-With` header and the footer provenance read
+"unpinned", and the first `npm run update:engine` writes the real stamp. Every
+reader of the file tolerates its absence.
+
+So: **do not add `.engine-version` to the seed.** If one appears in a seed's
+working tree after an update run, it belongs to that run, not to the template.
 
 ---
 
 ## The thirty-second version
 
 ```bash
-git rev-parse --abbrev-ref HEAD && git status --porcelain   # 1 — main, clean
-git fetch -q origin main && git log --oneline -3 origin/main # 3 — what's there
+git rev-parse --abbrev-ref HEAD && git status --porcelain   # 1, main, clean
+git fetch -q origin main && git log --oneline -3 origin/main # 3, what's there
 # ...make the change...
-git show --stat HEAD                                         # 2 — only my files
-npm run build && npm run gate                                # 4 — fresh build
+git show --stat HEAD                                         # 2, only my files
+npm run build && npm run gate                                # 4, fresh build
 ```

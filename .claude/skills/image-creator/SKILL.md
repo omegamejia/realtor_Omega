@@ -11,14 +11,14 @@ version: 1.0
 model: sonnet
 ---
 
-> ## ⚠️ HOUSE RULES — realtor-site-seed (read first)
+> ## ⚠️ HOUSE RULES, realtor-site-seed (read first)
 > This is **Krista's skill, copied verbatim** into this package. Her method stands;
 > **this project's rules override hers wherever they conflict.**
 > - Her vault paths (`Agent-OS/…`, `14-Confidential/`, `_Operations-Log.md`) **do not
 >   exist here.** Voice/VOC/brand inputs come from **`content/brand-voice.md`**
 >   (produced by `content-engine-builder`). Never invent a missing file's contents.
 > - Output must land in the codebase (`content/pages.ts`, `content/posts.ts`,
->   `site.config.ts`) — not in chat, not in a vault.
+>   `site.config.ts`), not in chat, not in a vault.
 > - Never fabricate facts/stats/results. Unknowns = `[PLACEHOLDER: ... to verify]`.
 > - Never hand-write JSON-LD (`lib/schema.ts` generates it). FAQs go in `faqs`.
 > - Nothing ships until `npm run validate:schema` + `npm run launch:check` pass and

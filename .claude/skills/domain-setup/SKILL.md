@@ -1,7 +1,7 @@
 ---
 name: domain-setup
 description: >-
-  Put an agent's site on their custom domain — help them BUY one if they don't
+  Put an agent's site on their custom domain, help them BUY one if they don't
   have it, connect a new domain, or carefully SWITCH an existing live domain onto
   this site without breaking their email or losing SEO. Use when someone says
   "buy a domain", "I need a domain", "I don't have a domain", "connect my domain",
@@ -15,14 +15,36 @@ model: opus
 
 Pick the situation first.
 
-- **No domain yet** — help them buy one, then it's a new-domain setup. (Branch 0 → A.)
-- **New domain** — they have a domain with no live site on it. Low risk. (Branch A.)
-- **Existing-domain switch** — a domain that currently runs a live site and/or
+- **No domain yet**: help them buy one, then it's a new-domain setup. (Branch 0 → A.)
+- **New domain**: they have a domain with no live site on it. Low risk. (Branch A.)
+- **Existing-domain switch**: a domain that currently runs a live site and/or
   email. This is a MIGRATION with real risk. Do the full runbook. (Branch B.)
 
 **Prerequisites for either:** the site content is written, `npm run validate:schema`
 and `npm run launch:check` pass, and `launchReady: true` is set. Don't put an
 unfinished site on a real domain.
+
+**And one more, which is not optional: `npm run test:ghl` must have passed
+against the real CRM.** Not the smoke test — that only proves the form was
+accepted. `test:ghl` proves a lead actually arrives: it creates a contact,
+reads it back, checks every value landed, and deletes it again.
+
+Say this to them in as many words before the domain moves:
+
+> Until your CRM key is in, every form on the site accepts a lead and throws it
+> away. Nothing errors, nothing looks broken, and you find out weeks later when
+> you wonder why the new site produced no business.
+
+That is not hypothetical. It has happened: every form on a launched site
+answered 200 while discarding each submission, because the location ID was
+still a sandbox value. Schema passed. The smoke test passed. The site was
+reported as fully working. It was found only by submitting a form and then
+going to look for the record.
+
+Going live before the CRM is wired is a decision they are allowed to make
+knowingly, never one to discover. If they choose it, confirm leads at least
+reach an inbox (the lead route's mail fallback) and tell them plainly what is
+not running.
 
 **You never touch the registrar yourself.** DNS changes happen in the agent's
 registrar/DNS host. You prepare the exact records and redirect map; the agent (or
@@ -30,9 +52,9 @@ whoever holds that login) applies them, or grants access.
 
 ---
 
-## Branch 0 — Buy a domain (they don't have one yet)
+## Branch 0: Buy a domain (they don't have one yet)
 
-The student buys it themselves — **you never enter payment details or purchase on
+The student buys it themselves, **you never enter payment details or purchase on
 their behalf.** You help them choose well and pick the easiest place to buy.
 
 ### Choosing the name (guide them)
@@ -42,12 +64,12 @@ their behalf.** You help them choose well and pick the easiest place to buy.
 - **Short, memorable, easy to say out loud and spell.** No hyphens, no numbers.
 - A local keyword can help SEO (`sacramentohomesbyjane.com`) but keep it brand-led,
   not keyword-stuffed.
-- **Check brokerage rules.** Some brokerages restrict agent domains/branding — confirm
+- **Check brokerage rules.** Some brokerages restrict agent domains/branding, confirm
   before buying. Also do a quick trademark sanity check on the name.
 
 ### Where to buy
 - **Easiest (recommended for non-technical agents): buy it through Vercel.** Buying the
-  domain inside their Vercel project auto-configures DNS and SSL — no A/CNAME records,
+  domain inside their Vercel project auto-configures DNS and SSL, no A/CNAME records,
   nothing to wire. After purchase it's essentially connected; just set `site.url` and
   redeploy. This is the least-friction path.
 - **Or a registrar** (Cloudflare, Namecheap, etc.) if they prefer to hold it there.
@@ -58,18 +80,18 @@ their behalf.** You help them choose well and pick the easiest place to buy.
   verify HTTPS. Done.
 - Bought at a registrar → go to **Branch A**.
 
-Typical cost is ~$10-25/year (some premium names cost more) — theirs to pay.
+Typical cost is ~$10-25/year (some premium names cost more), theirs to pay.
 
 ---
 
-## Branch A — Brand-new domain (low risk)
+## Branch A: Brand-new domain (low risk)
 
 1. Add the domain (apex + `www`) in the agent's own Vercel project
    (`vercel domains add theirdomain.com`, or the Vercel dashboard).
 2. Vercel shows the exact records. Set at the registrar:
    - apex `theirdomain.com` → `A` record to Vercel's IP, **or** an `ALIAS`/`ANAME` if supported.
    - `www` → `CNAME` to `cname.vercel-dns.com`.
-   - **Use A/CNAME records — do NOT delegate nameservers to Vercel.**
+   - **Use A/CNAME records, do NOT delegate nameservers to Vercel.**
 3. Pick a canonical host (apex or `www`) and 301 the other to it (Vercel does this
    when you set the redirect on the domain).
 4. Wait for verification; Vercel auto-provisions SSL.
@@ -79,30 +101,53 @@ Typical cost is ~$10-25/year (some premium names cost more) — theirs to pay.
 6. Verify: HTTPS loads, no cert warning, both apex and `www` resolve.
 7. **Get it indexed.** Add the domain in Google Search Console and submit
    `https://theirdomain.com/sitemap.xml` (the site generates it automatically).
-   A brand-new site won't rank until Google knows it exists — don't skip this.
+   A brand-new site won't rank until Google knows it exists, don't skip this.
 
 ---
 
-## Branch B — Switching an existing live domain (MIGRATION — full runbook)
+## Branch B: Switching an existing live domain (MIGRATION, full runbook)
 
 ### The 4 rules that keep it from blowing up
 1. **Protect email.** If mail flows to `@theirdomain.com`, the domain's **MX +
    SPF/DKIM/DMARC** records are live. Change **only** the apex `A` and `www` `CNAME`.
-   **Never switch to Vercel nameservers** — that drops MX and email goes dark.
+   **Never switch to Vercel nameservers**, that drops MX and email goes dark.
 2. **301 the old URLs.** Preserve ranking equity; don't 404 existing links.
 3. **Keep the old site live + a rollback plan.** Don't tear down old hosting first.
 4. **Preserve subdomains.** IDX/search/booking on a subdomain stays pointed where it is.
 
-### Before (prep — nothing goes live yet)
+### Before (prep: nothing goes live yet)
 1. **Inventory + export ALL current DNS records** (A, CNAME, **MX, TXT/SPF/DKIM/DMARC**,
-   NS, every subdomain). Save this file — it is the rollback and the list of what
+   NS, every subdomain). Save this file, it is the rollback and the list of what
    must be preserved.
 2. **Note whether the domain currently runs the site inside GoHighLevel** (common for
    agents). If so, DNS points at GHL now; you're moving the *site* off GHL while
    keeping GHL for CRM. Check GHL isn't also handling forms/email on that domain.
-3. **Crawl the old site's URLs** and build the 301 redirect map. Add each entry to
-   `content/redirects.mjs` as `{ source, destination, permanent: true }`. Map to the
-   closest relevant new page — never dump everything to the homepage.
+3. **Build the 301 redirect map**, with the tool rather than by hand:
+
+   ```
+   npm run dev                                    # the new site must be running
+   npm run swap:plan -- https://theiroldsite.com  # read it, then:
+   npm run swap:plan -- https://theiroldsite.com --write
+   ```
+
+   It reads every URL the old site admits to (its sitemap, then by following
+   its own links), asks the new site which of those already work, and proposes
+   a destination for the rest. Entries land in `content/redirects.mjs` as
+   `{ source, destination, permanent: true }`.
+
+   **The output that matters is the UNMATCHED list.** The tool refuses to guess
+   and never maps anything to the homepage, because Google reads a pile of
+   unrelated redirects into one page as soft-404s — worse than the 404 it
+   replaced and much harder to notice. Those are yours to place, and they are
+   the ones that need somebody who knows the business.
+
+   Read what it wrote before committing. A wrong destination is worse than no
+   redirect: it looks like it is working.
+
+   An established site is routinely several hundred URLs, and mapping them by
+   hand is where a migration actually goes wrong. Not in the DNS, which is four
+   records and a runbook, but in the long boring list nobody can hold in their
+   head.
 4. **Lower the DNS TTL** to ~300s at the registrar (do this a day ahead) so both the
    cutover and any rollback propagate in minutes.
 5. Commit the redirects and redeploy so they're live on the site before cutover.
@@ -114,14 +159,54 @@ Typical cost is ~$10-25/year (some premium names cost more) — theirs to pay.
 8. Pick the canonical host and 301 the other to it.
 9. Set `site.url` to the real domain; redeploy.
 
-### After (verify — do not skip)
+### After (verify: do not skip)
 10. **Send and receive a test email** to `@theirdomain.com`. Email first, always.
 11. Confirm **HTTPS/SSL** is live (Vercel auto-issues once the domain verifies).
-12. **Spot-check redirects:** hit several old URLs → confirm 301 → correct new page.
+12. **Check every redirect, not a sample:**
+
+    ```
+    npm run swap:verify -- https://theirdomain.com
+    ```
+
+    It requests every source in the map against the live domain and reports
+    anything that does not end on the page the map promises. A spot check of
+    600 redirects is a sample of about six, and the ones that are wrong are
+    exactly the ones nobody thought to spot-check.
+
+    It also catches a redirect that resolves but lands on the wrong page, which
+    a status check alone reports as healthy.
 13. Add the new **sitemap in Google Search Console**, request re-index. **Keep the
     redirects for many months** so equity transfers.
 14. Update the website link on the **Google Business Profile**, analytics, and major
     directory citations over time.
+
+**Take the after reading, if a before one exists.**
+`content/website-health/before/` holds the old site's grade from setup. The new
+site is now on the same address, so run the identical check and file it beside
+the first:
+
+```bash
+bash .claude/skills/website-health/scripts/run.sh https://theirdomain.com \
+  --out-dir content/website-health/after --open
+```
+
+Use the same `--industry` flag the baseline used, or the comparison is not
+like for like. See `.claude/skills/website-health/SHIPPED-FROM.md`.
+
+Run it **after `npm run check:domain` passes**, never before. Until the site is
+rebuilt on the new domain its sitemap and schema still name the old one, and
+the check reads that as a real fault. It is a real fault, but it belongs to the
+missing redeploy, not to the new site.
+
+Then show them the two side by side:
+
+```bash
+node .claude/skills/site-before-after/scripts/compare.mjs
+```
+
+That is the moment the whole project gets measured, so do not skip it because
+the site is already up. If no baseline was ever taken, say so plainly: it
+cannot be reconstructed, because the old site no longer exists.
 
 ### Rollback
 If email breaks or the site misbehaves: restore the exported DNS records at the
@@ -150,10 +235,10 @@ them, then you handle the project, the domain, and the environment variables
 directly.
 
 Reading a dashboard aloud to someone who has never seen it is where setups stall.
-Fall back to it only if connecting fails, and say so when you do — see the
+Fall back to it only if connecting fails, and say so when you do, see the
 connect-first rule in `CLAUDE.md`.
 
-## After the domain is connected — the step that gets missed
+## After the domain is connected: the step that gets missed
 
 **The site must be REDEPLOYED after the domain is attached, and then checked.**
 
@@ -161,7 +246,7 @@ These pages are generated at build time, so attaching a domain does not rewrite
 a build that already happened. Until it is rebuilt, the site serves perfectly
 happily on the new address while its sitemap and every schema `@id` still name
 the old one. Nothing errors, nothing looks broken, and a crawler is quietly told
-the wrong canonical home for every page — which is the most expensive kind of
+the wrong canonical home for every page, which is the most expensive kind of
 silent failure available here.
 
 So, in order:
@@ -181,6 +266,6 @@ So, in order:
 
 **What you no longer have to remember:** `lib/site-url.ts` resolves the address
 rather than reading `site.url` directly, and falls through to Vercel's own
-production URL — which follows the custom domain once one is attached. So the
+production URL, which follows the custom domain once one is attached. So the
 redeploy picks the new domain up on its own. Setting `site.url` is still worth
 doing once the domain is final, but forgetting it is no longer damaging.

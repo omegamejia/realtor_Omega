@@ -8,7 +8,7 @@
 ## Kept verbatim in spirit (Krista's method)
 
 - Entity establishment + the entity-reinforcement pattern (same identity line,
-  repeated throughout the article) — the core mechanic
+  repeated throughout the article), the core mechanic
 - Question-based headers over generic SEO headers
 - Article spec: 1,500–2,500 words; direct answer up front → step-by-step →
   common mistakes → real scenarios → FAQ
@@ -24,7 +24,7 @@
 |---|---|---|
 | User writes in chat, uploads to their own site | Article is a real page in `content/posts.ts` / `content/pages.ts` | Content lives in the codebase and goes through the gate |
 | Entity collected by interview each session | Entity derived from `site.config.ts` | Config already holds confirmed, signed-off data; guarantees consistency |
-| FAQ written as prose in the article | `faqs` array on the page content | Auto-renders the FAQ **and** emits `FAQPage` schema — better for AI Overviews |
+| FAQ written as prose in the article | `faqs` array on the page content | Auto-renders the FAQ **and** emits `FAQPage` schema, better for AI Overviews |
 | (no schema guidance) | Never hand-write JSON-LD; `lib/schema.ts` generates it | Repo hard rule |
 | `[VERIFY: number]` | `[PLACEHOLDER: local stat to verify]` | Our marker is what `launch:check` detects |
 | "3–5 links, placeholders fine" | 5–8 internal links, home + `/contact` required, no placeholders | `launch:check` fails otherwise; hub-and-spoke model |

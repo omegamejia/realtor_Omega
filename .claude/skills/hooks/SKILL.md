@@ -8,14 +8,14 @@ version: 1.0
 model: sonnet
 ---
 
-> ## ⚠️ HOUSE RULES — realtor-site-seed (read first)
+> ## ⚠️ HOUSE RULES, realtor-site-seed (read first)
 > This is **Krista's skill, copied verbatim** into this package. Her method stands;
 > **this project's rules override hers wherever they conflict.**
 > - Her vault paths (`Agent-OS/…`, `14-Confidential/`, `_Operations-Log.md`) **do not
 >   exist here.** Voice/VOC/brand inputs come from **`content/brand-voice.md`**
 >   (produced by `content-engine-builder`). Never invent a missing file's contents.
 > - Output must land in the codebase (`content/pages.ts`, `content/posts.ts`,
->   `site.config.ts`) — not in chat, not in a vault.
+>   `site.config.ts`), not in chat, not in a vault.
 > - Never fabricate facts/stats/results. Unknowns = `[PLACEHOLDER: ... to verify]`.
 > - Never hand-write JSON-LD (`lib/schema.ts` generates it). FAQs go in `faqs`.
 > - Nothing ships until `npm run validate:schema` + `npm run launch:check` pass and
@@ -46,9 +46,9 @@ Read-only on the brand-system files. Never auto-sends. Just generates.
 
 ## Inputs
 
-- **TOPIC** (required) — what the content is about.
-- **AUDIENCE** (default: your ideal client, from `02-Ideal-Client.md`) — alternates: past client, referral partner, lender, homeowner. If unclear, infer from topic and state the inference.
-- **FORMAT** (default: mixed across all) — if user names one (subject line, reel opener, ad hook, etc.), focus there. Match length to format:
+- **TOPIC** (required): what the content is about.
+- **AUDIENCE** (default: your ideal client, from `02-Ideal-Client.md`): alternates: past client, referral partner, lender, homeowner. If unclear, infer from topic and state the inference.
+- **FORMAT** (default: mixed across all): if user names one (subject line, reel opener, ad hook, etc.), focus there. Match length to format:
   - Email subject line → under 50 chars
   - FB/IG/LinkedIn ad hook → under 25 words
   - Reel/TikTok opener → under 8 words

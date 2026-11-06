@@ -2,7 +2,7 @@
 
 Written for someone who does not work in software. Every question on this page was
 asked out loud by a real agent partway through their own build, so if you are
-wondering it, you are not behind — you are in good company.
+wondering it, you are not behind, you are in good company.
 
 `docs/TROUBLESHOOTING.md` is the page for when something looks **broken**. This
 page is for when nothing is broken and you want to know what is going on.
@@ -24,7 +24,7 @@ Claude has no access to it. Nothing that happens here reaches it.
 What is actually happening: you are building a **brand new site, from scratch,
 alongside the one you have**. Yours keeps running the entire time. Your old site
 does not change, does not go down, and does not go anywhere until the day you
-personally decide to do something about it — and that day is weeks away, not
+personally decide to do something about it, and that day is weeks away, not
 today.
 
 ### "Then why is it asking about my old site?"
@@ -32,7 +32,7 @@ today.
 Two reasons, and both save you work:
 
 1. **Facts.** Your bio, your license number, your areas, your team, your
-   testimonials — all of that is already written on your old site. Reading it means
+   testimonials, all of that is already written on your old site. Reading it means
    you do not have to type it again.
 2. **Look.** If you like how your current site looks, say so and the new one can
    match it: same colours, same feel. If you would rather start clean, say that
@@ -41,15 +41,15 @@ Two reasons, and both save you work:
 When Claude asks whether you want a "clean slate," it is asking about the **look
 of the new site only**. It is never asking permission to touch the old one.
 
-### "I have two websites — which one do I give it?"
+### "I have two websites, which one do I give it?"
 
 Tell Claude about both and say which one describes you best. It will use that one
 and leave the other alone. Do not let it blend the two.
 
-### "Mine is only my brokerage page — does that count?"
+### "Mine is only my brokerage page: does that count?"
 
 Yes. An eXp page, a Bold Trail site, a Carrot site, a Mashore Method site, a
-brokerage bio — all of those are real answers and all of them are useful. Answering
+brokerage bio, all of those are real answers and all of them are useful. Answering
 "yes, but it's only my brokerage page" does not commit you to anything, and it
 does **not** mean your new site will be hosted there.
 
@@ -62,15 +62,15 @@ does **not** mean your new site will be hosted there.
 **Not yet, and not for a while.** This is the single most common thing people
 worry about too early.
 
-Everything you are about to build happens on your own computer. A domain — your
-`yourname.com` address — is the **last** step, long after the site is finished and
+Everything you are about to build happens on your own computer. A domain, your
+`yourname.com` address, is the **last** step, long after the site is finished and
 you are happy with it.
 
 ### "What does 'building it locally' mean?"
 
 It means your site lives right here on your computer and nowhere else.
 
-It looks like a real website. It works like a real website — you click around it in
+It looks like a real website. It works like a real website, you click around it in
 your browser exactly the way a visitor would, every page, every link, every form.
 The only difference is that **you are the only person on earth who can see it.**
 
@@ -80,7 +80,7 @@ love it, you push it out of the nest and give it an address.
 
 ### "I bought a domain through [platform] and it says using it will wipe out what I have running"
 
-Then do not use that one right now — and more to the point, **do not make that
+Then do not use that one right now, and more to the point, **do not make that
 decision today.** You have not needed a domain for anything yet.
 
 When you do get there, you have options: a brand new domain, or your existing one
@@ -101,7 +101,7 @@ reversible.
 ### "What is Vercel, and how is it different from WordPress?"
 
 GitHub holds your website's files, like a filing cabinet. **Vercel is the building
-with the lights on** — it runs your site 24/7 so people can visit it.
+with the lights on**, it runs your site 24/7 so people can visit it.
 
 WordPress is a place where you drag boxes around to build a page, and you pay for
 that convenience. Here you do not drag anything: you say what you want in plain
@@ -122,25 +122,25 @@ visible to anyone.
 
 Three stages, in order:
 
-1. **On your computer** — while you build it. Only you can see it.
-2. **On a free practice address** (something like `yoursite.vercel.app`) — so you
+1. **On your computer**: while you build it. Only you can see it.
+2. **On a free practice address** (something like `yoursite.vercel.app`), so you
    can send it to a friend or look at it on your phone. Real, but not your brand.
-3. **On your own domain** — when you are ready and only then.
+3. **On your own domain**: when you are ready and only then.
 
 ---
 
 ## Teams and partners
 
-### "My spouse/partner and I are both here — do we each build one?"
+### "My spouse/partner and I are both here: do we each build one?"
 
 **No. One business, one website.** Only one of you needs to do this. Build it
 together on one person's computer, on one account, and put both of you on it as
-team members — the site gives every team member their own page.
+team members, the site gives every team member their own page.
 
 Two half-finished sites for one business is the worst outcome available, and
 splitting the work between you is the usual way people end up there.
 
-### "My team name and my personal name are different — which do I use?"
+### "My team name and my personal name are different, which do I use?"
 
 Whatever your **Google Business Profile** says. That is the name Google already has
 on record for you, and matching it everywhere is worth more than picking the name
@@ -154,7 +154,7 @@ you like best. See the Google section below.
 
 Use whatever Google has. Small differences like a space, `&` versus `and`, or
 `Realty` versus `Real Estate` make Google and AI assistants less certain that all
-your listings are the same business — and certainty is the thing you are buying.
+your listings are the same business, and certainty is the thing you are buying.
 It is not worth risking your listing to fix a space, but where you have the choice,
 match Google.
 
@@ -165,17 +165,17 @@ Common, and less of a problem than it feels.
 Your site links its map to your **Google Business Profile itself**, not to a street
 address, and by default it does not display an address at all. What that link does
 is tell Google and every AI assistant *this website and this business are the same
-thing* — which is the part that helps you.
+thing*, which is the part that helps you.
 
 If the address is in the same town you still work in, leaving it alone is usually
 fine. If it is in a different town, or if your license or bar registration requires
-a specific address, **tell Claude that** — it will keep the site consistent with
+a specific address, **tell Claude that**, it will keep the site consistent with
 your licensing record and flag anything that conflicts rather than guessing.
 
 ### "I don't have a Google Business Profile at all"
 
 The site works without one. Say so and Claude will skip the map link and note it as
-something worth setting up later — it is one of the higher-value things you can do
+something worth setting up later, it is one of the higher-value things you can do
 for local ranking.
 
 ---
@@ -208,7 +208,7 @@ everything you have done. Doing it early costs you your momentum.
 ### "Is my work actually being saved anywhere?"
 
 It should be saved into your own private copy on GitHub as you go. If you want to
-be sure — and it is a reasonable thing to want to be sure about — say:
+be sure, and it is a reasonable thing to want to be sure about, say:
 
 > "Make sure everything we've done is backed up in my own GitHub repository."
 
@@ -226,10 +226,10 @@ like.
 
 Two different things:
 
-- **Your own listings** — yours, and they go on the site directly. No provider, no
+- **Your own listings**: yours, and they go on the site directly. No provider, no
   fee, and they are richer than anything a feed would give you.
 - **Every other home for sale in your area** (the searchable map of the whole
-  market) — that is IDX, and yes, that still comes from a provider with a monthly
+  market), that is IDX, and yes, that still comes from a provider with a monthly
   fee. If you already have one, it drops into this site. If you do not, the site
   works fine without it and you can add it any time.
 
